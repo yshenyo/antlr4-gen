@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>antlr4-gen</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.12.0</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <!--指定导入语法和标记文件的位置。-->
+                    <libDirectory>src/main/java/antlr4/oracle</libDirectory>
+                    <!--ANTLR语法文件(*.g4)所在的目录。-->
+                    <sourceDirectory>src/main/java/antlr4/oracle</sourceDirectory>
+                    <!--指定生成Java文件的输出目录。-->
+                    <outputDirectory>src/main/java/antlr4/oracle/gen</outputDirectory>
+                    <!--生成解析树侦听器接口和基类。-->
+                    <listener>true</listener>
+                    <!--生成解析树访问者接口和基类。-->
+                    <visitor>true</visitor>
+                    <!--<treatWarningsAsErrors>true</treatWarningsAsErrors>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
