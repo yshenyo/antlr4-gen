@@ -39,11 +39,11 @@
 
                 <configuration>
                     <!--指定导入语法和标记文件的位置。-->
-                    <libDirectory>src/main/java/antlr4/postgresql</libDirectory>
+                    <libDirectory>src/main/java/antlr4/mysql</libDirectory>
                     <!--ANTLR语法文件(*.g4)所在的目录。-->
-                    <sourceDirectory>src/main/java/antlr4/postgresql</sourceDirectory>
+                    <sourceDirectory>src/main/java/antlr4/mysql</sourceDirectory>
                     <!--指定生成Java文件的输出目录。-->
-                    <outputDirectory>src/main/java/antlr4/postgresql/gen</outputDirectory>
+                    <outputDirectory>src/main/java/antlr4/mysql/gen</outputDirectory>
                     <!--生成解析树侦听器接口和基类。-->
                     <listener>true</listener>
                     <!--生成解析树访问者接口和基类。-->
