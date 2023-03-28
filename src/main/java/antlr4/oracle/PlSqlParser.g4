@@ -167,7 +167,6 @@ unit_statement
     | flashback_table
     | grant_statement
     | noaudit_statement
-    | procedure_call
     | purge_statement
     | rename_object
     | revoke_statement
@@ -175,6 +174,7 @@ unit_statement
     | truncate_cluster
     | truncate_table
     | unified_auditing
+    | procedure_call
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-DISKGROUP.html
