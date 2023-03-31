@@ -72,7 +72,6 @@ unit_statement
     | alter_user
     | alter_view
 
-    | call_statement
     | create_analytic_view
     | create_attribute_dimension
     | create_audit_policy
@@ -175,6 +174,7 @@ unit_statement
     | truncate_cluster
     | truncate_table
     | unified_auditing
+    | call_statement
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-DISKGROUP.html
