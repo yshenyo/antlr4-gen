@@ -72,6 +72,7 @@ unit_statement
     | alter_user
     | alter_view
 
+    | call_statement
     | create_analytic_view
     | create_attribute_dimension
     | create_audit_policy
@@ -174,7 +175,6 @@ unit_statement
     | truncate_cluster
     | truncate_table
     | unified_auditing
-    | procedure_call
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-DISKGROUP.html
@@ -5361,9 +5361,8 @@ statement
     | return_statement
     | case_statement
     | sql_statement
-    | function_call
+    | call_statement
     | pipe_row_statement
-    | procedure_call
     ;
 
 swallow_to_semi
@@ -5443,12 +5442,8 @@ return_statement
     : RETURN expression?
     ;
 
-function_call
-    : CALL? routine_name function_argument?
-    ;
-
-procedure_call
-    : routine_name function_argument?
+call_statement
+    : CALL? routine_name function_argument? (INTO bind_variable)?
     ;
 
 pipe_row_statement
