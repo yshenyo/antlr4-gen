@@ -5919,7 +5919,7 @@ targetColumnName
 	: columnName
 	;
 
-newColumnName
+buildColumnName
 	: identifier
 	;
 
@@ -6203,8 +6203,8 @@ correlationClause
 	: AS?
 	correlationName
 	(LPAREN
-	newColumnName
-	(COMMA newColumnName)*
+	buildColumnName
+	(COMMA buildColumnName)*
 	RPAREN)?
 	;
 
@@ -6452,7 +6452,7 @@ superGroups
 
 selectColumns
 	: (
-	(expression ((operator expression) | INTEGERLITERAL)* (AS? (newColumnName | NONNUMERICLITERAL))?)
+	(expression ((operator expression) | INTEGERLITERAL)* (AS? (buildColumnName | NONNUMERICLITERAL))?)
 	| (tableName DOT SPLAT)
 	| unpackedRow
 	)
