@@ -96,6 +96,7 @@ ARCHIVAL:                     'ARCHIVAL';
 ARCHIVE:                      'ARCHIVE';
 ARCHIVED:                     'ARCHIVED';
 ARCHIVELOG:                   'ARCHIVELOG';
+ARE:                          'ARE';
 ARRAY:                        'ARRAY';
 AS:                           'AS';
 ASC:                          'ASC';
@@ -425,6 +426,7 @@ DEREF:                        'DEREF';
 DEREF_NO_REWRITE:             'DEREF_NO_REWRITE';
 DESC:                         'DESC';
 DESCRIPTION:                  'DESCRIPTION';
+DESTINATION:                  'DESTINATION';
 DESTROY:                      'DESTROY';
 DETACHED:                     'DETACHED';
 DETERMINES:                   'DETERMINES';
@@ -481,6 +483,7 @@ DYNAMIC_SAMPLING:             'DYNAMIC_SAMPLING';
 DYNAMIC_SAMPLING_EST_CDN:     'DYNAMIC_SAMPLING_EST_CDN';
 E_LETTER:                     'E';
 EACH:                         'EACH';
+EDGE:                         'EDGE';
 EDITIONABLE:                  'EDITIONABLE';
 EDITION:                      'EDITION';
 EDITIONING:                   'EDITIONING';
@@ -953,7 +956,8 @@ MIRRORHOT:                    'MIRRORHOT';
 MIRROR:                       'MIRROR';
 MISSING:                      'MISSING';
 MISMATCH:                     'MISMATCH';
-MLE:                         'MLE';
+MIXED:                        'MIXED';
+MLE:                          'MLE';
 MLSLABEL:                     'MLSLABEL';
 MODEL_COMPILE_SUBQUERY:       'MODEL_COMPILE_SUBQUERY';
 MODEL_DONTVERIFY_UNIQUENESS:  'MODEL_DONTVERIFY_UNIQUENESS';
@@ -1117,6 +1121,7 @@ NO_MONITOR:                   'NO_MONITOR';
 NO_MULTIMV_REWRITE:           'NO_MULTIMV_REWRITE';
 NO_NATIVE_FULL_OUTER_JOIN:    'NO_NATIVE_FULL_OUTER_JOIN';
 NONBLOCKING:                  'NONBLOCKING';
+NON_CDB:                      'NON$CDB';
 NONEDITIONABLE:               'NONEDITIONABLE';
 NONE:                         'NONE';
 NO_NLJ_BATCHING:              'NO_NLJ_BATCHING';
@@ -1444,6 +1449,7 @@ PROFILE:                      'PROFILE';
 PROGRAM:                      'PROGRAM';
 PROJECT:                      'PROJECT';
 PROPAGATE:                    'PROPAGATE';
+PROPERTIES:                   'PROPERTIES';
 PROPERTY:                     'PROPERTY';
 PROTECTED:                    'PROTECTED';
 PROTECTION:                   'PROTECTION';
@@ -2246,6 +2252,7 @@ VERSIONS_STARTTIME:           'VERSIONS_STARTTIME';
 VERSIONS:                     'VERSIONS';
 VERSIONS_XID:                 'VERSIONS_XID';
 VERSION:                      'VERSION';
+VERTEX:                       'VERTEX';
 VIEW:                         'VIEW';
 VIOLATION:                    'VIOLATION';
 VIRTUAL:                      'VIRTUAL';
@@ -2502,12 +2509,12 @@ REMARK_COMMENT:      'REM' {this.IsNewlineAtPos(-4)}? 'ARK'? (' ' ~('\r' | '\n')
 PROMPT_MESSAGE:      'PRO' {this.IsNewlineAtPos(-4)}? 'MPT'? (' ' ~('\r' | '\n')*)? NEWLINE_EOF;
 
 // TODO: should starts with newline
-START_CMD
-    //: 'STA' 'RT'? SPACE ~('\r' | '\n')* NEWLINE_EOF
-    // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12002.htm
-    // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12003.htm
-    : '@' {this.IsNewlineAtPos(-2)}? '@'? ~('\r' | '\n')* NEWLINE_EOF
-    ;
+//START_CMD
+//    //: 'STA' 'RT'? SPACE ~('\r' | '\n')* NEWLINE_EOF
+//    // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12002.htm
+//    // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12003.htm
+//    : '@' {this.IsNewlineAtPos(-2)}? '@'? ~('\r' | '\n')* NEWLINE_EOF
+//    ;
 
 REGULAR_ID: SIMPLE_LETTER (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*;
 
