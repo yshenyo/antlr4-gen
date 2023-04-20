@@ -2213,7 +2213,7 @@ storage_table_clause
 
 // https://docs.oracle.com/database/121/SQLRF/statements_4008.htm#SQLRF56110
 unified_auditing
-    : {p.isVersion12()}?
+    :
       AUDIT (POLICY policy_name ((BY | EXCEPT) audit_user (',' audit_user)* )?
                                 (WHENEVER NOT? SUCCESSFUL)?
             | CONTEXT NAMESPACE oracle_namespace
@@ -2241,11 +2241,11 @@ audit_traditional
     ;
 
 audit_direct_path
-    : {p.isVersion12()}? DIRECT_PATH auditing_by_clause
+    : DIRECT_PATH auditing_by_clause
     ;
 
 audit_container_clause
-    : {p.isVersion12()}? (CONTAINER EQUALS_OP (CURRENT | ALL))
+    :  (CONTAINER EQUALS_OP (CURRENT | ALL))
     ;
 
 audit_operation_clause
@@ -2287,7 +2287,7 @@ auditing_on_clause
     : ON ( object_name
          | DIRECTORY regular_id
          | MINING MODEL model_name
-         | {p.isVersion12()}? SQL TRANSLATION PROFILE profile_name
+         |  SQL TRANSLATION PROFILE profile_name
          | DEFAULT
          )
     ;
@@ -2315,7 +2315,7 @@ sql_statement_shortcut
     | MATERIALIZED VIEW
     | NOT EXISTS
     | OUTLINE
-    | {p.isVersion12()}? PLUGGABLE DATABASE
+    |  PLUGGABLE DATABASE
     | PROCEDURE
     | PROFILE
     | PUBLIC DATABASE LINK
@@ -2548,11 +2548,11 @@ credential_name
     ;
 
 library_editionable
-    : {p.isVersion12()}? (EDITIONABLE | NONEDITIONABLE)
+    :  (EDITIONABLE | NONEDITIONABLE)
     ;
 
 library_debug
-    : {p.isVersion12()}? DEBUG
+    :  DEBUG
     ;
 
 
@@ -2621,7 +2621,7 @@ alter_view
     ;
 
 alter_view_editionable
-    : {p.isVersion12()}? (EDITIONABLE | NONEDITIONABLE)
+    :  (EDITIONABLE | NONEDITIONABLE)
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-VIEW.html
@@ -4225,7 +4225,7 @@ partial_database_recovery
     ;
 
 partial_database_recovery_10g
-    : {p.isVersion10()}? STANDBY
+    :  STANDBY
       ( TABLESPACE tablespace (',' tablespace)*
       | DATAFILE CHAR_STRING | filenumber (',' CHAR_STRING | filenumber)*
       )
@@ -5044,7 +5044,7 @@ lob_partition_storage
     ;
 
 period_definition
-    : {p.isVersion12()}? PERIOD FOR column_name
+    :  PERIOD FOR column_name
         ( '(' start_time_column ',' end_time_column ')' )?
     ;
 
@@ -6133,6 +6133,7 @@ concatenation
 interval_expression
     : DAY ('(' concatenation ')')? TO SECOND ('(' concatenation ')')?
     | YEAR ('(' concatenation ')')? TO MONTH
+    | concatenation (SECOND | DAY | MONTH | YEAR)
     ;
 
 model_expression
@@ -6398,6 +6399,7 @@ other_function
       '(' (DOCUMENT | CONTENT) concatenation (AS type_spec)?
       xmlserialize_param_enconding_part? xmlserialize_param_version_part? xmlserialize_param_ident_part? ((HIDE | SHOW) DEFAULTS)? ')'
       ('.' general_element_part)?
+    | TIME CHAR_STRING
     | xmltable
     ;
 
