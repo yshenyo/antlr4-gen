@@ -30,7 +30,7 @@ options {
 }
 
 sql_script
-    : ((sql_plus_command | unit_statement) SEMICOLON?)* EOF
+    : ((unit_statement | sql_plus_command) SEMICOLON?)* EOF
     ;
 
 unit_statement
@@ -113,12 +113,16 @@ unit_statement
     | create_outline
     | create_package
     | create_package_body
+    | create_pfile //区别：新增
+    | create_pluggable_database //区别：新增
     | create_pmem_filestore
     | create_procedure_body
     | create_profile
+    | create_property_graph //区别：新增
     | create_restore_point
     | create_role
     | create_rollback_segment
+    | create_schema
     | create_sequence
     | create_spfile
     | create_synonym
@@ -137,8 +141,10 @@ unit_statement
     | drop_context
     | drop_database
     | drop_database_link
+    | drop_dimension //区别：新增
     | drop_directory
     | drop_diskgroup
+    | drop_domain //区别：新增
     | drop_edition
     | drop_flashback_archive
     | drop_function
@@ -150,12 +156,18 @@ unit_statement
     | drop_library
     | drop_lockdown_profile
     | drop_materialized_view
+    | drop_materialized_view_log
     | drop_materialized_zonemap
+    | drop_mle_env //区别：新增
+    | drop_mle_module //区别：新增
     | drop_operator
     | drop_outline
     | drop_package
+    | drop_pluggable_database
     | drop_pmem_filestore
     | drop_procedure
+    | drop_profile
+    | drop_property_graph
     | drop_restore_point
     | drop_role
     | drop_rollback_segment
@@ -182,15 +194,17 @@ unit_statement
     | data_manipulation_language_statements
     | disassociate_statistics
     | flashback_table
+    | flashback_database
     | grant_statement
-    | noaudit_statement
     | purge_statement
     | rename_object
     | revoke_statement
     | transaction_control_statements
     | truncate_cluster
     | truncate_table
+    | noaudit_statement
     | audit_unified //| unified_auditing
+    | noaudit_unified //区别：新增
     | call_statement
     ;
 
@@ -476,8 +490,8 @@ annotations_clause
 
 // Function DDLs
 
-drop_function
-    : DROP FUNCTION function_name ';'
+drop_function //区别：多了IF EXISTS
+    : DROP FUNCTION (IF EXISTS)? function_name ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-FLASHBACK-ARCHIVE.html
@@ -666,8 +680,8 @@ drop_lockdown_profile
 
 // Package DDLs
 
-drop_package
-    : DROP PACKAGE BODY? (schema_object_name '.')? package_name ';'
+drop_package //区别：多了IF EXISTS
+    : DROP PACKAGE (IF EXISTS)? BODY? (schema_object_name '.')? package_name ';'
     ;
 
 alter_package //区别：多了IF EXISTS
@@ -676,12 +690,12 @@ alter_package //区别：多了IF EXISTS
     ) ';'
     ;
 
-create_package
-    : CREATE (OR REPLACE)? PACKAGE (schema_object_name '.')? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name? ';'
+create_package //区别：多了IF NOT EXISTS
+    : CREATE (OR REPLACE)? editionable_noneditionable? PACKAGE (IF NOT EXISTS)? (schema_object_name '.')? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name? ';'
     ;
 
-create_package_body
-    : CREATE (OR REPLACE)? PACKAGE BODY (schema_object_name '.')? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name? ';'
+create_package_body //区别：多了IF NOT EXISTS
+    : CREATE (OR REPLACE)? editionable_noneditionable? PACKAGE BODY (IF NOT EXISTS)? (schema_object_name '.')? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name? ';'
     ;
 
 // Create Package Specific Clauses
@@ -716,6 +730,145 @@ package_obj_body
     | function_body
     | procedure_spec
     | function_spec
+    ;
+
+create_pluggable_database
+    : CREATE PLUGGABLE DATABASE
+    ( pdb_name=id_expression ( AS APPLICATION CONTAINER )? | AS SEED )
+    ( create_pdb_from_seed
+    | create_pdb_clone
+    | create_pdb_from_xml
+    | create_pdb_from_mirror_copy
+    | container_map_clause
+    | pdb_snapshot_clause
+    )
+    ;
+
+create_pdb_from_seed
+    : ADMIN USER admin_user_name=id_expression IDENTIFIED BY password_value
+    pdb_dba_roles?
+    parallel_pdb_creation_clause?
+    default_tablespace?
+    pdb_storage_clause?
+    file_name_convert?
+    service_name_convert?
+    path_prefix_clause?
+    tempfile_reuse_clause?
+    user_tablespaces_clause?
+    standbys_clause?
+    logging_clause?
+    create_file_dest_clause?
+    (HOST EQUALS_OP CHAR_STRING)?
+    (PORT EQUALS_OP numeric)?
+    ;
+
+pdb_dba_roles
+    : ROLES EQUALS_OP '(' role_name (',' role_name)* ')'
+    ;
+
+parallel_pdb_creation_clause
+    : PARALLEL UNSIGNED_INTEGER?
+    ;
+
+service_name_convert
+    : SERVICE_NAME_CONVERT EQUALS_OP ( '(' CHAR_STRING (',' CHAR_STRING)+ ')' | NONE )
+    ;
+
+path_prefix_clause
+    : PATH_PREFIX EQUALS_OP (CHAR_STRING | id_expression | NONE)
+    ;
+
+tempfile_reuse_clause
+    : TEMPFILE REUSE
+    ;
+
+user_tablespaces_clause
+    : USER_TABLESPACES EQUALS_OP ( '(' CHAR_STRING (',' CHAR_STRING)* ')' | NONE | ALL (EXCEPT '(' CHAR_STRING (',' CHAR_STRING)* ')')? )
+    ((SNAPSHOT COPY) | (NO DATA) | COPY | MOVE| NOCOPY)?
+    ;
+
+standbys_clause
+    : STANDBYS EQUALS_OP ( '(' CHAR_STRING (',' CHAR_STRING)* ')' | NONE | ALL (EXCEPT '(' CHAR_STRING (',' CHAR_STRING)* ')')? )
+    ;
+
+create_file_dest_clause
+    : CREATE_FILE_DEST EQUALS_OP (CHAR_STRING | id_expression | NONE)
+    ;
+
+create_pdb_clone
+    : ( FROM ( id_expression (AT_SIGN dblink)? | NON_CDB AT_SIGN dblink )
+    | AS PROXY FROM id_expression AT_SIGN dblink
+    )
+    parallel_pdb_creation_clause?
+    default_tablespace?
+    pdb_storage_clause?
+    file_name_convert?
+    service_name_convert?
+    path_prefix_clause?
+    tempfile_reuse_clause?
+    (SNAPSHOT COPY)?
+    using_snapshot_clause?
+    user_tablespaces_clause?
+    standbys_clause?
+    logging_clause?
+    create_file_dest_clause?
+    keystore_clause?
+    pdb_refresh_mode_clause?
+    (RELOCATE AVAILABILITY (MAX | NORMAL))?
+    (NO DATA)?
+    (HOST EQUALS_OP CHAR_STRING)?
+    (PORT EQUALS_OP numeric)?
+    ;
+
+using_snapshot_clause
+    : USING SNAPSHOT (id_expression | AT SCN id_expression | AT datetime_expr)
+    ;
+
+keystore_clause
+    : KEYSTORE IDENTIFIED BY (EXTERNAL STORE | password_value) (NO REKEY)?
+    ;
+
+create_pdb_from_xml
+    : ( AS CLONE )? USING filename
+    ( source_file_name_convert | source_file_directory )?
+    ( ( COPY | MOVE )? file_name_convert | NOCOPY )?
+    service_name_convert?
+    default_tablespace?
+    pdb_storage_clause?
+    path_prefix_clause?
+    tempfile_reuse_clause?
+    user_tablespaces_clause?
+    standbys_clause?
+    logging_clause?
+    create_file_dest_clause?
+    (HOST EQUALS_OP CHAR_STRING)?
+    (PORT EQUALS_OP numeric)?
+    create_pdb_decrypt_from_xml?
+    ;
+
+source_file_name_convert
+    : SOURCE_FILE_NAME_CONVERT EQUALS_OP ( '(' CHAR_STRING (',' CHAR_STRING)+ ')' | NONE )
+    ;
+
+source_file_directory
+    : SOURCE_FILE_DIRECTORY EQUALS_OP (CHAR_STRING | NONE)
+    ;
+
+create_pdb_decrypt_from_xml
+    : DECRYPT USING transport_secret=CHAR_STRING
+    ;
+
+create_pdb_from_mirror_copy
+    : new_pdb_name=id_expression FROM base_pdb_name=id_expression (AT_SIGN dblinkname=id_expression)?
+     USING MIRROR COPY mirror_name=id_expression
+    ;
+
+container_map_clause
+    : CONTAINER_MAP UPDATE ( '(' CHAR_STRING (',' CHAR_STRING)+ ')' | NONE )
+    ;
+
+drop_pluggable_database
+    : DROP PLUGGABLE DATABASE pdb_name=id_expression ((INCLUDING | KEEP) DATAFILES)?
     ;
 
 alter_pluggable_database
@@ -927,8 +1080,8 @@ drop_pmem_filestore
 
 // Procedure DDLs
 
-drop_procedure
-    : DROP PROCEDURE procedure_name ';'
+drop_procedure //区别：多了IF EXISTS
+    : DROP PROCEDURE (IF EXISTS)? procedure_name ';'
     ;
 
 alter_procedure //区别：多了IF EXISTS
@@ -948,8 +1101,8 @@ procedure_body
       (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL) ';'
     ;
 
-create_procedure_body
-    : CREATE (OR REPLACE)? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')?
+create_procedure_body //区别：多了IF NOT EXISTS
+    : CREATE (OR REPLACE)? PROCEDURE (IF NOT EXISTS)? procedure_name ('(' parameter (',' parameter)* ')')?
       invoker_rights_clause? (IS | AS)
       (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL) ';'
     ;
@@ -958,8 +1111,16 @@ alter_profile
     : ALTER PROFILE profile_name LIMIT ( resource_parameters | password_parameters )* (CONTAINER EQUALS_OP ( CURRENT | ALL ))? ';'
     ;
 
+drop_profile
+    : DROP PROFILE profile_name CASCADE? ';'
+    ;
+
 alter_property_graph
     : ALTER PROPERTY GRAPH graph_name COMPILE ';'
+    ;
+
+drop_property_graph
+    : DROP PROPERTY GRAPH graph_name ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-RESOURCE-COST.html
@@ -1015,8 +1176,8 @@ create_rollback_segment
 
 // Trigger DDLs
 
-drop_trigger
-    : DROP TRIGGER trigger_name ';'
+drop_trigger //区别：多了IF EXISTS
+    : DROP TRIGGER (IF EXISTS)? trigger_name ';'
     ;
 
 alter_trigger //区别：多了IF EXISTS
@@ -1024,8 +1185,8 @@ alter_trigger //区别：多了IF EXISTS
       (enable_or_disable | RENAME TO rename_trigger_name=trigger_name | COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)? | editionable_noneditionable) ';'
     ;
 
-create_trigger
-    : CREATE ( OR REPLACE )? TRIGGER trigger_name
+create_trigger //区别：多了IF NOT EXISTS default_collation_clause
+    : CREATE ( OR REPLACE )? TRIGGER (IF NOT EXISTS)? trigger_name default_collation_clause?
       (simple_dml_trigger | compound_dml_trigger | non_dml_trigger)
       trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body ';'
     ;
@@ -1126,8 +1287,8 @@ referencing_element
 
 // DDLs
 
-drop_type
-    : DROP TYPE BODY? type_name (FORCE | VALIDATE)? ';'
+drop_type //区别：多了IF EXISTS
+    : DROP TYPE BODY? (IF EXISTS)? type_name (FORCE | VALIDATE)? ';'
     ;
 
 alter_type //区别：多了IF EXISTS 结构不一样
@@ -1193,8 +1354,8 @@ dependent_exceptions_part
     : FORCE? EXCEPTIONS INTO tableview_name
     ;
 
-create_type
-    : CREATE (OR REPLACE)? TYPE (type_definition | type_body) ';'
+create_type //区别：多了IF NOT EXISTS
+    : CREATE (OR REPLACE)? TYPE ( (IF NOT EXISTS)? type_definition | type_body) ';'
     ;
 
 // Create Type Specific Clauses
@@ -1225,7 +1386,7 @@ sqlj_object_type
     ;
 
 type_body
-    : BODY type_name (IS | AS) (type_body_elements)+ END
+    : BODY (IF NOT EXISTS)? type_name (IS | AS) (type_body_elements)+ END
     ;
 
 type_body_elements
@@ -1332,8 +1493,8 @@ type_elements_parameter
 
 // Sequence DDLs
 
-drop_sequence
-    : DROP SEQUENCE sequence_name ';'
+drop_sequence //区别：多了IF EXISTS
+    : DROP SEQUENCE (IF EXISTS)? sequence_name ';'
     ;
 
 alter_sequence //区别：多了IF EXISTS
@@ -1364,8 +1525,15 @@ alter_session_set_clause
     | DEFAULT_COLLATION '=' (c=id_expression | NONE)
     ;
 
-create_sequence
-    : CREATE SEQUENCE sequence_name (sequence_start_clause | sequence_spec)* ';'
+create_schema
+    : CREATE SCHEMA AUTHORIZATION schema_name ( create_table
+    | create_view
+    | grant_statement
+    )+
+    ;
+
+create_sequence //区别：多了IF NOT EXISTS
+    : CREATE SEQUENCE (IF NOT EXISTS)? sequence_name (sequence_start_clause | sequence_spec)* ';'
     ;
 
 // Common Sequence
@@ -2153,18 +2321,22 @@ alter_inmemory_join_group //区别：多了IF EXISTS
         (ADD | REMOVE) '(' (schema_name '.')? t=id_expression '(' c=id_expression ')' ')'
     ;
 
-create_user
-    : CREATE USER
+create_user //区别：多了IF NOT EXISTS
+    : CREATE USER (IF NOT EXISTS)?
       user_object_name
         ( identified_by
-          | identified_other_clause
-          | user_tablespace_clause
-          | quota_clause
-          | profile_clause
-          | password_expire_clause
-          | user_lock_clause
-          | user_editions_clause
-          | container_clause
+        | identified_other_clause
+        | NO AUTHENTICATION
+        | DEFAULT COLLATION id_expression
+        | user_tablespace_clause
+        | quota_clause
+        | profile_clause
+        | password_expire_clause
+        | user_lock_clause
+        | HTTP? DIGEST enable_or_disable
+        | user_editions_clause
+        | container_clause
+        | enable_or_disable DICTIONARY PROTECTION
         )+ ';'
     ;
 
@@ -2193,8 +2365,8 @@ alter_user //区别：多了IF EXISTS NO AUTHENTICATION
       | user_object_name (',' user_object_name)* proxy_clause ';'
     ;
 
-drop_user
-    : DROP USER user_object_name CASCADE?
+drop_user //区别：多了IF EXISTS
+    : DROP USER (IF EXISTS)? user_object_name CASCADE?
     ;
 
 alter_identified_by
@@ -2210,7 +2382,7 @@ identified_other_clause
     ;
 
 user_tablespace_clause
-    : (DEFAULT | TEMPORARY) TABLESPACE id_expression
+    : (DEFAULT | LOCAL? TEMPORARY) TABLESPACE id_expression
     ;
 
 quota_clause
@@ -2636,7 +2808,7 @@ storage_table_clause
 
 // https://docs.oracle.com/database/121/SQLRF/statements_4008.htm#SQLRF56110
 //unified_auditing
-//    :
+//    : {p.isVersion12()}?
 //      AUDIT (POLICY policy_name ((BY | EXCEPT) audit_user (',' audit_user)* )?
 //                                (WHENEVER NOT? SUCCESSFUL)?
 //            | CONTEXT NAMESPACE oracle_namespace
@@ -2654,6 +2826,16 @@ policy_name
 
 audit_unified
     : AUDIT ( POLICY policy_name ( ( BY | EXCEPT ) user_object_name (',' user_object_name)* | by_users_with_roles )?
+    ( WHENEVER NOT? SUCCESSFUL )?
+    | CONTEXT NAMESPACE oracle_namespace ATTRIBUTES attribute_name (',' attribute_name)*
+    (',' CONTEXT NAMESPACE oracle_namespace ATTRIBUTES attribute_name (',' attribute_name)* )*
+    ( BY user_object_name (',' user_object_name)*)?
+    )
+      ';'
+    ;
+
+noaudit_unified
+    : NOAUDIT ( POLICY policy_name ( ( BY | EXCEPT ) user_object_name (',' user_object_name)* | by_users_with_roles )?
     ( WHENEVER NOT? SUCCESSFUL )?
     | CONTEXT NAMESPACE oracle_namespace ATTRIBUTES attribute_name (',' attribute_name)*
     (',' CONTEXT NAMESPACE oracle_namespace ATTRIBUTES attribute_name (',' attribute_name)* )*
@@ -2791,8 +2973,8 @@ sql_statement_shortcut
     | UPDATE TABLE
     ;
 
-drop_index
-    : DROP INDEX index_name ';'
+drop_index //区别：多了IF EXISTS
+    : DROP INDEX (IF EXISTS)? index_name ONLINE? FORCE? ((DEFERRED | IMMEDIATE) INVALIDATION)? ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DISASSOCIATE-STATISTICS.html
@@ -2809,13 +2991,21 @@ disassociate_statistics
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-INDEXTYPE.html
-drop_indextype
-    : DROP INDEXTYPE (schema_name '.')? it=id_expression FORCE?
+drop_indextype //区别：多了IF EXISTS
+    : DROP INDEXTYPE (IF EXISTS)? (schema_name '.')? it=id_expression FORCE?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-INMEMORY-JOIN-GROUP.html
-drop_inmemory_join_group
-    : DROP INMEMORY JOIN GROUP (schema_name '.')? jg=id_expression
+drop_inmemory_join_group //区别：多了IF EXISTS
+    : DROP INMEMORY JOIN GROUP (IF EXISTS)? (schema_name '.')? jg=id_expression
+    ;
+
+flashback_database
+    : FLASHBACK STANDBY? PLUGGABLE? DATABASE database? TO (
+    (SCN | TIMESTAMP) expression
+    | RESTORE POINT restore_point
+    | BEFORE ( (SCN | TIMESTAMP) expression | RESETLOGS )
+    )
     ;
 
 flashback_table
@@ -2855,19 +3045,53 @@ rename_object
     ;
 
 grant_statement
-    : GRANT
-        ( ','?
-          (role_name
-          | system_privilege
-          | object_privilege paren_column_list?
-          )
-        )+
-      (ON grant_object_name)?
-      TO (grantee_name | PUBLIC) (',' (grantee_name | PUBLIC) )*
-      (WITH (ADMIN | DELEGATE) OPTION)?
-      (WITH HIERARCHY OPTION)?
-      (WITH GRANT OPTION)?
-      container_clause? ';'
+    : GRANT ( ( grant_system_privileges
+    | grant_schema_privileges
+    | grant_object_privileges
+    ) container_clause?
+    | grant_roles_to_programs
+    )
+    ;
+//    : GRANT
+//        ( ','?
+//          (role_name
+//          | system_privilege
+//          | object_privilege paren_column_list?
+//          )
+//        )+
+//      (ON grant_object_name)?
+//      TO (grantee_name | PUBLIC) (',' (grantee_name | PUBLIC) )*
+//      (WITH (ADMIN | DELEGATE) OPTION)?
+//      (WITH HIERARCHY OPTION)?
+//      (WITH GRANT OPTION)?
+//      container_clause? ';'
+//    ;
+
+grant_system_privileges
+    : (role_name | system_privilege | object_privilege paren_column_list?)
+    (',' (role_name | system_privilege | object_privilege paren_column_list?))*
+    TO (grantee_clause | grantee_identified_by) (WITH (ADMIN | DELEGATE) OPTION)?
+    ;
+
+grantee_clause
+    : (grantee_name | PUBLIC) (',' (grantee_name | PUBLIC))*
+    ;
+
+grantee_identified_by
+    : grantee_name (',' grantee_name)* IDENTIFIED BY password_value (',' password_value)*
+    ;
+
+grant_schema_privileges
+    : (schema_privilege | ALL PRIVILEGES) ON SCHEMA schema_name TO (grantee_clause | grantee_identified_by) (WITH (ADMIN | DELEGATE) OPTION)?
+    ;
+
+grant_object_privileges
+    : (object_privilege | ALL PRIVILEGES?) paren_column_list (',' (object_privilege | ALL PRIVILEGES?) paren_column_list)*
+    on_object_clause TO grantee_clause (WITH (HIERARCHY | GRANT) OPTION)*
+    ;
+
+grant_roles_to_programs
+    : role_name (',' role_name)* TO program_unit (',' program_unit)*
     ;
 
 container_clause
@@ -2876,11 +3100,15 @@ container_clause
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/REVOKE.html
 revoke_statement
-    : REVOKE ((revoke_system_privilege | revoke_object_privileges) container_clause? | revoke_roles_from_programs)
+    : REVOKE ((revoke_system_privilege | revoke_schema_privilege | revoke_object_privileges) container_clause? | revoke_roles_from_programs)
     ;
 
 revoke_system_privilege
     : (system_privilege | role_name | ALL PRIVILEGES) FROM revokee_clause
+    ;
+
+revoke_schema_privilege
+    : (schema_privilege | ALL PRIVILEGES) ON SCHEMA (schema_name '.')? s=id_expression FROM revokee_clause
     ;
 
 revokee_clause
@@ -2938,8 +3166,8 @@ create_inmemory_join_group //区别：多了IF NOT EXISTS
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-HIERARCHY.html
-drop_hierarchy
-    : DROP HIERARCHY (schema_name '.')? hn=id_expression
+drop_hierarchy //区别：多了IF EXISTS
+    : DROP HIERARCHY (IF EXISTS)? (schema_name '.')? hn=id_expression
     ;
 
 // https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/alter_library.htm#LNPLS99946
@@ -2953,12 +3181,12 @@ alter_library //区别：多了IF EXISTS
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-JAVA.html
-drop_java
-    : DROP JAVA (SOURCE | CLASS | RESOURCE) (schema_name '.')? id_expression
+drop_java //区别：多了IF EXISTS
+    : DROP JAVA (IF EXISTS)? (SOURCE | CLASS | RESOURCE) (schema_name '.')? id_expression
     ;
 
-drop_library
-    : DROP LIBRARY library_name
+drop_library //区别：多了IF EXISTS
+    : DROP LIBRARY (IF EXISTS)? library_name
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-JAVA.html
@@ -3039,12 +3267,13 @@ credential_name
     ;
 
 //library_editionable
-//    : //
+//    : //{p.isVersion12()}?
 //    (EDITIONABLE | NONEDITIONABLE)
 //    ;
 
 library_debug
-    : DEBUG
+    : //{p.isVersion12()}?
+    DEBUG
     ;
 
 
@@ -3118,10 +3347,10 @@ editionable_noneditionable
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-VIEW.html
-create_view
-    : CREATE (OR REPLACE)? (NO? FORCE)? editioning_clause? VIEW (schema_name '.')? v=id_expression
+create_view //区别：多了IF NOT EXISTS annotations_clause
+    : CREATE (OR REPLACE)? (NO? FORCE)? editioning_clause? VIEW (IF NOT EXISTS)? (schema_name '.')? v=id_expression
       (SHARING '=' (METADATA | EXTENDED? DATA | NONE))?
-      view_options?
+      view_options? annotations_clause?
       (DEFAULT COLLATION cn=id_expression)?
       (BEQUEATH (CURRENT_USER | DEFINER))?
       AS select_only_statement subquery_restriction_clause?
@@ -3287,15 +3516,15 @@ create_tablespace
       ';'
     ;
 
-permanent_tablespace_clause
-    : TABLESPACE id_expression datafile_specification?
+permanent_tablespace_clause //区别：多了IF NOT EXISTS
+    : TABLESPACE id_expression (IF NOT EXISTS)? datafile_specification?
         ( MINIMUM EXTENT size_clause
         | BLOCKSIZE size_clause
         | logging_clause
         | FORCE LOGGING
         | (ONLINE | OFFLINE)
         | ENCRYPTION tablespace_encryption_spec
-        | DEFAULT //TODO table_compression? storage_clause?
+        | DEFAULT default_table_compression? default_index_compression? inmemory_clause? ilm_clause? storage_clause?
         | extent_management_clause
         | segment_management_clause
         | flashback_mode_clause
@@ -3601,6 +3830,10 @@ create_materialized_view_log //区别：多了IF NOT EXISTS
         for_refresh_clause?
     ;
 
+drop_materialized_view_log //区别：多了IF EXISTS
+    : DROP MATERIALIZED VIEW LOG (IF EXISTS)? ON tableview_name
+    ;
+
 new_values_clause
     : (INCLUDING | EXCLUDING ) NEW VALUES
     ;
@@ -3624,8 +3857,8 @@ alter_materialized_zonemap //区别：多了IF EXISTS
         )
     ;
 
-drop_materialized_zonemap
-    : DROP MATERIALIZED ZONEMAP zonemap_name
+drop_materialized_zonemap //区别：多了IF EXISTS
+    : DROP MATERIALIZED ZONEMAP (IF EXISTS)? zonemap_name
     ;
 
 zonemap_refresh_clause
@@ -3682,6 +3915,10 @@ mle_module_name
     : id_expression
     ;
 
+drop_mle_env
+    : DROP MLE ENV (IF EXISTS)? (schema_name '.')? name=id_expression
+    ;
+
 create_mle_module
     : CREATE (OR REPLACE)? MLE MODULE (IF NOT EXISTS)? (schema_name '.')? module_name=id_expression
     LANGUAGE (schema_name '.')? mle_language=id_expression (VERSION CHAR_STRING)?
@@ -3696,16 +3933,20 @@ alter_mle_module //clob?
     SET METADATA USING CLOB '('? CLOB ')'?
     ;
 
+drop_mle_module
+    : DROP MLE MODULE (IF EXISTS)? (schema_name '.')? module_name=id_expression
+    ;
+
 alter_operator //区别：多了IF EXISTS
     : ALTER OPERATOR (IF EXISTS)? operator_name (add_binding_clause | drop_binding_clause | COMPILE)
     ;
 
-drop_operator
-    : DROP OPERATOR operator_name FORCE?
+drop_operator //区别：多了IF EXISTS
+    : DROP OPERATOR (IF EXISTS)? operator_name FORCE?
     ;
 
-create_operator
-    : CREATE (OR REPLACE)? OPERATOR operator_name BINDING binding_clause (COMMA binding_clause)*
+create_operator //区别：多了IF NOT EXISTS
+    : CREATE (OR REPLACE)? OPERATOR (IF NOT EXISTS)? operator_name BINDING binding_clause (COMMA binding_clause)*
         (SHARING '=' (METADATA | NONE))?
     ;
 
@@ -3787,8 +4028,8 @@ create_mv_refresh
       )
     ;
 
-drop_materialized_view
-    : DROP MATERIALIZED VIEW tableview_name (PRESERVE TABLE)?
+drop_materialized_view //区别：多了IF EXISTS
+    : DROP MATERIALIZED VIEW (IF EXISTS)? tableview_name (PRESERVE TABLE)?
         ';'
     ;
 
@@ -3875,6 +4116,70 @@ create_outline
         (FROM (PUBLIC | PRIVATE)? so=id_expression)?
         (FOR CATEGORY c=id_expression)?
         (ON statement)?
+    ;
+
+create_property_graph
+    : CREATE (OR REPLACE)? PROPERTY GRAPH graph_name vertex_tables_clause edge_tables_clause? graph_options?
+    ;
+
+vertex_tables_clause
+    : VERTEX TABLES '(' vertex_table_definition (',' vertex_table_definition)* ')'
+    ;
+
+vertex_table_definition
+    : graph_element_name_and_key graph_table_label_and_properties?
+    ;
+
+graph_element_name_and_key
+    : graph_element_object_name (AS graph_element_name=id_expression)? graph_element_key?
+    ;
+
+graph_element_object_name
+    : (schema_name '.')? (tableview_name | synonym_name)
+    ;
+
+graph_element_key
+    : KEY '(' column_name (',' column_name)* ')'
+    ;
+
+graph_table_label_and_properties
+    : ( graph_table_label_properties_clause | graph_table_label_clause+ graph_table_label_properties_clause? ) graph_table_label_clause*
+    ;
+
+graph_table_label_properties_clause
+    : NO PROPERTIES
+    | PROPERTIES graph_table_properties_alternatives
+    ;
+
+graph_table_properties_alternatives
+    : ARE? ALL COLUMNS (EXCEPT '(' column_list ')')?
+    | '(' column_or_expression (',' column_or_expression)* ')'
+    ;
+
+column_or_expression
+    : column_name (AS property_name)?
+    | expression AS property_name
+    ;
+
+graph_table_label_clause
+    : ( LABEL identifier | DEFAULT LABEL ) graph_table_label_properties_clause?
+    ;
+
+edge_tables_clause
+    : EDGE TABLES '(' edge_tables_definition (',' edge_tables_definition)* ')'
+    ;
+
+edge_tables_definition
+    : graph_element_name_and_key SOURCE vertex_table_reference DESTINATION vertex_table_reference graph_table_label_and_properties?
+    ;
+
+vertex_table_reference
+    : graph_element_name=id_expression
+    | graph_element_key REFERENCES graph_element_name=id_expression '(' column_list ')'
+    ;
+
+graph_options
+    : OPTIONS '(' (ENFORCED | TRUSTED) MODE | (ALLOW | DISALLOW) MIXED PROPERTY TYPES (',' (ENFORCED | TRUSTED) MODE | (ALLOW | DISALLOW) MIXED PROPERTY TYPES )* ')'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-RESTORE-POINT.html
@@ -4566,8 +4871,8 @@ upgrade_table_clause
     : UPGRADE (NOT? INCLUDING DATA) column_properties
     ;
 
-truncate_table
-    : TRUNCATE TABLE tableview_name PURGE? SEMICOLON
+truncate_table //区别：结构复杂了
+    : TRUNCATE TABLE tableview_name ( (PRESERVE | PURGE) MATERIALIZED VIEW LOG )? ( (DROP ALL? | REUSE) STORAGE )? CASCADE? SEMICOLON
     ;
 
 drop_table //区别：多了IF EXISTS
@@ -4575,8 +4880,8 @@ drop_table //区别：多了IF EXISTS
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-TABLESPACE.html
-drop_tablespace
-    : DROP TABLESPACE ts=id_expression ((DROP | KEEP) QUOTA?)?
+drop_tablespace //区别：多了IF EXISTS
+    : DROP TABLESPACE (IF EXISTS)? ts=id_expression ((DROP | KEEP) QUOTA?)?
         including_contents_clause?
     ;
 
@@ -4590,8 +4895,8 @@ including_contents_clause
     : INCLUDING CONTENTS ((AND | KEEP) DATAFILES)? (CASCADE CONSTRAINTS)?
     ;
 
-drop_view
-    : DROP VIEW tableview_name (CASCADE CONSTRAINT)? SEMICOLON
+drop_view //区别：多了IF EXISTS
+    : DROP VIEW (IF EXISTS)? tableview_name (CASCADE CONSTRAINT)? SEMICOLON
     ;
 
 comment_on_column
@@ -4623,14 +4928,14 @@ alter_synonym //区别：多了IF EXISTS
     : ALTER PUBLIC? SYNONYM (IF EXISTS)? (schema_name '.')? synonym_name (editionable_noneditionable | COMPILE)
     ;
 
-create_synonym
+create_synonym //区别：多了IF NOT EXISTS
     // Synonym's schema cannot be specified for public synonyms
-    : CREATE (OR REPLACE)? PUBLIC SYNONYM synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
-    | CREATE (OR REPLACE)? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
+    : CREATE (OR REPLACE)? PUBLIC SYNONYM (IF NOT EXISTS)? synonym_name sharing_clause? FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
+    | CREATE (OR REPLACE)? SYNONYM (IF NOT EXISTS)? (schema_name PERIOD)? synonym_name sharing_clause? FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
     ;
 
-drop_synonym
-    : DROP PUBLIC? SYNONYM (schema_name '.')? synonym_name FORCE?
+drop_synonym //区别：多了IF EXISTS
+    : DROP PUBLIC? SYNONYM (IF EXISTS)? (schema_name '.')? synonym_name FORCE?
     ;
 
 alter_system
@@ -4750,6 +5055,11 @@ create_spfile
         FROM (PFILE ('=' pfile_name)? (AS COPY)? | MEMORY)
     ;
 
+create_pfile
+    : CREATE PFILE ('=' pfile_name)?
+        FROM (SPFILE ('=' spfile_name)? | MEMORY)
+    ;
+
 spfile_name
     : CHAR_STRING
     ;
@@ -4821,13 +5131,13 @@ alter_cluster //区别：多了IF EXISTS MODIFY PARTITION
         ';'
     ;
 
-drop_analytic_view
-    : DROP ANALYTIC VIEW (schema_name '.')? av=id_expression
+drop_analytic_view // 区别：多了IF EXISTS
+    : DROP ANALYTIC VIEW (IF EXISTS)? (schema_name '.')? av=id_expression
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-ATTRIBUTE-DIMENSION.html
-drop_attribute_dimension
-    : DROP ATTRIBUTE DIMENSION (schema_name '.')? ad=id_expression
+drop_attribute_dimension // 区别：多了IF EXISTS
+    : DROP ATTRIBUTE DIMENSION (IF EXISTS)? (schema_name '.')? ad=id_expression
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-AUDIT-POLICY-Unified-Auditing.html
@@ -4840,8 +5150,8 @@ drop_flashback_archive
     : DROP FLASHBACK ARCHIVE fa=id_expression
     ;
 
-drop_cluster
-    : DROP CLUSTER cluster_name (INCLUDING TABLES (CASCADE CONSTRAINTS)?)?
+drop_cluster //区别：多了IF EXISTS
+    : DROP CLUSTER (IF EXISTS)? cluster_name (INCLUDING TABLES (CASCADE CONSTRAINTS)?)?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-CONTEXT.html
@@ -4849,9 +5159,13 @@ drop_context
     : DROP CONTEXT ns=id_expression
     ;
 
+drop_dimension
+    : DROP DIMENSION (schema_name '.')? dn=id_expression
+    ;
+
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-DIRECTORY.html
-drop_directory
-    : DROP DIRECTORY dn=id_expression
+drop_directory // 区别：多了IF EXISTS
+    : DROP DIRECTORY (IF EXISTS)? dn=id_expression
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-DISKGROUP.html
@@ -4859,9 +5173,13 @@ drop_diskgroup
     : DROP DISKGROUP dgn=id_expression ((FORCE? INCLUDING | EXCLUDING) CONTENTS)?
     ;
 
+drop_domain // 区别：多了IF EXISTS
+    : DROP DOMAIN (IF EXISTS)? (schema_name '.')? dn=id_expression (FORCE PRESERVE?)?
+    ;
+
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-EDITION.html
-drop_edition
-    : DROP EDITION e=id_expression CASCADE?
+drop_edition // 区别：多了IF EXISTS
+    : DROP EDITION (IF EXISTS)? e=id_expression CASCADE?
     ;
 
 truncate_cluster
@@ -4955,7 +5273,7 @@ partial_database_recovery //区别：注释10g
     ;
 
 //partial_database_recovery_10g
-//    :  STANDBY
+//    : {p.isVersion10()}? STANDBY
 //      ( TABLESPACE tablespace (',' tablespace)*
 //      | DATAFILE CHAR_STRING | filenumber (',' CHAR_STRING | filenumber)*
 //      )
@@ -5323,8 +5641,8 @@ undo_tablespace
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-DATABASE.html
-drop_database
-    : DROP DATABASE (INCLUDING BACKUPS)? NOPROMPT?
+drop_database //区别：少了
+    : DROP DATABASE //(INCLUDING BACKUPS)? NOPROMPT?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-DATABASE-LINK.html
@@ -5340,8 +5658,8 @@ dblink
     : database_name ('.' d=id_expression)* ('@' cq=id_expression)?
     ;
 
-drop_database_link
-    : DROP PUBLIC? DATABASE LINK dblink
+drop_database_link //区别：多了IF EXISTS
+    : DROP PUBLIC? DATABASE LINK (IF EXISTS)? dblink
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-TABLESPACE-SET.html
@@ -6348,6 +6666,7 @@ open_for_statement
 
 transaction_control_statements
     : set_transaction_command
+    | set_role //区别：新增
     | set_constraint_command
     | commit_statement
     | rollback_statement
@@ -6362,6 +6681,10 @@ set_transaction_command
 
 set_constraint_command
     : SET (CONSTRAINT | CONSTRAINTS) (ALL | constraint_name (',' constraint_name)*) (IMMEDIATE | DEFERRED)
+    ;
+
+set_role
+    : SET ROLE ( role_name (IDENTIFIED BY password_value)? (',' role_name (IDENTIFIED BY password_value)?)* | ALL ( EXCEPT role_name (',' role_name)* ) | NONE )
     ;
 
 // https://docs.oracle.com/cd/E18283_01/server.112/e17118/statements_4010.htm#SQLRF01110
@@ -6991,7 +7314,6 @@ concatenation
 interval_expression
     : DAY ('(' concatenation ')')? TO SECOND ('(' concatenation ')')?
     | YEAR ('(' concatenation ')')? TO MONTH
-    | concatenation (SECOND | DAY | MONTH | YEAR)
     ;
 
 model_expression
@@ -7257,7 +7579,6 @@ other_function
       '(' (DOCUMENT | CONTENT) concatenation (AS type_spec)?
       xmlserialize_param_enconding_part? xmlserialize_param_version_part? xmlserialize_param_ident_part? ((HIDE | SHOW) DEFAULTS)? ')'
       ('.' general_element_part)?
-    | TIME CHAR_STRING
     | xmltable
     ;
 
@@ -7400,7 +7721,7 @@ sql_plus_command
     | EXIT
     | PROMPT_MESSAGE
     | SHOW (ERR | ERRORS)
-    | START_CMD
+//    | START_CMD
     | whenever_command
     | set_command
     | timing_command
@@ -7880,6 +8201,40 @@ system_privilege
     | SYSDG
     | SYSKM
     | SYSOPER
+    ;
+
+schema_privilege
+    : (CREATE | ALTER | DROP ) ANY ANALYTIC VIEW
+    | (CREATE | ALTER | DROP ) ANY ATTRIBUTE DIMENSION
+    | (CREATE | ALTER | DROP ) ANY CLUSTER
+    | EXEMPT REDACTION POLICY
+    | CREATE DIMENSION
+    | (CREATE | ALTER | DROP ) ANY DIMENSION
+    | (CREATE | ALTER | DROP ) ANY HIERARCHY
+    | (CREATE | ALTER | DROP ) ANY INDEX
+    | CREATE INDEXTYPE
+    | (CREATE | ALTER | DROP | EXECUTE ) ANY INDEXTYPE
+    | CREATE ANY JOB
+    | (CREATE | ALTER | DROP | EXECUTE ) ANY LIBRARY
+    | (CREATE | ALTER | DROP ) ANY MATERIALIZED VIEW
+    | GLOBAL QUERY REWRITE
+    | FLASHBACK ANY TABLE
+    | (CREATE | ALTER | DROP | SELECT | COMMENT ) ANY MINING MODEL
+    | (CREATE | ALTER | DROP | SELECT | UPDATE ) ANY CUBE
+    | (CREATE | DROP | DELETE | INSERT ) ANY MEASURE FOLDER
+    | (CREATE | ALTER | DROP | DELETE | INSERT | SELECT | UPDATE ) ANY CUBE DIMENSION
+    | (CREATE | DROP | UPDATE ) ANY CUBE BUILD PROCESS
+    | (CREATE | ALTER | DROP | EXECUTE ) ANY OPERATOR
+    | (CREATE | ALTER | DROP | EXECUTE ) ANY PROCEDURE
+    | (CREATE | ALTER | DROP | SELECT ) ANY SEQUENCE
+    | (CREATE | ALTER | DROP | USE ) ANY SQL TRANSLATION PROFILE
+    | TRANSLATE ANY SQL
+    | (CREATE | DROP ) ANY SYNONYM
+    | (CREATE | ALTER | BACKUP | DELETE | DROP | INSERT | LOCK | READ | SELECT | FLASHBACK | UPDATE ) ANY TABLE
+    | (CREATE | ALTER | DROP ) ANY TRIGGER
+    | (CREATE | ALTER | DROP | EXECUTE | UNDER ) ANY TYPE
+    | (CREATE | FLASHBACK | DROP | UNDER ) ANY VIEW
+    | ANALYZE ANY | AUDIT ANY | COMMENT ANY TABLE | EXEMPT ACCESS POLICY
     ;
 
 // $>
