@@ -4282,6 +4282,7 @@ object_table_substitution
 
 relational_table
     : ('(' relational_property (',' relational_property)* ')')?
+      annotations_clause?
       immutable_table_clauses
       blockchain_table_clauses?
       (DEFAULT COLLATION collation_name)?
@@ -6154,7 +6155,21 @@ column_properties
     : (object_type_col_properties
     | nested_table_col_properties
     | (varray_col_properties | lob_storage_clause) ('(' lob_partition_storage (',' lob_partition_storage)* ')')? //TODO '(' ( ','? lob_partition_storage)+ ')'
-    | xmltype_column_properties)+
+    | xmltype_column_properties
+    | json_storage_clause
+    )+
+    ;
+
+json_storage_clause
+    : JSON '(' json_column=id_expression (',' json_column=id_expression)* ')' STORE AS
+    ( json_parameters
+    | lob_segname? ('(' json_parameters ')')?
+    )
+    ;
+
+json_parameters
+    : ( TABLESPACE tablespace | storage_clause | (CHUNK | PCTVERSION | FREEPOOLS)  UNSIGNED_INTEGER | RETENTION )
+    (',' ( TABLESPACE tablespace | storage_clause | (CHUNK | PCTVERSION | FREEPOOLS)  UNSIGNED_INTEGER | RETENTION ) )*
     ;
 
 lob_partition_storage
@@ -6183,7 +6198,7 @@ column_definition
          (VISIBLE | INVISIBLE)?
          (DEFAULT (ON NULL_)? expression | identity_clause)?
          (ENCRYPT encryption_spec)?
-         (inline_constraint+ | inline_ref_constraint)?
+         (inline_constraint+ | inline_ref_constraint | annotations_clause)?
     ;
 
 column_collation_name
