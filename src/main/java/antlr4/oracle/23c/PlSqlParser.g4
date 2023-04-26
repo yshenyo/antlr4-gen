@@ -6804,7 +6804,7 @@ selected_list
     ;
 
 from_clause
-    : FROM (table_ref_list | inline_analytic_view (',' inline_analytic_view)* | values_clause)
+    : FROM (table_ref_list | inline_analytic_view (',' inline_analytic_view)* | '(' values_clause ')')
     ;
 
 select_list_elements
