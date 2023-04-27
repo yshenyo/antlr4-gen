@@ -2993,8 +2993,8 @@ security_statement
     | create_certificate
     ;
 
-principal_id:
-    | id_
+principal_id
+    : id_
     | PUBLIC
     ;
 
@@ -6054,6 +6054,7 @@ id_
     | DOUBLE_QUOTE_BLANK
     | SQUARE_BRACKET_ID
     | keyword
+    | RAW
     ;
 
 simple_id
