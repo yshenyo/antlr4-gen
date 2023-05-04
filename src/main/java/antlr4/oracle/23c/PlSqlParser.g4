@@ -8399,6 +8399,61 @@ regular_id
     | VAR_
     | VALUE
     | COVAR_
+    | keywords_23c
+    ;
+
+keywords_23c //23c新增
+    : ACCESSIBLE
+    | AFFINITY
+    | ANNOTATIONS
+    | ARE
+    | COMPUTATION
+    | CONCURRENT
+    | CREDENTIALS
+    | DESTINATION
+    | DIGEST
+    | DISPLAY
+    | DOMAIN
+    | DUALITY
+    | EDGE
+    | ENV
+    | ETAG
+    | EXTEND
+    | FLEXIBLE
+    | GRANTED
+    | GRAPH
+    | HOST
+    | IMPORTS
+    | INSTALL
+    | INVALIDATION
+    | LOW_COST_TBS
+    | MAX_AUDIT_SIZE
+    | MAX_DIAG_SIZE
+    | MAX_PDB_SNAPSHOTS
+    | MIXED
+    | MLE
+    | NOCHECK
+    | NODELETE
+    | NOEXTEND
+    | NOINSERT
+    | NOINSTALL
+    | NON_CDB
+    | NOSCALE
+    | NOSHARD
+    | NOUPDATE
+    | OPTIONS
+    | PASSWORDFILE_METADATA_CACHE
+    | POLYMORPHIC
+    | PORT
+    | PROPERTIES
+    | SCALAR
+    | SHARD
+    | STAGING
+    | TARGET
+    | UNINSTALL
+    | USING_NLS_COMP
+    | VERTEX
+    | WINDOW
     ;
 
 non_reserved_keywords_in_12c
