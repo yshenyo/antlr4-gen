@@ -213,9 +213,9 @@ labelStatement
     ;
 
 callStatement
-    : CALL (procedure=identifier OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
-    | functionName=identifier OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR RETURNING identifier (COMMA identifier)*
-    | routineName=identifier (RETURNING identifier (COMMA identifier)*)?
+    : CALL (procedureName OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
+    | functionName OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR RETURNING identifier (COMMA identifier)*
+    | routineName (RETURNING identifier (COMMA identifier)*)?
     )
     ;
 
@@ -257,7 +257,7 @@ foreachStatement
     ;
 
 routineCall
-    : EXECUTE (PROCEDURE | FUNCTION) identifier OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
+    : EXECUTE (PROCEDURE procedureName | FUNCTION functionName)  OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
     ;
 
 gotoStatement
@@ -321,11 +321,11 @@ ifSubsetSqlStatement
 
 letStatement
     : LET identifier (COMMA identifier)*
-    (functionName=identifier OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
+    (functionName OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
     | expression
     | OPEN_PAR selectStatement (COMMA selectStatement)* CLOSE_PAR
     )
-    (COMMA (functionName=identifier OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
+    (COMMA (functionName OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR
     | expression
     | OPEN_PAR selectStatement (COMMA selectStatement)* CLOSE_PAR
     ))*
@@ -361,7 +361,7 @@ allocateCollection
     ;
 
 allocateDescriptor
-    : ALLOCATE DESCRIPTOR anyName (WITH MAX (NUMERIC_LITERAL | identifier))?
+    : ALLOCATE DESCRIPTOR anyName (WITH MAX (numeric | identifier))?
     ;
 
 allocateRow
@@ -374,18 +374,18 @@ alterAccessMethod
     ;
 
 purposeOptions
-    : identifier (ASSIGN (NUMERIC_LITERAL | QUOTED_STRING | identifier))?
+    : identifier (ASSIGN (numeric | quotedString | identifier))?
     ;
 
 alterFragment
     : ALTER FRAGMENT (
-    ON TABLE identifier (attachClause | detachClause | initClause | addClause | dropClause | modifyClause)
-    | ON INDEX identifier (initClause | addClause | dropClause | modifyClause)
+    ON TABLE tableName (attachClause | detachClause | initClause | addClause | dropClause | modifyClause)
+    | ON INDEX indexName (initClause | addClause | dropClause | modifyClause)
     )
     ;
 
 attachClause
-    : ATTACH identifier asClause? (COMMA identifier asClause?)*
+    : ATTACH tableName asClause? (COMMA tableName asClause?)*
     ;
 
 asClause
@@ -405,7 +405,7 @@ rangeIntervalExpression
     ;
 
 detachClause
-    : DETACH PARTITION? identifier identifier
+    : DETACH PARTITION? identifier tableName
     ;
 
 initClause
@@ -432,8 +432,8 @@ intervalFragmentClause
     ;
 
 rollingWindowClause
-    : ROLLING OPEN_PAR NUMERIC_LITERAL FRAGMENTS CLOSE_PAR (DETACH | DISCARD)
-    | (ROLLING OPEN_PAR NUMERIC_LITERAL FRAGMENTS)? LIMIT TO NUMERIC_LITERAL IDENTIFIER (DETACH | DISCARD) (INTERVAL FIRST | ANY | INTERVAL ONLY)?
+    : ROLLING OPEN_PAR numeric FRAGMENTS CLOSE_PAR (DETACH | DISCARD)
+    | (ROLLING OPEN_PAR numeric FRAGMENTS)? LIMIT TO numeric IDENTIFIER (DETACH | DISCARD) (INTERVAL FIRST | ANY | INTERVAL ONLY)?
     ;
 
 listFragmentClause
@@ -481,7 +481,7 @@ fragmentExpression
     ;
 
 alterFunction
-    : ALTER (FUNCTION identifier OPEN_PAR dataTypeName (COMMA dataTypeName)* CLOSE_PAR
+    : ALTER (FUNCTION functionName OPEN_PAR dataType (COMMA dataType)* CLOSE_PAR
     | SPECIFIC FUNCTION identifier
     ) WITH OPEN_PAR ((ADD | MODIFY | DROP) routineModifier | MODIFY EXTERNAL NAME ASSIGN sharedObjectFilename=identifier) CLOSE_PAR
     ;
@@ -500,11 +500,11 @@ addingOrModifyingRoutineModifier
     | PARALLELIZABLE
     | HANDLESNULLS
     | INTERNAL
-    | PERCALL_COST ASSIGN NUMERIC_LITERAL
+    | PERCALL_COST ASSIGN numeric
     | COSTFUNC ASSIGN identifier
     | SELFUNC ASSIGN identifier
-    | SELCONST ASSIGN NUMERIC_LITERAL
-    | STACK ASSIGN NUMERIC_LITERAL
+    | SELCONST ASSIGN numeric
+    | STACK ASSIGN numeric
     ;
 
 droppingRoutineModifier
@@ -523,42 +523,42 @@ droppingRoutineModifier
     ;
 
 alterIndex
-    : ALTER INDEX identifier TO NOT? CLUSTER
+    : ALTER INDEX indexName TO NOT? CLUSTER
     ;
 
 alterProcedure
-    : ALTER (PROCEDURE identifier OPEN_PAR dataTypeName (COMMA dataTypeName)* CLOSE_PAR
-    | SPECIFIC PROCEDURE identifier
+    : ALTER (PROCEDURE procedureName OPEN_PAR dataType (COMMA dataType)* CLOSE_PAR
+    | SPECIFIC PROCEDURE procedureName
     ) WITH OPEN_PAR ((ADD | MODIFY | DROP) routineModifier | MODIFY EXTERNAL NAME ASSIGN sharedObjectFilename=identifier) CLOSE_PAR
     ;
 
 alterRoutine
-    : ALTER (ROUTINE identifier OPEN_PAR dataTypeName (COMMA dataTypeName)* CLOSE_PAR
-    | SPECIFIC ROUTINE identifier
+    : ALTER (ROUTINE routineName OPEN_PAR dataType (COMMA dataType)* CLOSE_PAR
+    | SPECIFIC ROUTINE routineName
     ) WITH OPEN_PAR ((ADD | MODIFY | DROP) routineModifier | MODIFY EXTERNAL NAME ASSIGN sharedObjectFilename=identifier) CLOSE_PAR
     ;
 
 alterSecurityLabelComponent
-    : ALTER SECURITY LABEL COMPONENT identifier ADD (ARRAY SYM2 QUOTED_STRING (COMMA QUOTED_STRING)* (BEFORE | AFTER) QUOTED_STRING (COMMA QUOTED_STRING (COMMA QUOTED_STRING)* (BEFORE | AFTER) QUOTED_STRING)* SYM3
-    | SET SYM4 QUOTED_STRING (COMMA QUOTED_STRING)* SYM5
-    | TREE OPEN_PAR QUOTED_STRING UNDER QUOTED_STRING (COMMA QUOTED_STRING UNDER QUOTED_STRING)* CLOSE_PAR
+    : ALTER SECURITY LABEL COMPONENT identifier ADD (ARRAY SYM2 quotedString (COMMA quotedString)* (BEFORE | AFTER) quotedString (COMMA quotedString (COMMA quotedString)* (BEFORE | AFTER) quotedString)* SYM3
+    | SET SYM4 quotedString (COMMA quotedString)* SYM5
+    | TREE OPEN_PAR quotedString UNDER quotedString (COMMA quotedString UNDER quotedString)* CLOSE_PAR
     )
     ;
 
 alterSequence
     : ALTER SEQUENCE identifier (
     | CYCLE | NOCYCLE
-    | CACHE NUMERIC_LITERAL | NOCACHE
+    | CACHE numeric | NOCACHE
     | ORDER | NOORDER
-    | INCREMENT BY? NUMERIC_LITERAL
-    | RESTART WITH? NUMERIC_LITERAL
-    | MINVALUE NUMERIC_LITERAL | NOMINVALUE
-    | MAXVALUE NUMERIC_LITERAL | NOMAXVALUE
+    | INCREMENT BY? numeric
+    | RESTART WITH? numeric
+    | MINVALUE numeric | NOMINVALUE
+    | MAXVALUE numeric | NOMAXVALUE
     )
     ;
 
 alterTable
-    : ALTER TABLE identifier (basicTableOption | loggingTypeOption | addTypeClause | statisticsOptions)
+    : ALTER TABLE tableName (basicTableOption | loggingTypeOption | addTypeClause | statisticsOptions)
     ;
 
 basicTableOption
@@ -582,7 +582,7 @@ addColumnClause
     ;
 
 newColumn
-    : new_column=identifier dataTypeName (defaultClause | singleColumnConstraint)* (BEFORE identifier)? (COLUMN? SECURED WITH identifier)?
+    : newColumnName=columnName dataType (defaultClause | singleColumnConstraint)* (BEFORE columnName)? (COLUMN? SECURED WITH identifier)?
     ;
 
 defaultClause
@@ -614,7 +614,7 @@ addConstraintClause
 
 multipleColumnConstraint
     : (
-    ((NOT NULL | NULL | UNIQUE | DISTINCT | PRIMARY KEY | referencesClause) OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR
+    ((NOT NULL | NULL | UNIQUE | DISTINCT | PRIMARY KEY | referencesClause) OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR
     | checkClause
     | foreignKeyDefinition
     ) constraintDefinition?
@@ -623,7 +623,7 @@ multipleColumnConstraint
     ;
 
 foreignKeyDefinition
-    : FOREIGN KEY OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR referencesClause
+    : FOREIGN KEY OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR referencesClause
     ;
 
 addOrDropSpecializedColumns
@@ -635,7 +635,7 @@ dropConstraintClause
     ;
 
 dropColumnClause
-    : DROP identifier (COMMA identifier)*
+    : DROP (columnName | OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)
     ;
 
 lockModeClause
@@ -652,7 +652,7 @@ modifyNextSizeClause
 
 putClause
     : PUT identifier IN OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR
-    (OPEN_PAR (COMMA? (EXTENT SIZE NUMERIC_LITERAL | NO LOG | LOG | HIGH INTEG | MODERATE INTEG | NO? KEEP ACCESS TIME))* CLOSE_PAR)?
+    (OPEN_PAR (COMMA? (EXTENT SIZE numeric | NO LOG | LOG | HIGH INTEG | MODERATE INTEG | NO? KEEP ACCESS TIME))* CLOSE_PAR)?
     ;
 
 securityPolicyClause
@@ -665,31 +665,31 @@ loggingTypeOption
     ;
 
 addTypeClause
-    : ADD TYPE identifier
+    : ADD TYPE rowType=identifier
     ;
 
 statisticsOptions
-    : (STATCHANGE (AUTO | NUMERIC_LITERAL)) (STATLEVEL (FRAGMENT | TABLE | AUTO))?
-    | (STATCHANGE (AUTO | NUMERIC_LITERAL))? (STATLEVEL (FRAGMENT | TABLE | AUTO))
+    : (STATCHANGE (AUTO | numeric)) (STATLEVEL (FRAGMENT | TABLE | AUTO))?
+    | (STATCHANGE (AUTO | numeric))? (STATLEVEL (FRAGMENT | TABLE | AUTO))
     ;
 
 alterTrustedContext
     : ALTER TRUSTED CONTEXT identifier ( ALTER (SYSTEM AUTHID identifier | ATTRIBUTES OPEN_PAR ADDRESS identifier (COMMA ADDRESS identifier)* CLOSE_PAR | NO DEFAULT ROLE | DEFAULT ROLE identifier | DISABLE | ENABLE)+
     | (ADD | DROP) ATTRIBUTES OPEN_PAR ADDRESS identifier (COMMA ADDRESS identifier)* CLOSE_PAR
     | (ADD | REPLACE) USE FOR authorizedUserClause (COMMA authorizedUserClause)*
-    | DROP USE FOR (identifier | PUBLIC) (COMMA (identifier | PUBLIC))*
+    | DROP USE FOR (userName | PUBLIC) (COMMA (userName | PUBLIC))*
     )+
     ;
 
 authorizedUserClause
-    : (identifier (ROLE identifier)? | PUBLIC) (WITH AUTHENTICATION | WITHOUT AUTHENTICATION)?
+    : (userName (ROLE roleName)? | PUBLIC) (WITH AUTHENTICATION | WITHOUT AUTHENTICATION)?
     ;
 
 alterUser
-    : ALTER (DEFAULT USER | USER identifier (LOCK | ACCOUNT UNLOCK)?)
-    (COMMA? ((ADD | MODIFY) (PASSWORD QUOTED_STRING | UID NUMERIC_LITERAL | GROUP OPEN_PAR (identifier | NUMERIC_LITERAL) (COMMA (identifier | NUMERIC_LITERAL))* CLOSE_PAR
-    | USER identifier | AUTHORIZATION OPEN_PAR (DBSA | DBSSO | AAO | BARGROUP) (COMMA (DBSA | DBSSO | AAO | BARGROUP))* CLOSE_PAR | HOME QUOTED_STRING)
-    | DROP (PASSWORD | UID | GROUP OPEN_PAR (identifier | NUMERIC_LITERAL) (COMMA (identifier | NUMERIC_LITERAL))* CLOSE_PAR
+    : ALTER (DEFAULT USER | USER userName (LOCK | ACCOUNT UNLOCK)?)
+    (COMMA? ((ADD | MODIFY) (PASSWORD quotedString | UID numeric | GROUP OPEN_PAR (identifier | numeric) (COMMA (identifier | numeric))* CLOSE_PAR
+    | USER identifier | AUTHORIZATION OPEN_PAR (DBSA | DBSSO | AAO | BARGROUP) (COMMA (DBSA | DBSSO | AAO | BARGROUP))* CLOSE_PAR | HOME quotedString)
+    | DROP (PASSWORD | UID | GROUP OPEN_PAR (identifier | numeric) (COMMA (identifier | numeric))* CLOSE_PAR
     | USER | AUTHORIZATION OPEN_PAR (DBSA | DBSSO | AAO | BARGROUP) (COMMA (DBSA | DBSSO | AAO | BARGROUP))* CLOSE_PAR | HOME)
     )
     )+
@@ -720,7 +720,7 @@ databaseEnvironment
     ;
 
 userAuthenticationClause
-    : USER QUOTED_STRING USING QUOTED_STRING
+    : USER quotedString USING quotedString
     ;
 
 createAccessMethod
@@ -740,7 +740,7 @@ modifiers
     ;
 
 createCast
-    : CREATE (EXPLICIT | IMPLICIT)? CAST (IF NOT EXISTS)? OPEN_PAR dataTypeName AS dataTypeName (WITH FUNCTION identifier)? CLOSE_PAR
+    : CREATE (EXPLICIT | IMPLICIT)? CAST (IF NOT EXISTS)? OPEN_PAR dataType AS dataType (WITH FUNCTION functionName)? CLOSE_PAR
     ;
 
 createDatabase
@@ -748,7 +748,7 @@ createDatabase
     ;
 
 createDistinctType
-    : CREATE DISTINCT TYPE (IF NOT EXISTS)? dataTypeName AS dataTypeName
+    : CREATE DISTINCT TYPE (IF NOT EXISTS)? dataType AS dataType
     ;
 
 createDefaultUser
@@ -761,24 +761,24 @@ createExternalTable
 
 columnDeifinition
     : SAMEAS identifier
-    | identifier dataType otherOptionalClause (COMMA identifier dataType otherOptionalClause)*
+    | columnName dataType otherOptionalClause (COMMA columnName dataType otherOptionalClause)*
     ;
 
 dataType
     : builtInDataTypes
-    | identifier DOT dataTypeName
     | complexDataType
+    | dataTypeName
     ;
 
 otherOptionalClause
-    : (EXTERNAL CHAR OPEN_PAR NUMERIC_LITERAL CLOSE_PAR (NULL STRING_LITERAL | NOT NULL)?
+    : (EXTERNAL CHAR OPEN_PAR numeric CLOSE_PAR (NULL STRING_LITERAL | NOT NULL)?
     )?
     ;
 
 tableOptions
     : (FORMAT SYM6 (DELIMITED | INFORMIX | FIXED) SYM6
     | DEFAULT | loadingModeOption | DBDATE STRING_LITERAL | DBMONEY STRING_LITERAL | DELIMITER STRING_LITERAL | RECORDEND STRING_LITERAL
-    | MAXERRORS NUMERIC_LITERAL | REJECTFILE STRING_LITERAL | ESCAPE (ON | OFF)? | (NUMROWS | SIZE) NUMERIC_LITERAL
+    | MAXERRORS numeric | REJECTFILE STRING_LITERAL | ESCAPE (ON | OFF)? | (NUMROWS | SIZE) numeric
     )
     ;
 
@@ -791,9 +791,9 @@ datafilesClause
     ;
 
 createFunction
-    : CREATE DBA? FUNCTION (IF NOT EXISTS)? identifier OPEN_PAR routineParameterList? CLOSE_PAR
+    : CREATE DBA? FUNCTION (IF NOT EXISTS)? functionName OPEN_PAR routineParameterList? CLOSE_PAR
     (referencingClause FOR tableName)? returnClause (SPECIFIC identifier)? (WITH OPEN_PAR routineModifier (COMMA routineModifier)* CLOSE_PAR)? SCOL?
-    (statementBlock | externalRoutineReference) END FUNCTION (DOCUMENT QUOTED_STRING (COMMA QUOTED_STRING)*)? (WITH LISTING IN STRING_LITERAL)?
+    (statementBlock | externalRoutineReference) END FUNCTION (DOCUMENT quotedString (COMMA quotedString)*)? (WITH LISTING IN STRING_LITERAL)?
     ;
 
 routineParameterList
@@ -801,13 +801,13 @@ routineParameterList
     ;
 
 parameter
-    : identifier? ((dataTypeName | LINK identifier) (DEFAULT identifier)?
+    : identifier? ((dataType | LINK columnName) (DEFAULT numeric)?
     | REFERENCES (BYTE | TEXT) (DEFAULT NULL)?
     )
     ;
 
 referencingClause
-    : REFERENCING ((NEW | OLD) AS? identifier)+ FOR identifier
+    : REFERENCING ((NEW | OLD) AS? identifier)+ FOR tableName
     ;
 
 returnClause
@@ -823,12 +823,12 @@ statementBlock
 
 defineStatement
     : DEFINE (
-    | identifier (COMMA identifier)* (dataTypeName | REFERENCES (BYTE | TEXT) | LIKE tableName DOT column=identifier | PROCEDURE | BLOB | CLOB | subsetComplexDataTypes)
+    | identifier (COMMA identifier)* (dataTypeName | REFERENCES (BYTE | TEXT) | LIKE columnName | PROCEDURE | BLOB | CLOB | subsetComplexDataTypes)
     ) SCOL?
     ;
 
 onException
-    : ON EXCEPTION (IN OPEN_PAR NUMERIC_LITERAL (COMMA NUMERIC_LITERAL)* CLOSE_PAR)?
+    : ON EXCEPTION (IN OPEN_PAR numeric (COMMA numeric)* CLOSE_PAR)?
     (SET identifier (COMMA identifier)?)? statementBlock END EXCEPTION (WITH RESUME)?
     SCOL?
     ;
@@ -884,7 +884,7 @@ subsetSqlStatement
     ;
 
 externalRoutineReference
-    : EXTERNAL NAME QUOTED_STRING LANGUAGE (C | JAVA) (PARAMETER STYLE INFORMIX?)? (NOT? VARIANT)?
+    : EXTERNAL NAME quotedString LANGUAGE (C | JAVA) (PARAMETER STYLE INFORMIX?)? (NOT? VARIANT)?
     ;
 
 createFunctionFrom
@@ -892,7 +892,7 @@ createFunctionFrom
     ;
 
 createIndex
-    : CREATE indexTypeOptions INDEX (IF NOT EXISTS)? identifier ON tableName indexKeySpecs indexOptions?
+    : CREATE indexTypeOptions INDEX (IF NOT EXISTS)? indexName ON tableName indexKeySpecs indexOptions?
     ;
 
 indexTypeOptions
@@ -900,7 +900,7 @@ indexTypeOptions
     ;
 
 indexKeySpecs
-    : OPEN_PAR (column=identifier | functionName=identifier OPEN_PAR func_col=identifier (COMMA func_col=identifier | op_class=identifier | bsonFieldSpecification)* CLOSE_PAR) (ASC | DESC)? CLOSE_PAR
+    : OPEN_PAR (columnName | functionName OPEN_PAR func_col=columnName (COMMA func_col=columnName | op_class=identifier | bsonFieldSpecification)* CLOSE_PAR) (ASC | DESC)? CLOSE_PAR
     ;
 
 bsonFieldSpecification
@@ -923,11 +923,11 @@ indexOptions
     ;
 
 usingAccessMethodClause
-    : USING identifier OPEN_PAR QUOTED_STRING ASSIGN (QUOTED_STRING | NUMERIC_LITERAL) (COMMA QUOTED_STRING ASSIGN (QUOTED_STRING | NUMERIC_LITERAL))* CLOSE_PAR
+    : USING identifier OPEN_PAR quotedString ASSIGN (quotedString | numeric) (COMMA quotedString ASSIGN (quotedString | numeric))* CLOSE_PAR
     ;
 
 filefactorOption
-    : FILLFACTOR NUMERIC_LITERAL
+    : FILLFACTOR numeric
     ;
 
 storageOptions
@@ -940,7 +940,7 @@ indexModes
     ;
 
 hashOnClause
-    : HASH ON OPEN_PAR identifier (COMMA identifier)? CLOSE_PAR WITH NUMERIC_LITERAL BUCKETS
+    : HASH ON OPEN_PAR identifier (COMMA identifier)? CLOSE_PAR WITH numeric BUCKETS
     ;
 
 extentSizeOptions
@@ -949,14 +949,14 @@ extentSizeOptions
     ;
 
 createOpaqueType
-    : CREATE OPAQUE TYPE (IF NOT EXISTS)? identifier OPEN_PAR INTERNALLENGTH ASSIGN (NUMERIC_LITERAL | VARIABLE) (COMMA opaqueTypeModifier)* CLOSE_PAR
+    : CREATE OPAQUE TYPE (IF NOT EXISTS)? identifier OPEN_PAR INTERNALLENGTH ASSIGN (numeric | VARIABLE) (COMMA opaqueTypeModifier)* CLOSE_PAR
     ;
 
 opaqueTypeModifier
-    : MAXLEN ASSIGN NUMERIC_LITERAL
+    : MAXLEN ASSIGN numeric
     | CANNOTHASH
     | PASSEDBYVALUE
-    | ALIGNMENT ASSIGN NUMERIC_LITERAL
+    | ALIGNMENT ASSIGN numeric
     ;
 
 createOpclass
@@ -965,9 +965,9 @@ createOpclass
     ;
 
 createProcedure
-    : CREATE DBA? PROCEDURE (IF NOT EXISTS)? identifier OPEN_PAR routineParameterList? CLOSE_PAR (referencingClause FOR tableName)? returnClause? (SPECIFIC identifier)?
+    : CREATE DBA? PROCEDURE (IF NOT EXISTS)? procedureName OPEN_PAR routineParameterList? CLOSE_PAR (referencingClause FOR tableName)? returnClause? (SPECIFIC identifier)?
     (WITH OPEN_PAR routineModifier (COMMA routineModifier)* CLOSE_PAR)? SCOL? (statementBlock | externalRoutineReference) END PROCEDURE
-    (DOCUMENT QUOTED_STRING (COMMA QUOTED_STRING)*)? (WITH LISTING IN STRING_LITERAL)?
+    (DOCUMENT quotedString (COMMA quotedString)*)? (WITH LISTING IN STRING_LITERAL)?
     ;
 
 createProcedureFrom
@@ -985,7 +985,7 @@ createRoutineFrom
 
 createRowType
     : CREATE ROW TYPE (IF NOT EXISTS)? identifier (OPEN_PAR fieldDefinition (COMMA fieldDefinition)* CLOSE_PAR
-    | (OPEN_PAR fieldDefinition (COMMA fieldDefinition)* CLOSE_PAR)? UNDER dataTypeName
+    | (OPEN_PAR fieldDefinition (COMMA fieldDefinition)* CLOSE_PAR)? UNDER dataType
     )
     ;
 
@@ -994,18 +994,18 @@ fieldDefinition
     ;
 
 createSchema
-    : CREATE SCHEMA AUTHORIZATION identifier (createTable | createView | grantStatement | createIndex | createSynonym | createTrigger | createSequence | createRowType
+    : CREATE SCHEMA AUTHORIZATION userName (createTable | createView | grantStatement | createIndex | createSynonym | createTrigger | createSequence | createRowType
     | createOpaqueType | createDistinctType | createCast)+ SCOL?
     ;
 
 createSecurityLabel
-    : CREATE SECURITY LABEL (IF NOT EXISTS)? identifier COMPONENT identifier QUOTED_STRING (COMMA QUOTED_STRING)* (COMMA COMPONENT identifier QUOTED_STRING (COMMA QUOTED_STRING)*)*
+    : CREATE SECURITY LABEL (IF NOT EXISTS)? identifier COMPONENT identifier quotedString (COMMA quotedString)* (COMMA COMPONENT identifier quotedString (COMMA quotedString)*)*
     ;
 
 createSecurityLabelComponent
-    : CREATE SECURITY LABEL COMPONENT (IF NOT EXISTS)? identifier (ARRAY SYM2 QUOTED_STRING (COMMA QUOTED_STRING)* SYM3
-    | SET SYM4 QUOTED_STRING (COMMA QUOTED_STRING)* SYM5
-    | TREE OPEN_PAR QUOTED_STRING ROOT (COMMA QUOTED_STRING UNDER QUOTED_STRING)* CLOSE_PAR
+    : CREATE SECURITY LABEL COMPONENT (IF NOT EXISTS)? identifier (ARRAY SYM2 quotedString (COMMA quotedString)* SYM3
+    | SET SYM4 quotedString (COMMA quotedString)* SYM5
+    | TREE OPEN_PAR quotedString ROOT (COMMA quotedString UNDER quotedString)* CLOSE_PAR
     )
     ;
 
@@ -1015,14 +1015,14 @@ createSecurityPolicy
     ;
 
 createSequence
-    : CREATE SEQUENCE (IF NOT EXISTS)? identifier (INCREMENT BY? NUMERIC_LITERAL
-    | START WITH? NUMERIC_LITERAL | NOMAXVALUE | MAXVALUE NUMERIC_LITERAL | NOMINVALUE | MINVALUE NUMERIC_LITERAL
-    | NOCYCLE | CYCLE | CACHE NUMERIC_LITERAL | NOCACHE | ORDER | NOORDER
+    : CREATE SEQUENCE (IF NOT EXISTS)? identifier (INCREMENT BY? numeric
+    | START WITH? numeric | NOMAXVALUE | MAXVALUE numeric | NOMINVALUE | MINVALUE numeric
+    | NOCYCLE | CYCLE | CACHE numeric | NOCACHE | ORDER | NOORDER
     )*
     ;
 
 createSynonym
-    : CREATE (PUBLIC | PRIVATE)? SYNONYM (IF NOT EXISTS)? identifier FOR identifier
+    : CREATE (PUBLIC | PRIVATE)? SYNONYM (IF NOT EXISTS)? identifier FOR tableName
     ;
 
 createTable
@@ -1051,8 +1051,8 @@ createTrigger
     ;
 
 triggerOnTable
-    : (DELETE | SELECT (OF identifier (COMMA identifier)*)?) ON tableName deleteAndSelectClause
-    | UPDATE (OF identifier (COMMA identifier)*)? ON tableName updateClause
+    : (DELETE | SELECT (OF columnName (COMMA columnName)*)?) ON tableName deleteAndSelectClause
+    | UPDATE (OF columnName (COMMA columnName)*)? ON tableName updateClause
     | INSERT ON tableName (REFERENCING NEW AS? identifier correlatedTableAction | actionClause)
     ;
 
@@ -1082,31 +1082,31 @@ triggeredAction
     ;
 
 triggerOnView
-    : INSERT ON identifier (REFERENCING NEW AS? identifier)?
-    | DELETE ON identifier (REFERENCING OLD AS? identifier)?
-    | UPDATE ON identifier ((REFERENCING OLD AS? identifier (NEW AS? identifier)?)? | (REFERENCING NEW AS? identifier (OLD AS? identifier)?)?)
+    : INSERT ON viewName (REFERENCING NEW AS? identifier)?
+    | DELETE ON viewName (REFERENCING OLD AS? identifier)?
+    | UPDATE ON viewName ((REFERENCING OLD AS? identifier (NEW AS? identifier)?)? | (REFERENCING NEW AS? identifier (OLD AS? identifier)?)?)
     ;
 
 createTrustedContext
     : CREATE TRUSTED CONTEXT identifier (USER | BASED UPON CONNECTION USING SYSTEM AUTHID) identifier
-    (ATTRIBUTES OPEN_PAR ADDRESS QUOTED_STRING (COMMA ADDRESS QUOTED_STRING)* CLOSE_PAR
+    (ATTRIBUTES OPEN_PAR ADDRESS quotedString (COMMA ADDRESS quotedString)* CLOSE_PAR
     | WITH USE FOR authorizedUserClause (COMMA authorizedUserClause)*
     | NO DEFAULT ROLE | DEFAULT ROLE identifier | DISABLE | ENABLE
     )*
     ;
 
 createUser
-    : CREATE (DEFAULT USER WITH (ACCOUNT UNLOCK | ACCOUNT LOCK)? properties | USER identifier (PASSWORD QUOTED_STRING)? (ACCOUNT UNLOCK | ACCOUNT LOCK)? properties?)
+    : CREATE (DEFAULT USER WITH (ACCOUNT UNLOCK | ACCOUNT LOCK)? properties | USER userName (PASSWORD quotedString)? (ACCOUNT UNLOCK | ACCOUNT LOCK)? properties?)
     ;
 
 properties
-    : PROPERTIES (UID NUMERIC_LITERAL GROUP OPEN_PAR (NUMERIC_LITERAL | identifier) (COMMA (NUMERIC_LITERAL | identifier))* CLOSE_PAR
-    | USER identifier (GROUP OPEN_PAR (NUMERIC_LITERAL | identifier) (COMMA (NUMERIC_LITERAL | identifier))* CLOSE_PAR)?)
-    (HOME QUOTED_STRING)? (AUTHORIZATION OPEN_PAR (DBSA | DBSSO | AAO | BARGROUP) (COMMA (DBSA | DBSSO | AAO | BARGROUP))* CLOSE_PAR)?
+    : PROPERTIES (UID numeric GROUP OPEN_PAR (numeric | identifier) (COMMA (numeric | identifier))* CLOSE_PAR
+    | USER identifier (GROUP OPEN_PAR (numeric | identifier) (COMMA (numeric | identifier))* CLOSE_PAR)?)
+    (HOME quotedString)? (AUTHORIZATION OPEN_PAR (DBSA | DBSSO | AAO | BARGROUP) (COMMA (DBSA | DBSSO | AAO | BARGROUP))* CLOSE_PAR)?
     ;
 
 createView
-    : CREATE VIEW (IF NOT EXISTS)? viewName identifier? (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR | OF TYPE dataTypeName)? AS
+    : CREATE VIEW (IF NOT EXISTS)? viewName identifier? (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR | OF TYPE dataType)? AS
     selectStatement (WITH CHECK OPTION)?
     ;
 
@@ -1127,7 +1127,7 @@ deallocateCollection
     ;
 
 deallocateDescriptor
-    : DEALLOCATE DESCRIPTOR (identifier | QUOTED_STRING)
+    : DEALLOCATE DESCRIPTOR (identifier | quotedString)
     ;
 
 deallocateRow
@@ -1150,7 +1150,7 @@ otherSelectOrFunctionOptions
     ;
 
 deleteStatement
-    : DELETE optimizerDirectives? FROM? (identifier (AS? identifier)? | ONLY OPEN_PAR identifier CLOSE_PAR | identifier)
+    : DELETE optimizerDirectives? FROM? (tableName (AS? alias)? | ONLY OPEN_PAR tableName CLOSE_PAR | collectionDerivedTable)
     (WHERE condition | WHERE CURRENT OF identifier)?
     ;
 
@@ -1159,19 +1159,19 @@ optimizerDirectives //TODO: add more
     ;
 
 describeStatement
-    : DESCRIBE OUTPUT? identifier (USING SQL DESCRIPTOR (identifier | QUOTED_STRING)
-    | INTO SQL DESCRIPTOR (identifier | QUOTED_STRING) //TODO: sqlda_pointer
+    : DESCRIBE OUTPUT? identifier (USING SQL DESCRIPTOR (identifier | quotedString)
+    | INTO SQL DESCRIPTOR (identifier | quotedString) //TODO: sqlda_pointer
     )
     ;
 
 describeInput
-    : DESCRIBE INPUT identifier (USING SQL DESCRIPTOR (identifier | QUOTED_STRING)
-    | INTO SQL DESCRIPTOR (identifier | QUOTED_STRING) //TODO: sqlda_pointer
+    : DESCRIBE INPUT identifier (USING SQL DESCRIPTOR (identifier | quotedString)
+    | INTO SQL DESCRIPTOR (identifier | quotedString) //TODO: sqlda_pointer
     )
     ;
 
 disconnectStatement
-    : DISCONNECT (CURRENT | ALL | DEFAULT | identifier | QUOTED_STRING)
+    : DISCONNECT (CURRENT | ALL | DEFAULT | identifier | quotedString)
     ;
 
 dropAccessMethod
@@ -1183,7 +1183,7 @@ dropAggregate
     ;
 
 dropCast
-    : DROP CAST (IF EXISTS)? OPEN_PAR dataTypeName AS dataTypeName CLOSE_PAR
+    : DROP CAST (IF EXISTS)? OPEN_PAR dataType AS dataType CLOSE_PAR
     ;
 
 dropDatabase
@@ -1191,12 +1191,12 @@ dropDatabase
     ;
 
 dropFunction
-    : DROP FUNCTION (IF EXISTS)? (identifier (OPEN_PAR dataTypeName (COMMA dataTypeName)* CLOSE_PAR)?
+    : DROP FUNCTION (IF EXISTS)? (functionName (OPEN_PAR dataType (COMMA dataType)* CLOSE_PAR)?
     | SPECIFIC FUNCTION (IF EXISTS)? identifier)
     ;
 
 dropIndex
-    : DROP INDEX (IF EXISTS)? identifier ONLINE?
+    : DROP INDEX (IF EXISTS)? indexName ONLINE?
     ;
 
 dropOpclass
@@ -1204,7 +1204,7 @@ dropOpclass
     ;
 
 dropProcedure
-    : DROP (PROCEDURE (IF EXISTS)? identifier (OPEN_PAR dataTypeName (COMMA dataTypeName)* CLOSE_PAR)?
+    : DROP (PROCEDURE (IF EXISTS)? procedureName (OPEN_PAR dataType (COMMA dataType)* CLOSE_PAR)?
     | SPECIFIC PROCEDURE (IF EXISTS)? identifier
     )
     ;
@@ -1215,13 +1215,13 @@ dropRole
     ;
 
 dropRoutine
-    : DROP (ROUTINE (IF EXISTS)? identifier (OPEN_PAR dataTypeName (COMMA dataTypeName)* CLOSE_PAR)?
+    : DROP (ROUTINE (IF EXISTS)? routineName (OPEN_PAR dataType (COMMA dataType)* CLOSE_PAR)?
     | SPECIFIC ROUTINE (IF EXISTS)? identifier
     )
     ;
 
 dropRowType
-    : DROP ROW TYPE (IF EXISTS)? identifier RESTRICT
+    : DROP ROW TYPE (IF EXISTS)? dataType RESTRICT
     ;
 
 dropSecurity
@@ -1281,20 +1281,20 @@ executeStatement
 
 intoClause
     : INTO (identifier ((SYM1 | INDICATOR) identifier)?
-    | SQL DESCRIPTOR (identifier | QUOTED_STRING)
+    | SQL DESCRIPTOR (identifier | quotedString)
     //| DESCRIPTOR sqlda_pointer TODO: sqlda_pointer
     )
     ;
 
 usingClause
     : USING (identifier ((SYM1 | INDICATOR) identifier)?
-    | SQL DESCRIPTOR (identifier | QUOTED_STRING)
+    | SQL DESCRIPTOR (identifier | quotedString)
     //| DESCRIPTOR sqlda_pointer TODO: sqlda_pointer
     )
     ;
 
 executeFunction
-    : EXECUTE FUNCTION identifier (OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR)? intoClause? (WITH TRIGGER REFERENCES)?
+    : EXECUTE FUNCTION functionName (OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR)? intoClause? (WITH TRIGGER REFERENCES)?
     ;
 
 argument
@@ -1302,16 +1302,16 @@ argument
     ;
 
 executeImmediate
-    : EXECUTE IMMEDIATE (QUOTED_STRING | identifier | expression)
+    : EXECUTE IMMEDIATE (quotedString | identifier | expression)
     ;
 
 executeProcedure
-    : EXECUTE PROCEDURE identifier (OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR)? (INTO identifier (COMMA identifier)*)? (WITH TRIGGER REFERENCES)?
+    : EXECUTE PROCEDURE procedureName (OPEN_PAR (argument (COMMA argument)*)? CLOSE_PAR)? (INTO identifier (COMMA identifier)*)? (WITH TRIGGER REFERENCES)?
     ;
 
 fetchStatement
-    : FETCH (NEXT | PRIOR | FIRST | LAST | CURRENT | ABSOLUTE PLUS? (NUMERIC_LITERAL | identifier) | RELATIVE (NUMERIC_LITERAL | identifier))? identifier
-    (USING SQL DESCRIPTOR (identifier | QUOTED_STRING)
+    : FETCH (NEXT | PRIOR | FIRST | LAST | CURRENT | ABSOLUTE PLUS? (numeric | identifier) | RELATIVE (numeric | identifier))? identifier
+    (USING SQL DESCRIPTOR (identifier | quotedString)
     | INTO (identifier | identifier ((INDICATOR | SYM1) identifier)?) (COMMA (identifier | identifier ((INDICATOR | SYM1) identifier)?))*)?
     ;
 
@@ -1324,7 +1324,7 @@ freeStatement
     ;
 
 getDescriptor
-    : GET DESCRIPTOR (identifier | QUOTED_STRING) (identifier ASSIGN COUNT | VALUE (identifier | NUMERIC_LITERAL) describedItemInformation (COMMA describedItemInformation)*)
+    : GET DESCRIPTOR (identifier | quotedString) (identifier ASSIGN COUNT | VALUE (identifier | numeric) describedItemInformation (COMMA describedItemInformation)*)
     ;
 
 describedItemInformation
@@ -1337,15 +1337,15 @@ getDiagnostics
     ;
 
 statementClause
-    : identifier ASSIGN (identifier | NUMERIC_LITERAL)
+    : identifier ASSIGN (identifier | numeric)
     ;
 
 exceptionClause
-    : EXCEPTION (identifier | NUMERIC_LITERAL) identifier ASSIGN (identifier | NUMERIC_LITERAL) (COMMA identifier ASSIGN (identifier | NUMERIC_LITERAL))*
+    : EXCEPTION (identifier | numeric) identifier ASSIGN (identifier | numeric) (COMMA identifier ASSIGN (identifier | numeric))*
     ;
 
 grantStatement
-    : GRANT ((CONNECT | RESOURCE | DBA | DEFAULT ROLE rolename) TO (PUBLIC | STRING_LITERAL (COMMA STRING_LITERAL)*)
+    : GRANT ((CONNECT | RESOURCE | DBA | DEFAULT ROLE rolename) TO (PUBLIC | userName (COMMA userName)*)
     | rolename toOptions | securityAdministrationOptions | accessToPropertiesClause
     | (tableLevelPrivileges | routineLevelPrivileges | languageLevelPrivileges | typeLevelPrivileges | sequenceLevelPrivileges) toOptions
     )
@@ -1357,7 +1357,7 @@ rolename
     ;
 
 toOptions
-    : TO (STRING_LITERAL (COMMA STRING_LITERAL)* (WITH GRANT OPTION)? | (STRING_LITERAL | PUBLIC) (COMMA (STRING_LITERAL | PUBLIC))*) (AS STRING_LITERAL)?
+    : TO (userName (COMMA userName)* (WITH GRANT OPTION)? | (userName | PUBLIC) (COMMA (userName | PUBLIC))*) (AS STRING_LITERAL)?
     ;
 
 securityAdministrationOptions
@@ -1388,9 +1388,9 @@ setsessionauthClause
 
 accessToPropertiesClause
     : ACCESS TO (PUBLIC | USER identifier (COMMA USER identifier)*) PROPERTIES
-    (UID NUMERIC_LITERAL GROUP OPEN_PAR (NUMERIC_LITERAL | identifier) (COMMA (NUMERIC_LITERAL | identifier))* CLOSE_PAR
-    | USER identifier (GROUP OPEN_PAR (NUMERIC_LITERAL | identifier) (COMMA (NUMERIC_LITERAL | identifier))* CLOSE_PAR)?)
-    (HOME QUOTED_STRING)? (COMMA AUTHORIZATION OPEN_PAR QUOTED_STRING (COMMA QUOTED_STRING)* CLOSE_PAR)?
+    (UID numeric GROUP OPEN_PAR (numeric | identifier) (COMMA (numeric | identifier))* CLOSE_PAR
+    | USER identifier (GROUP OPEN_PAR (numeric | identifier) (COMMA (numeric | identifier))* CLOSE_PAR)?)
+    (HOME quotedString)? (COMMA AUTHORIZATION OPEN_PAR quotedString (COMMA quotedString)* CLOSE_PAR)?
     ;
 
 tableLevelPrivileges
@@ -1437,10 +1437,8 @@ infoStatement
     ;
 
 insertStatement
-    : INSERT (INTO (tableName (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR)? (valuesClause | executeRoutineClause | selectStatement)
-    | external=identifier (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR)? selectStatement?
-    )
-    | (AT position=NUMERIC_LITERAL)? INTO collectionDerivedTable fieldOptions
+    : INSERT (INTO tableName (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)? (valuesClause | executeRoutineClause | selectStatement)
+    | (AT position=numeric)? INTO collectionDerivedTable fieldOptions
     )
     ;
 
@@ -1449,7 +1447,7 @@ executeRoutineClause
     ;
 
 collectionDerivedTable
-    : TABLE OPEN_PAR (collectionExpression=expression CLOSE_PAR (AS? alias=identifier)? (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR)?
+    : TABLE OPEN_PAR (expression CLOSE_PAR (AS? alias)? (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)?
     | identifier CLOSE_PAR
     )
     ;
@@ -1460,13 +1458,13 @@ fieldOptions
 
 valuesClause
     : VALUES OPEN_PAR (identifier (SYM1 identifier | SYM12 identifier)?
-    | NULL | USER | QUOTED_STRING | NUMERIC_LITERAL | constExprssion | columnExpression
+    | NULL | USER | quotedString | numeric | constExprssion | columnExpression
     | literalCollection | literalRow | expression
     ) CLOSE_PAR
     ;
 
 loadStatement
-    : LOAD FROM QUOTED_STRING (DELIMITER QUOTED_STRING)? INSERT INTO tableName (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR)?
+    : LOAD FROM quotedString (DELIMITER quotedString)? INSERT INTO tableName (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)?
     ;
 
 lockTable
@@ -1474,9 +1472,9 @@ lockTable
     ;
 
 mergeStatement
-    : MERGE (optimizerDirectives (COMMA optimizerDirectives)*)? INTO tableName (AS alias=identifier)?
-    USING (tableName | selectStatement) (AS alias=identifier)? (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR)? ON condition
-    (WHEN NOT MATCHED THEN INSERT (OPEN_PAR identifier (COMMA identifier)* CLOSE_PAR)? valuesClause
+    : MERGE (optimizerDirectives (COMMA optimizerDirectives)*)? INTO tableName (AS alias)?
+    USING (tableName | selectStatement) (AS alias)? (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)? ON condition
+    (WHEN NOT MATCHED THEN INSERT (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)? valuesClause
     | WHEN MATCHED THEN DELETE | WHEN MATCHED THEN UPDATE setClause
     )
     ;
@@ -1505,12 +1503,12 @@ outputStatement
     ;
 
 prepareStatement
-    : PREPARE identifier FROM (expression | identifier | QUOTED_STRING)
+    : PREPARE identifier FROM (expression | identifier | quotedString)
     ;
 
 putStatement
     : PUT identifier (FROM identifier (INDICATOR identifier | SYM1 identifier | SYM12 identifier)? (COMMA identifier (INDICATOR identifier | SYM1 identifier | SYM12 identifier)?)*
-    | USING SQL DESCRIPTOR QUOTED_STRING)?
+    | USING SQL DESCRIPTOR quotedString)?
     ;
 
 releaseSavepoint
@@ -1518,19 +1516,19 @@ releaseSavepoint
     ;
 
 renameColumn
-    : RENAME COLUMN tableName DOT old_column=identifier TO new_column=identifier
+    : RENAME COLUMN old_column=columnName TO new_column=columnName
     ;
 
 renameConstraint
-    : RENAME CONSTRAINT identifier DOT old_constraint=identifier TO new_constraint=identifier
+    : RENAME CONSTRAINT old_constraint=identifier TO new_constraint=identifier
     ;
 
 renameDatabase
-    : RENAME DATABASE identifier DOT old_database=identifier TO new_database=identifier
+    : RENAME DATABASE old_database=identifier TO new_database=identifier
     ;
 
 renameIndex
-    : RENAME INDEX identifier DOT old_index=identifier TO new_index=identifier
+    : RENAME INDEX old_index=indexName TO new_index=indexName
     ;
 
 renameSecurity
@@ -1538,11 +1536,11 @@ renameSecurity
     ;
 
 renameSequence
-    : RENAME SEQUENCE identifier DOT old_sequence=identifier TO new_sequence=identifier
+    : RENAME SEQUENCE old_sequence=identifier TO new_sequence=identifier
     ;
 
 renameTable
-    : RENAME TABLE identifier DOT old_table=identifier TO new_table=identifier
+    : RENAME TABLE old_table=tableName TO new_table=tableName
     ;
 
 renameTrustedContext
@@ -1550,7 +1548,7 @@ renameTrustedContext
     ;
 
 renameUser
-    : RENAME USER old_name=identifier TO new_name=identifier
+    : RENAME USER old_name=userName TO new_name=userName
     ;
 
 revokeStatement
@@ -1585,12 +1583,12 @@ selectOptions
     ;
 
 projectionClause
-    : (SKIP_ NUMERIC_LITERAL)? ((FIRST | LIMIT) NUMERIC_LITERAL)? (DISTINCT | ALL | UNIQUE)? selectList (COMMA selectList)*
+    : (SKIP_ numeric)? ((FIRST | LIMIT) numeric)? (DISTINCT | ALL | UNIQUE)? selectList (COMMA selectList)*
     ;
 
 selectList
-    : (expression | column=identifier) (AS? displayLabel=identifier)?
-    | tableName DOT (column=identifier (AS? identifier)? | STAR)
+    : (expression | columnName) (AS? displayLabel=identifier)?
+    | tableName DOT (columnName (AS? alias)? | STAR)
 //    | external=identifier DOT STAR
     | OPEN_PAR (collectionSubquery | selectStatement) CLOSE_PAR
     ;
@@ -1607,34 +1605,34 @@ fromClause
     ;
 
 ansiTables
-    : tableName (AS? alias=identifier)?
+    : (tableName | ONLY? OPEN_PAR tableName CLOSE_PAR) (AS? alias)?
     | collectionDerivedTable
     | iterator
     ;
 
 iterator
     : TABLE OPEN_PAR (FUNCTION | PROCEDURE)? identifier OPEN_PAR routineParameterList? CLOSE_PAR CLOSE_PAR
-    (AS? tableName OPEN_PAR column=identifier (COMMA column=identifier)* CLOSE_PAR)?
+    (AS? tableName OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)?
     ;
 
 ansiJoins
     : ((INNER | (LEFT | RIGHT | FULL) OUTER?)? JOIN ansiTables onCLause
     | CROSS JOIN ansiTables
-    ) (AS? alias=identifier)?
+    ) (AS? alias)?
     ;
 
 onCLause
-    : ON (tableName DOT column=identifier relationalOperator tableName DOT column=identifier | function | condition
+    : ON (columnName relationalOperator columnName | function | condition
     | OPEN_PAR selectStatement CLOSE_PAR | OPEN_PAR collectionSubquery CLOSE_PAR)
-    ((AND | OR) (tableName DOT column=identifier relationalOperator tableName DOT column=identifier | function | condition
+    ((AND | OR) (columnName relationalOperator columnName | function | condition
     | OPEN_PAR selectStatement CLOSE_PAR | OPEN_PAR collectionSubquery CLOSE_PAR))*
     ;
 
 otherTables
-    : external=identifier (AS? alias=identifier (OPEN_PAR derivedColumn=identifier (COMMA derivedColumn=identifier)* CLOSE_PAR)?)?
+    : external=identifier (AS? alias (OPEN_PAR derivedColumn=columnName (COMMA derivedColumn=columnName)* CLOSE_PAR)?)?
     | OPEN_PAR collectionSubquery CLOSE_PAR
     | OPEN_PAR selectStatement CLOSE_PAR
-    | ONLY? tableName AS? alias=identifier OPEN_PAR derivedColumn=identifier (COMMA derivedColumn=identifier)* CLOSE_PAR
+    | (tableName | ONLY? OPEN_PAR tableName CLOSE_PAR) AS? alias OPEN_PAR derivedColumn=columnName (COMMA derivedColumn=columnName)* CLOSE_PAR
     ;
 
 outerJoinClause
@@ -1648,7 +1646,7 @@ outerJoinClause
     ;
 
 lateralDerivedTable
-    : LATERAL OPEN_PAR selectStatement CLOSE_PAR AS? alias=identifier (OPEN_PAR columnAlias=identifier (COMMA columnAlias=identifier)* CLOSE_PAR)?
+    : LATERAL OPEN_PAR selectStatement CLOSE_PAR AS? alias (OPEN_PAR columnAlias=alias (COMMA columnAlias=alias)* CLOSE_PAR)?
     ;
 
 gridClause
@@ -1656,9 +1654,9 @@ gridClause
     ;
 
 whereClause
-    : WHERE (condition | (tableName DOT column=identifier relationalOperator tableName DOT column=identifier) | function
+    : WHERE (condition | (columnName relationalOperator columnName) | function
     | OPEN_PAR selectStatement CLOSE_PAR | OPEN_PAR collectionSubquery CLOSE_PAR | identifier)
-    (logicalOperator (condition | (tableName DOT column=identifier relationalOperator tableName DOT column=identifier) | function
+    (logicalOperator (condition | (columnName relationalOperator columnName) | function
     | OPEN_PAR selectStatement CLOSE_PAR | OPEN_PAR collectionSubquery CLOSE_PAR | identifier))*
     ;
 
@@ -1675,8 +1673,8 @@ connectByClause
     ;
 
 groupByClause
-    : GROUP BY ((tableName DOT)? (identifier | expression) | colAlias=identifier | NUMERIC_LITERAL)
-    (COMMA ((tableName DOT)? (identifier | expression) | colAlias=identifier | NUMERIC_LITERAL))*
+    : GROUP BY (tableName DOT expression | columnName | colAlias=alias | numeric)
+    (COMMA (tableName DOT expression | columnName | colAlias=alias | numeric))*
     ;
 
 havingClause
@@ -1684,17 +1682,17 @@ havingClause
     ;
 
 orderByClause
-    : ORDER SIBLINGS? BY ((tableName DOT column=identifier | expression) substring?
-    | selectNumber=NUMERIC_LITERAL | displayLabel=identifier | caseExpression | ROWID //| olapWindowExpressions TODO
+    : ORDER SIBLINGS? BY ((columnName | expression) substring?
+    | selectNumber=numeric | displayLabel=identifier | caseExpression | ROWID //| olapWindowExpressions TODO
     ) (ASC | DESC)? (NULLS FIRST | NULLS LAST)?
     ;
 
 substring
-    : SYM2 NUMERIC_LITERAL COMMA NUMERIC_LITERAL SYM3
+    : SYM2 numeric COMMA numeric SYM3
     ;
 
 limitClause
-    : LIMIT NUMERIC_LITERAL
+    : LIMIT numeric
     ;
 
 intoTableClause
@@ -1712,11 +1710,11 @@ setAutofree
     ;
 
 setCollation
-    : SET (COLLATION QUOTED_STRING | NO COLLATION)
+    : SET (COLLATION quotedString | NO COLLATION)
     ;
 
 setLockMode
-    : SET LOCK MODE TO (WAIT NUMERIC_LITERAL | NOWAIT)
+    : SET LOCK MODE TO (WAIT numeric | NOWAIT)
     ;
 
 setLog
@@ -1733,15 +1731,15 @@ environmentOptions
     ;
 
 setPdqpriority
-    : SET PDQPRIORITY (DEFAULT | NUMERIC_LITERAL | LOW | OFF | HIGH)
+    : SET PDQPRIORITY (DEFAULT | numeric | LOW | OFF | HIGH)
     ;
 
 setRole
-    : SET ROLE (NULL | NONE | identifier | QUOTED_STRING | DEFAULT)
+    : SET ROLE (NULL | NONE | roleName | quotedString | DEFAULT)
     ;
 
 setSessionAuthorization
-    : SET SESSION AUTHORIZATION TO QUOTED_STRING (USING QUOTED_STRING)?
+    : SET SESSION AUTHORIZATION TO quotedString (USING quotedString)?
     ;
 
 setStatementCache
@@ -1761,11 +1759,11 @@ setTriggers
     ;
 
 setUserPassword
-    : SET USER PASSWORD OLD old_password=QUOTED_STRING NEW new_password=QUOTED_STRING
+    : SET USER PASSWORD OLD old_password=quotedString NEW new_password=quotedString
     ;
 
 startViolationsTable
-    : START VIOLATIONS TABLE FOR tableName (USING identifier COMMA identifier)? (MAX ROWS NUMERIC_LITERAL)?
+    : START VIOLATIONS TABLE FOR tableName (USING identifier COMMA identifier)? (MAX ROWS numeric)?
     ;
 
 stopViolationsTable
@@ -1777,7 +1775,7 @@ truncateStatement
     ;
 
 unloadStatement
-    : UNLOAD TO filename=QUOTED_STRING (DELIMITER delimiter=QUOTED_STRING)? (selectStatement | identifier)
+    : UNLOAD TO filename=quotedString (DELIMITER delimiter=quotedString)? (selectStatement | identifier)
     ;
 
 unlockTable
@@ -1798,7 +1796,7 @@ updateStatistics
     ;
 
 tableAndColumnScope
-    : (FOR TABLE (ONLY? tableName (OPEN_PAR column=identifier (COMMA column=identifier)* CLOSE_PAR)?)?)?
+    : (FOR TABLE ((tableName | ONLY OPEN_PAR tableName CLOSE_PAR) (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR)?)?)?
     ;
 
 resolutionClause
@@ -1807,14 +1805,14 @@ resolutionClause
     ;
 
 resolutionClauseMedium
-    : (SAMPLING SIZE NUMERIC_LITERAL) (RESOLUTION NUMERIC_LITERAL NUMERIC_LITERAL?)? (DISTRIBUTIONS ONLY)?
-    | (SAMPLING SIZE NUMERIC_LITERAL)? (RESOLUTION NUMERIC_LITERAL NUMERIC_LITERAL?) (DISTRIBUTIONS ONLY)?
-    | (SAMPLING SIZE NUMERIC_LITERAL)? (RESOLUTION NUMERIC_LITERAL NUMERIC_LITERAL?)? (DISTRIBUTIONS ONLY)
+    : (SAMPLING SIZE numeric) (RESOLUTION numeric numeric?)? (DISTRIBUTIONS ONLY)?
+    | (SAMPLING SIZE numeric)? (RESOLUTION numeric numeric?) (DISTRIBUTIONS ONLY)?
+    | (SAMPLING SIZE numeric)? (RESOLUTION numeric numeric?)? (DISTRIBUTIONS ONLY)
     ;
 
 resolutionClauseHigh
-    : (RESOLUTION NUMERIC_LITERAL) (DISTRIBUTIONS ONLY)?
-    | (RESOLUTION NUMERIC_LITERAL)? (DISTRIBUTIONS ONLY)
+    : (RESOLUTION numeric) (DISTRIBUTIONS ONLY)?
+    | (RESOLUTION numeric)? (DISTRIBUTIONS ONLY)
     ;
 
 routineStatistics
@@ -1824,7 +1822,7 @@ routineStatistics
     ;
 
 updateTarget
-    : tableName (AS? alias=identifier)?
+    : tableName (AS? alias)?
     | ONLY OPEN_PAR tableName CLOSE_PAR
     ;
 
@@ -1835,22 +1833,22 @@ whereOptions
     ;
 
 wheneverStatement
-    : WHENEVER (SQLERROR | ERROR | NOT FOUND | SQLWARNING) (CONTINUE | STOP | CALL identifier | (GOTO | GO TO) SYM1? identifier)
+    : WHENEVER (SQLERROR | ERROR | NOT FOUND | SQLWARNING) (CONTINUE | STOP | CALL routineName | (GOTO | GO TO) SYM1? identifier)
     ;
 
 constExprssion
-    : QUOTED_STRING
-    | NUMERIC_LITERAL
+    : quotedString
+    | numeric
     | USER
     | CURRENT_USER
     | CURRENT_ROLE
     | DEFAULT_ROLE
     | anyName
     | TODAY
-    | (CURRENT | SYSDATE) NUMERIC_LITERAL?
+    | (CURRENT | SYSDATE) numeric?
     | literalDatetime
     | literalInterval
-    | NUMERIC_LITERAL UNITS timeUnit
+    | numeric UNITS timeUnit
     | identifier DOT (CURRVAL | NEXTVAL)
     | literalCollection
     | literalRow
@@ -1873,9 +1871,9 @@ literalData
     ;
 
 elementLiteralValue
-    : QUOTED_STRING
+    : quotedString
     | literalDatetime
-    | NUMERIC_LITERAL
+    | numeric
     | literalInterval
     | literalRow
     ;
@@ -1890,8 +1888,8 @@ literalRow
     ;
 
 fieldLiteralValue
-    : QUOTED_STRING
-    | NUMERIC_LITERAL
+    : quotedString
+    | numeric
     | USER
     | literalDatetime
     | literalInterval
@@ -1922,7 +1920,7 @@ castExpression
     ;
 
 columnExpression
-    : tableName DOT (column=identifier (SYM2 NUMERIC_LITERAL COMMA NUMERIC_LITERAL SYM3)? | ROWID | rowColumn=identifier (DOT STAR | (DOT identifier)+)?)
+    : tableName DOT (columnName (SYM2 numeric COMMA numeric SYM3)? | ROWID | rowColumn=columnName (DOT STAR | (DOT identifier)+)?)
 //    | expression (DOT STAR | (DOT identifier)+)
     ;
 
@@ -1955,11 +1953,11 @@ comparisionCondition
     | inCondition
     | (identifier | expression) IS NOT? NULL
     | DELETING | INSERTING | SELECTING | UPDATING
-    | identifier NOT? (LIKE | MATCHES) identifier (ESCAPE QUOTED_STRING)?
+    | identifier NOT? (LIKE | MATCHES) identifier (ESCAPE quotedString)?
     ;
 
 inCondition
-    : expression NOT? IN (OPEN_PAR (NUMERIC_LITERAL | literalDatetime | identifier | literalInterval | USER | CURRENT_USER | TODAY | CURRENT datetimeField? | literalRow) CLOSE_PAR
+    : expression NOT? IN (OPEN_PAR (numeric | literalDatetime | identifier | literalInterval | USER | CURRENT_USER | TODAY | CURRENT datetimeField? | literalRow) CLOSE_PAR
     | identifier
     | OPEN_PAR literalCollection (COMMA literalCollection)* CLOSE_PAR
     | literalCollection
@@ -2000,7 +1998,7 @@ linearCaseExpression
     ;
 
 function
-    : functionName=identifier OPEN_PAR
+    : functionName OPEN_PAR
     ((identifier ASSIGN)? expression (COMMA (identifier ASSIGN)? expression)*)?
     (COMMA variableDeclaration)?
     CLOSE_PAR
@@ -2032,21 +2030,21 @@ exactNumericDataType
     | INTEGER
     | INT8
     | SMALLINT
-    | (BIGSERIAL | SERIAL | SERIAL8) (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?
-    | (MONEY | DECIMAL | DEC | NUMERIC) (OPEN_PAR NUMERIC_LITERAL (COMMA NUMERIC_LITERAL)? CLOSE_PAR)
+    | (BIGSERIAL | SERIAL | SERIAL8) (OPEN_PAR numeric CLOSE_PAR)?
+    | (MONEY | DECIMAL | DEC | NUMERIC) (OPEN_PAR numeric (COMMA numeric)? CLOSE_PAR)
     ;
 
 approximateNumericDataType
-    : (DECIMAL | DEC | NUMERIC) (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?
-    | (FLOAT | DOUBLE PRECISION) (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?
+    : (DECIMAL | DEC | NUMERIC) (OPEN_PAR numeric CLOSE_PAR)?
+    | (FLOAT | DOUBLE PRECISION) (OPEN_PAR numeric CLOSE_PAR)?
     | SMALLFLOAT
     | REAL
     ;
 
 characterDataType
-    : (CHAR | CHARACTER | NCHAR) OPEN_PAR NUMERIC_LITERAL CLOSE_PAR
-    | (NVARCHAR | VARCHAR | CHARACTER VARYING) OPEN_PAR NUMERIC_LITERAL (COMMA NUMERIC_LITERAL)? CLOSE_PAR
-    | LVARCHAR OPEN_PAR NUMERIC_LITERAL CLOSE_PAR
+    : (CHAR | CHARACTER | NCHAR) OPEN_PAR numeric CLOSE_PAR
+    | (NVARCHAR | VARCHAR | CHARACTER VARYING) OPEN_PAR numeric (COMMA numeric)? CLOSE_PAR
+    | LVARCHAR OPEN_PAR numeric CLOSE_PAR
     ;
 
 largeObjectDataType
@@ -2079,11 +2077,35 @@ roleName
     : anyName
     ;
 
+alias
+    : identifier
+    ;
+
 tableName
     : identifier
     ;
 
+columnName
+    : identifier
+    ;
+
+routineName
+    : identifier
+    ;
+
+procedureName
+    : identifier
+    ;
+
+functionName
+    : identifier
+    ;
+
 viewName
+    : identifier
+    ;
+
+indexName
     : identifier
     ;
 
@@ -2102,24 +2124,32 @@ identifier
     : anyName (DOT anyName)*
     ;
 
+numeric
+    : NUMERIC_LITERAL
+    ;
+
+quotedString
+    : QUOTED_STRING
+    ;
+
 datetimeField
-    : YEAR TO (YEAR | MONTH | DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | MONTH TO (MONTH | DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | DAY TO (DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | HOUR TO (HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | MINUTE TO (MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | SECOND TO (SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | FRACTION TO FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?
+    : YEAR TO (YEAR | MONTH | DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | MONTH TO (MONTH | DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | DAY TO (DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | HOUR TO (HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | MINUTE TO (MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | SECOND TO (SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | FRACTION TO FRACTION (OPEN_PAR numeric CLOSE_PAR)?
     ;
 
 intervalField
-    : DAY (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)? TO (DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | HOUR (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)? TO (HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | MINUTE (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)? TO (MINUTE | SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | SECOND (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)? TO (SECOND | FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?)
-    | FRACTION TO FRACTION (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)?
-    | YEAR (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)? TO (YEAR | MONTH)
-    | MONTH (OPEN_PAR NUMERIC_LITERAL CLOSE_PAR)? TO MONTH
+    : DAY (OPEN_PAR numeric CLOSE_PAR)? TO (DAY | HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | HOUR (OPEN_PAR numeric CLOSE_PAR)? TO (HOUR | MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | MINUTE (OPEN_PAR numeric CLOSE_PAR)? TO (MINUTE | SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | SECOND (OPEN_PAR numeric CLOSE_PAR)? TO (SECOND | FRACTION (OPEN_PAR numeric CLOSE_PAR)?)
+    | FRACTION TO FRACTION (OPEN_PAR numeric CLOSE_PAR)?
+    | YEAR (OPEN_PAR numeric CLOSE_PAR)? TO (YEAR | MONTH)
+    | MONTH (OPEN_PAR numeric CLOSE_PAR)? TO MONTH
     ;
 
 timeUnit
