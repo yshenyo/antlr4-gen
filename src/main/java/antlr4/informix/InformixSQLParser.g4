@@ -29,7 +29,7 @@ options {
 }
 
 sqlScript
-    : (unitStatement | splStatement)* EOF
+    : unitStatement* EOF
     ;
 
 unitStatement
