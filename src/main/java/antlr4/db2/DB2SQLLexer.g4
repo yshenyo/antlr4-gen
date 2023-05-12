@@ -368,6 +368,10 @@ CHECKING
     : C H E C K I N G
     ;
 
+CLASS
+    : C L A S S
+    ;
+
 CLONE
 	: C L O N E 
 	;
@@ -499,6 +503,10 @@ DETERMINISTIC
 	: D E T E R M I N I S T I C 
 	;
 
+DEVICE
+    : D E V I C E
+    ;
+
 DISABLE
 	: D I S A B L E 
 	;
@@ -507,9 +515,17 @@ DISALLOW
 	: D I S A L L O W 
 	;
 
+DISCONNECT
+    : D I S C O N N E C T
+    ;
+
 DISTINCT
 	: D I S T I N C T 
 	;
+
+DISTRIBUTE
+    : D I S T R I B U T E
+    ;
 
 DO
 	: D O 
@@ -869,6 +885,10 @@ MAINTAINED
 	: M A I N T A I N E D 
 	;
 
+MAPPING
+    : M A P P I N G
+    ;
+
 MATERIALIZED
 	: M A T E R I A L I Z E D 
 	;
@@ -1001,6 +1021,10 @@ OUTER
 	: O U T E R 
 	;
 
+OVERHEAD
+    : O V E R H E A D
+    ;
+
 PACKAGE
 	: P A C K A G E 
 	;
@@ -1102,6 +1126,14 @@ QUERY
 QUERYNO
 	: Q U E R Y N O 
 	;
+
+QUERYTAG
+    : Q U E R Y T A G
+    ;
+
+RATE
+    : R A T E
+    ;
 
 READS
 	: R E A D S 
@@ -1223,6 +1255,10 @@ SCHEMA
 	: S C H E M A 
 	;
 
+SCOPE
+    : S C O P E
+    ;
+
 SCRATCHPAD
 	: S C R A T C H P A D 
 	;
@@ -1266,6 +1302,14 @@ SIGNAL
 SIMPLE
 	: S I M P L E 
 	;
+
+SINGLE
+    : S I N G L E
+    ;
+
+SNAPSHOT
+    : S N A P S H O T
+    ;
 
 SOME
 	: S O M E 
@@ -1341,6 +1385,10 @@ TABLESPACE
 
 TABLESPACES
     : T A B L E S P A C E S
+    ;
+
+TAG
+    : T A G
     ;
 
 TEMPLATE
@@ -1459,6 +1507,14 @@ WLM
 	: W L M 
 	;
 
+WORKLOAD
+    : W O R K L O A D
+    ;
+
+WRAPPER
+    : W R A P P E R
+    ;
+
 XMLCAST
 	: X M L C A S T 
 	;
@@ -1470,6 +1526,10 @@ XMLEXISTS
 XMLNAMESPACES
 	: X M L N A M E S P A C E S 
 	;
+
+XSROBJECT
+    : X S R O B J E C T
+    ;
 
 YEAR
 	: Y E A R 

@@ -72,76 +72,124 @@ sqlStatement
 	| alterMaskStatement
 	| alterMethodStatement
 //	| alterModuleStatement
-	| alterNicknameStatement
+//	| alterNicknameStatement
 	| alterPackageStatement
 	| alterPermissionStatement
 	| alterProcedureStatement
-	| alterProcedureSQLPLStatement
+//	| alterProcedureSQLPLStatement
+//    | alterSchemaStatement
+//    | alterSecurityLabelComponentStatement
+//    | alterSecurityPolicyStatement
 	| alterSequenceStatement
+//	| alterServerStatement
+//	| alterServiceClassStatement
 	| alterStogroupStatement
-	| alterTableStatement
-	| alterTablespaceStatement
+	| alterTableStatement//TODO
+	| alterTablespaceStatement//TODO
+//	| alterThresholdStatement
 	| alterTriggerStatement
 	| alterTrustedContextStatement
+//	| alterTypeStatement
+//	| alterUsageListStatement
+//	| alterUserMappingStatement
 	| alterViewStatement
+//	| alterWorkActionSetStatement
+//	| alterWorkClassSetStatement
+//	| alterWorkloadStatement
+//	| alterWrapperStatement
+//    | alterXsrobjectStatement
 	| associateLocatorsStatement
+//	| auditStatement
 	| beginDeclareSectionStatement
 	| callStatement
+//	| caseStatement
 	| closeStatement
 	| commitStatement
 	| commentStatement
 	| connectStatement
 	| createAliasStatement
-	| createAuxiliaryTableStatement
+//	| createAuxiliaryTableStatement
+//    | createAuditPolicyStatement
+//    | createBufferpoolStatement
 	| createDatabaseStatement
-	| createFunctionStatement
+//	| createDatabasePartitionGroupStatement
+//	| createEventMonitorStatement
+	| createFunctionStatement//TODO
+//	| createFunctionMappingStatement
 	| createGlobalTemporaryTableStatement
+//	| createHistogramTemplateStatement
 	| createIndexStatement
-	| createLobTablespaceStatement
-	| createMaskStatement
+//	| createIndexExtensionStatement
+//	| createLobTablespaceStatement
+    | createMaskStatement
+//    | createMethodStatement
+//    | createModuleStatement
+//    | createNicknameStatement
 	| createPermissionStatement
-	| createProcedureStatement
-	| createProcedureSQLPLStatement
+	| createProcedureStatement//TODO
+//	| createProcedureSQLPLStatement
+	| createRoleStatement
+//	| createSchemaStatement
+//	| createSecurityLabelComponentStatement
+//	| createSecurityLabelStatement
+//	| createSecurityPolicyStatement
 	| createRoleStatement
 	| createSequenceStatement
-	| createStogroupStatement
-	| createTableStatement
-	| createTablespaceStatement
+//	| createServerStatement
+//	| createServiceClassStatement
+//	| createStogroupStatement
+//    | createSynonymStatement
+	| createTableStatement//TODO
+	| createTablespaceStatement//TODO
+//	| createThresholdStatement
+//  | createTransformStatement
 	| createTriggerStatement
 	| createTrustedContextStatement
 	| createTypeArrayStatement
 	| createTypeDistinctStatement
+//	| createTypeMappingStatement
+//    | createUsageListStatement
+//    | createUserMappingStatement
 	| createVariableStatement
 	| createViewStatement
+//	| createWorkActionSetStatement
+//	| createWorkClassSetStatement
+//	| createWorkloadStatement
+//	| createWrapperStatement
 	| declareCursorStatement
 	| declareGlobalTemporaryTableStatement
-	| declareTableStatement
-	| declareVariableStatement
-	| declareStatementStatement
-	| deleteStatement
+//	| declareTableStatement
+//	| declareVariableStatement
+//	| declareStatementStatement
+	| deleteStatement//TODO
 	| describeStatement
-	| dropStatement
+	| disconnectStatement
+	| dropStatement//TODO
 	| endDeclareSectionStatement
-	| exchangeStatement
+//	| exchangeStatement
 	| executeStatement
 	| executeImmediateStatement
 	| explainStatement
 	| fetchStatement
+//	| flushBufferpoolsStatement
+//	| flushEventMonitorStatement
+//	| flushFederatedCacheStatement
+//    | forStatement
 	| freeLocatorStatement
 	| getDiagnosticsStatement
 	| grantStatement
-	| holdLocatorStatement
+//	| holdLocatorStatement
 	| includeStatement
 	| insertStatement
-	| labelStatement
 	| lockTableStatement
 	| mergeStatement
 	| openStatement
 	| prepareStatement
-	| refreshTableStatement
+//	| refreshTableStatement
 	| releaseSavepointStatement
 	| releaseConnectionStatement
 	| renameStatement
+//	| renameStogroupStatement
 	| revokeStatement
 	| rollbackStatement
 	| savepointStatement
@@ -266,67 +314,67 @@ alterFunctionStatement
 	)+
 	;
 
-alterFunctionStatementExternal
-	: (
-	ALTER 
-	functionDesignator
-	functionExternalOptionList+
-	)
-	;
-
-alterFunctionStatementCompiledSqlScalar
-	: (
-	ALTER 
-	functionDesignator
-		((ALTER? alterWhichFunction1? functionCompiledSqlScalarOptionList+)
-		| (REPLACE alterWhichFunction2? 
-			functionCompiledSqlScalarRoutineSpecification)
-		| (ADD versionOption
-			functionCompiledSqlScalarRoutineSpecification)
-		| (ACTIVATE versionOption)
-		| (REGENERATE alterWhichFunction2 applicationCompatibilityPhrase?)
-		| (DROP versionOption)
-		)
-	)
-	;
-
-alterWhichFunction1
-	: ((ACTIVE VERSION) | (ALL VERSIONS) | versionOption)
-	;
-
-alterWhichFunction2
-	: ((ACTIVE VERSION) | versionOption)
-	;
-
-functionCompiledSqlScalarRoutineSpecification
-	: (
-	LPAREN (parameterDeclaration2 (COMMA parameterDeclaration2)*)? RPAREN
-	functionReturnsClause
-	functionCompiledSqlScalarOptionList*
-	sqlRoutineBody
-	)
-	;
-
-alterFunctionStatementInlineSqlScalar
-	: (
-	ALTER 
-	functionDesignator
-	functionInlineSqlScalarOptionList+
-	)
-	;
-
-alterFunctionStatementSqlTable
-	: (
-	ALTER 
-	functionDesignator
-	RESTRICT
-	functionSqlTableOptionList+
-	)
-	;
-
-functionReturnsClause
-	: (RETURNS functionDataType)
-	;
+//alterFunctionStatementExternal
+//	: (
+//	ALTER
+//	functionDesignator
+//	functionExternalOptionList+
+//	)
+//	;
+//
+//alterFunctionStatementCompiledSqlScalar
+//	: (
+//	ALTER
+//	functionDesignator
+//		((ALTER? alterWhichFunction1? functionCompiledSqlScalarOptionList+)
+//		| (REPLACE alterWhichFunction2?
+//			functionCompiledSqlScalarRoutineSpecification)
+//		| (ADD versionOption
+//			functionCompiledSqlScalarRoutineSpecification)
+//		| (ACTIVATE versionOption)
+//		| (REGENERATE alterWhichFunction2 applicationCompatibilityPhrase?)
+//		| (DROP versionOption)
+//		)
+//	)
+//	;
+//
+//alterWhichFunction1
+//	: ((ACTIVE VERSION) | (ALL VERSIONS) | versionOption)
+//	;
+//
+//alterWhichFunction2
+//	: ((ACTIVE VERSION) | versionOption)
+//	;
+//
+//functionCompiledSqlScalarRoutineSpecification
+//	: (
+//	LPAREN (parameterDeclaration2 (COMMA parameterDeclaration2)*)? RPAREN
+//	functionReturnsClause
+//	functionCompiledSqlScalarOptionList*
+//	sqlRoutineBody
+//	)
+//	;
+//
+//alterFunctionStatementInlineSqlScalar
+//	: (
+//	ALTER
+//	functionDesignator
+//	functionInlineSqlScalarOptionList+
+//	)
+//	;
+//
+//alterFunctionStatementSqlTable
+//	: (
+//	ALTER
+//	functionDesignator
+//	RESTRICT
+//	functionSqlTableOptionList+
+//	)
+//	;
+//
+//functionReturnsClause
+//	: (RETURNS functionDataType)
+//	;
 
 functionDesignator
 	: (
@@ -363,17 +411,44 @@ methodDesignator
     | SPECIFIC METHOD specificName
     ;
 
+alterPackageStatement
+    : ALTER PACKAGE packageName (VERSION? versionID)? (ACCESS PLAN REUSE (YES | NO)
+    | OPTIMIZATION PROFILE (NONE | identifier)
+    | KEEP DYNAMIC (YES | NO)
+    )+
+    ;
+
 alterPermissionStatement
 	: (
-	ALTER PERMISSION permissionName (ENABLE | DISABLE | regenerateClause)
+	ALTER PERMISSION permissionName (ENABLE | DISABLE)// | regenerateClause)
 	)
 	;
 
 alterProcedureStatement
+//	: (
+//	ALTER PROCEDURE procedureName procedureOptionList+
+//	)
+    : ALTER PROCEDURE procedureDesignator
+	(EXTERNAL NAME identifier
+	| NOT? FENCED
+	| NOT? SECURED
+	| NOT? THREADSAFE
+	| NEW SAVEPOINT LEVEL
+	| NO? EXTERNAL ACTION
+	| ALTER PARAMETER parameterAlteration
+	)+
+	;
+
+procedureDesignator
 	: (
-	ALTER PROCEDURE procedureName procedureOptionList+
+	((PROCEDURE procedureName (LPAREN functionParameterType (COMMA functionParameterType)* RPAREN)?)
+	| (SPECIFIC PROCEDURE specificName))
 	)
 	;
+
+parameterAlteration
+    : identifier SET DATA TYPE dataType
+    ;
 
 alterProcedureSQLPLStatement
 	: (
@@ -413,13 +488,20 @@ alterSequenceStatement
 
 alterStogroupStatement
 	: (
-	ALTER STOGROUP stogroupName alterStogroupOptionList+
+	ALTER STOGROUP stogroupName //alterStogroupOptionList+
+	(ADD NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)*
+	| DROP NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)*
+	| OVERHEAD INTEGERLITERAL
+	| DEVICE READ RATE INTEGERLITERAL
+	| DATA TAG (INTEGERLITERAL | NONE)
+	| SET AS DEFAULT
+	)+
 	)
 	;
 
 alterTableStatement
 	: (
-	ALTER TABLE alterTableName alterTableOptionList+
+	ALTER TABLE tableName alterTableOptionList+
 	)
 	;
 
@@ -451,8 +533,11 @@ alterTrustedContextStatement
 
 alterViewStatement
 	: (
-	ALTER VIEW viewName REGENERATE
-	(USING APPLICATION COMPATIBILITY applCompatValue)?
+	ALTER VIEW viewName
+	(//USING APPLICATION COMPATIBILITY applCompatValue)?
+	ALTER COLUMN? columnName ADD SCOPE identifier
+	| (ENABLE | DISABLE) QUERY OPTIMIZATION
+	)
 	)
 	;
 
@@ -460,7 +545,7 @@ associateLocatorsStatement
 	: (
 	ASSOCIATE (RESULT SET)? (LOCATOR | LOCATORS) 
 	LPAREN rsLocatorVariable (COMMA rsLocatorVariable)* RPAREN
-	WITH PROCEDURE (procedureName | hostVariable)
+	WITH PROCEDURE procedureName
 	)
 	;
 
@@ -470,37 +555,62 @@ beginDeclareSectionStatement
 
 callStatement
 	: (
-	CALL (procedureName | hostVariable)
-	(LPAREN (
-		((expression | NULL | (TABLE tableName)) (COMMA (expression | NULL | (TABLE tableName)))*)
-		| (USING DESCRIPTOR hostVariable)
-	) RPAREN)?
+	CALL procedureName
+	(LPAREN argument (COMMA argument)* RPAREN)?
 	)
 	;
 
+argument
+    : identifier? (expression | DEFAULT | NULL)
+    ;
+
 closeStatement
-	: (CLOSE cursorName)
+	: (CLOSE cursorName (WITH RELEASE)?)
 	;
 
 commentStatement
 	: (
 	COMMENT ON ((
 	(aliasDesignator
+	| AUDIT POLICY identifier
 	| (COLUMN tableName DOT columnName)
-	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+	| CONSTRAINT tableName DOT constraintName
+	| DATABASE PARTITION GROUP identifier
+//	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+	| functionDesignator
+	| FUNCTION MAPPING identifier
+	| HISTOGRAM TEMPLATE identifier
 	| (INDEX indexName)
+	| MASK identifier
+	| MODULE identifier
+	| NICKNAME identifier
 	| (PACKAGE packageDesignator)
-	| (PLAN planName)
-	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+	| PERMISSION identifier
+//	| (PLAN planName)
+//	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+	| procedureDesignator
 	| (ROLE roleName)
+	| SCHEMA identifier
+	| SECURITY LABEL identifier
+	| SECURITY LABEL COMPONENT identifier
+	| SECURITY POLICY identifier
 	| (SEQUENCE sequenceName)
+	| SERVER identifier
+//	| SERVER OPTION identifier FOR remoteServer TODO
+//    | serviceClassDesignator TODO
 	| (TABLE tableName)
-	| (TRIGGER triggerName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+	| TABLESPACE identifier
+	| THRESHOLD identifier
+	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
 	| (TRUSTED CONTEXT contextName)
 	| (TYPE typeName)
-	| (MASK maskName)
-	| (PERMISSION permissionName)
+	| TYPE MAPPINE identifier
 	| (VARIABLE variableName))
+	| WORK ACTION SET identifier
+	| WORK CLASS SET identifier
+	| WORKLOAD identifier
+	| WRAPPER identifier
+	| XSROBJECT identifier
 	IS NONNUMERICLITERAL)
 	| multipleColumnList)
 	)
@@ -513,17 +623,26 @@ commitStatement
 connectStatement
 	: (
 	CONNECT (
-	(TO (locationName | hostVariable) authorization?)
+	(TO (locationName | hostVariable) lockBlock? authorization?)
 	| RESET
 	| authorization)?
 	)
 	;
 
+lockBlock
+    : IN SHARE MODE_
+    | IN EXCLUSIVE MODE_ (ON SINGLE MEMBER)?
+    ;
+
 createAliasStatement
 	: (
-	CREATE PUBLIC? ALIAS (sequenceAlias | tableAlias)
+	CREATE (OR REPLACE)? PUBLIC? ALIAS (sequenceAlias | tableAlias | moduleAlias)
 	)
 	;
+
+moduleAlias
+    : identifier FOR MODULE identifier
+    ;
 
 createAuxiliaryTableStatement
 	: (
@@ -639,10 +758,18 @@ createGlobalTemporaryTableStatement
 	: (
 	CREATE GLOBAL TEMPORARY TABLE tableName
 	((LPAREN createGlobalTemporaryTableColumnDefinition (COMMA createGlobalTemporaryTableColumnDefinition)* RPAREN)
-	| (LIKE tableName))
-	ccsidClause1?
+	| (LIKE tableName copyOptions?)
+	| AS LPAREN fullSelect RPAREN WITH NO DATA copyOptions?)
+//	ccsidClause1?
+    (ON COMMIT DELETE ROWS | ON COMMIT PRESERVE ROWS)?
+    (NOT LOGGED (ON ROLLBACK DELETE ROWS)? | NOT LOGGED ON ROLLBACK PRESERVE ROWS | LOGGED)?
+    (IN identifier)? distributionClause?
 	)
 	;
+
+distributionClause
+    : DISTRIBUTE BY HASH LPAREN columnName (COMMA columnName)* RPAREN
+    ;
 
 createIndexStatement
 	: (
@@ -665,14 +792,14 @@ createLobTablespaceStatement
 
 createMaskStatement
 	: (
-	CREATE MASK maskName ON tableName (AS? correlationName)?
+	CREATE (OR REPLACE)? MASK maskName ON tableName (AS? correlationName)?
 	FOR COLUMN columnName RETURN caseExpression enableDisableOption?
 	)
 	;
 
 createPermissionStatement
 	: (
-	CREATE PERMISSION permissionName ON tableName (AS? correlationName)?
+	CREATE (OR REPLACE)? PERMISSION permissionName ON tableName (AS? correlationName)?
 	FOR ROWS WHERE searchCondition ENFORCED FOR ALL ACCESS enableDisableOption?
 	)
 	;
@@ -821,13 +948,13 @@ in a static SQL context so it is not supported here.
 */
 createTriggerStatement
 	: (
-	CREATE TRIGGER triggerName triggerDefinition
+	CREATE (OR REPLACE)? TRIGGER triggerName triggerDefinition
 	)
 	;
 
 createTrustedContextStatement
 	: (
-	CREATE TRUSTED CONTEXT contextName
+	CREATE (OR REPLACE)? TRUSTED CONTEXT contextName
 	BASED UPON CONNECTION USING SYSTEM AUTHID authorizationName
 	(trustedContextDefaultRoleClause
 	| trustedContextEnableDisableClause
@@ -839,22 +966,22 @@ createTrustedContextStatement
 
 createTypeArrayStatement
 	: (
-	CREATE TYPE arrayTypeName AS createTypeArrayBuiltinType 
+	CREATE (OR REPLACE)? TYPE arrayTypeName AS createTypeArrayBuiltinType
 	ARRAY OPENSQBRACKET (INTEGERLITERAL | createTypeArrayBuiltinType2) CLOSESQBRACKET
 	)
 	;
 
 createTypeDistinctStatement
 	: (
-	CREATE TYPE distinctTypeName AS sourceDataType (INLINE LENGTH INTEGERLITERAL)?
+	CREATE (OR REPLACE)? TYPE distinctTypeName AS sourceDataType (INLINE LENGTH INTEGERLITERAL)?
 	)
 	;
 
 createVariableStatement
 	: (
-	CREATE VARIABLE variableName 
+	CREATE (OR REPLACE)? VARIABLE variableName
 	(createVariableBuiltInType | arrayTypeName) 
-	(DEFAULT (NULL | INTEGERLITERAL | NONNUMERICLITERAL | specialRegister))?
+	((DEFAULT | CONSTANT) (NULL | INTEGERLITERAL | NONNUMERICLITERAL | specialRegister | LPAREN expression RPAREN))?
 	)
 	;
 
@@ -870,19 +997,20 @@ Noted by Martijn Rutte 2023-01-10.
 */
 createViewStatement
 	: (
-	CREATE VIEW viewName 
+	CREATE (OR REPLACE)? VIEW viewName
 	(LPAREN columnName (COMMA columnName)* RPAREN)? AS
 	(WITH commonTableExpression (COMMA commonTableExpression)*)?
 	fullSelect
-	createViewCheckOptionClause?
+	createViewCheckOptionClause? (WITH NO? ROW MOVEMENT)?
 	)
 	;
 
 declareCursorStatement
 	: (
 	DECLARE cursorName
-	((NO SCROLL) | ((ASENSITIVE | INSENSITIVE | (SENSITIVE (DYNAMIC | STATIC))) SCROLL))?
-	CURSOR (holdability | returnability | rowsetPositioning)* FOR (selectStatement | statementName)
+//	((NO SCROLL) | ((ASENSITIVE | INSENSITIVE | (SENSITIVE (DYNAMIC | STATIC))) SCROLL))?
+    (ASENSITIVE | INSENSITIVE)?
+	CURSOR (holdability | returnability)* FOR (selectStatement | statementName)
 	)
 	;
 
@@ -893,9 +1021,12 @@ declareGlobalTemporaryTableStatement
 			(COMMA declareGlobalTemporaryTableColumnDefinition)* RPAREN)
 		| declareGlobalTemporaryTableLikeClause
 		| declareGlobalTemporaryTableAsResultTable)
-		(ccsidClause1
+		(//ccsidClause1
 		| onCommitClause
-		| loggedWithRollbackClause)*
+		| loggedWithRollbackClause
+		| WITH REPLACE
+		| IN identifier
+		| distributionClause)*
 	)
 	;
 
@@ -963,6 +1094,10 @@ describeTableStatement
 	)
 	;
 
+disconnectStatement
+    : DISCONNECT (CURRENT | ALL SQL? | identifier | hostVariable)
+    ;
+
 dropStatement
 	: (
 	DROP
@@ -1014,16 +1149,17 @@ entire PL/I language here.
 
 */
 executeImmediateStatement
-	: (EXECUTE IMMEDIATE (variable | NONNUMERICLITERAL))
+	: (EXECUTE IMMEDIATE expression)//(variable | NONNUMERICLITERAL))
 	;
 
 explainStatement
 	: (
 	EXPLAIN
 		(explainPlanClause
-		| explainStmtcacheClause
-		| explainPackageClause
-		| explainStabilizedDynamicQueryClause)
+//		| explainStmtcacheClause
+//		| explainPackageClause
+//		| explainStabilizedDynamicQueryClause
+		)
 	)
 	;
 
@@ -1034,9 +1170,8 @@ optional.
 */
 fetchStatement
 	: (
-	FETCH (INSENSITIVE | SENSITIVE)? (WITH CONTINUE)? 
-	fetchOrientation? FROM? cursorName
-	(singleRowFetch | multipleRowFetch)?
+	FETCH FROM? cursorName singleRowFetch
+//	(singleRowFetch | multipleRowFetch)?
 	)
 	;
 
@@ -1050,6 +1185,10 @@ getDiagnosticsStatement
 	(statementInformation | conditionInformation | combinedInformation)
 	)
 	;
+
+gotoStatement
+    : (GOTO identifier)
+    ;
 
 grantStatement
 	: (
@@ -1078,34 +1217,43 @@ includeStatement
 
 insertStatement
 	: (
-	INSERT INTO tableName (LPAREN columnName (COMMA columnName)* RPAREN)?
+	INSERT INTO (tableName | LPAREN fullSelect RPAREN) (LPAREN columnName (COMMA columnName)* RPAREN)?
 	includeColumns?
-	(OVERRIDING USER VALUE)?
+//	(OVERRIDING USER VALUE)?
 	((VALUES (valuesList1 |
 		(LPAREN valuesList1 (COMMA valuesList1)* RPAREN)))
 	| ((WITH commonTableExpression (COMMA commonTableExpression)*)?
 		fullSelect isolationClause? querynoClause?)
 	| multipleRowInsert)
+	(WITH (R R | R S | C S | U R))?
 	)
 	;
 
-labelStatement
-	: (
-	LABEL ON
-	((((TABLE tableName)
-	| (ALIAS aliasName)
-	| (COLUMN tableName DOT columnName))
-	IS NONNUMERICLITERAL)
-	| (tableName LPAREN 
-		columnName IS NONNUMERICLITERAL 
-		(COMMA columnName IS NONNUMERICLITERAL)* 
-		RPAREN))
-	)
-	;
+iterateStatement
+    : (ITERATE identifier)
+    ;
+
+//labelStatement
+//	: (
+//	LABEL ON
+//	((((TABLE tableName)
+//	| (ALIAS aliasName)
+//	| (COLUMN tableName DOT columnName))
+//	IS NONNUMERICLITERAL)
+//	| (tableName LPAREN
+//		columnName IS NONNUMERICLITERAL
+//		(COMMA columnName IS NONNUMERICLITERAL)*
+//		RPAREN))
+//	)
+//	;
+
+leaveStatement
+    : (LEAVE identifier)
+    ;
 
 lockTableStatement
 	: (
-	LOCK TABLE tableName ((PARTITION | PART) INTEGERLITERAL)? IN (SHARE | EXCLUSIVE) MODE_
+	LOCK TABLE tableName IN (SHARE | EXCLUSIVE) MODE_
 	)
 	;
 
@@ -1114,8 +1262,9 @@ mergeStatement
 	MERGE INTO tableName correlationClause? includeColumns?
 	USING ((LPAREN* tableReference RPAREN*) | sourceValues) ON searchCondition
 	(WHEN matchingCondition THEN (modificationOperation | signalStatement))+ (ELSE IGNORE)?
-	notAtomicPhrase?
-	querynoClause?
+//	notAtomicPhrase?
+//	querynoClause?
+	(WITH (R R | R S | C S | U R))?
 	)
 	;
 
@@ -1136,8 +1285,10 @@ implement the entirety of the PL/I language here.
 prepareStatement
 	: (
 	PREPARE statementName 
-	(INTO descriptorName (USING (NAMES | LABELS | ANY | BOTH))?)?
-	(ATTRIBUTES hostVariable)? FROM variable
+	(OUTPUT? INTO descriptorName)?
+	(INPUT INTO descriptorName)?// (USING (NAMES | LABELS | ANY | BOTH))?)?
+//	(ATTRIBUTES hostVariable)?
+	FROM variable
 	)
 	;
 
@@ -1259,7 +1410,7 @@ transferOwnershipStatement
 truncateStatement
 	: (
 	TRUNCATE TABLE? tableName ((DROP | REUSE) STORAGE)?
-	((IGNORE | (RESTRICT WHEN)) DELETE TRIGGERS)?
+	((IGNORE | (RESTRICT WHEN)) DELETE TRIGGERS)? (CONTINUE IDENTITY)?
 	IMMEDIATE?
 	)
 	;
@@ -1298,14 +1449,50 @@ valuesIntoTargetVariable
 	;
 
 ownedObject
-	: (
-	(DATABASE databaseName)
-	| (INDEX indexName)
-	| (STOGROUP stogroupName)
-	| (TABLE tableName)
-	| (TABLESPACE (databaseName DOT)? tablespaceName)
-	| (VIEW viewName)
-	)
+	:( (
+      	(aliasDesignator
+      	| AUDIT POLICY identifier
+      	| (COLUMN tableName DOT columnName)
+      	| CONSTRAINT tableName DOT constraintName
+      	| DATABASE PARTITION GROUP identifier
+      //	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+      	| functionDesignator
+      	| FUNCTION MAPPING identifier
+      	| HISTOGRAM TEMPLATE identifier
+      	| (INDEX indexName)
+      	| MASK identifier
+      	| MODULE identifier
+      	| NICKNAME identifier
+      	| (PACKAGE packageDesignator)
+      	| PERMISSION identifier
+      //	| (PLAN planName)
+      //	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+      	| procedureDesignator
+      	| (ROLE roleName)
+      	| SCHEMA identifier
+      	| SECURITY LABEL identifier
+      	| SECURITY LABEL COMPONENT identifier
+      	| SECURITY POLICY identifier
+      	| (SEQUENCE sequenceName)
+      	| SERVER identifier
+      //	| SERVER OPTION identifier FOR remoteServer TODO
+      //    | serviceClassDesignator TODO
+      	| (TABLE tableName)
+      	| TABLESPACE identifier
+      	| THRESHOLD identifier
+      	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
+      	| (TRUSTED CONTEXT contextName)
+      	| (TYPE typeName)
+      	| TYPE MAPPINE identifier
+      	| (VARIABLE variableName))
+      	| WORK ACTION SET identifier
+      	| WORK CLASS SET identifier
+      	| WORKLOAD identifier
+      	| WRAPPER identifier
+      	| XSROBJECT identifier
+      	IS NONNUMERICLITERAL)
+      	| multipleColumnList
+      	)
 	;
 
 newOwner
@@ -1891,54 +2078,54 @@ multipleRowFetchIntoClause
 
 explainPlanClause
 	: (
-	(PLAN | ALL) (SET QUERYNO EQ INTEGERLITERAL)? FOR
+	(PLAN SECTION? | ALL) ((FOR | WITH)? SNAPSHOT)? (WITH REOPT ONCE)? (SET QUERYNO EQ INTEGERLITERAL)? (SET QUERYTAG EQ NONNUMERICLITERAL)? FOR
 	(query | insertStatement | mergeStatement | searchedDelete | searchedUpdate)
 	)
 	;
 
-explainStmtcacheClause
-	: (
-	STMTCACHE
-		(ALL
-		| (STMTID (hostVariable | INTEGERLITERAL))
-		| (STMTTOKEN (hostVariable | NONNUMERICLITERAL)))
-	)
-	;
-
-explainPackageClause
-	: (
-	PACKAGE packageScopeSpecification
-	)
-	;
-
-explainStabilizedDynamicQueryClause
-	: (
-	STABILIZED DYNAMIC QUERY STMTID
-	(hostVariable | INTEGERLITERAL)
-	(COPY NONNUMERICLITERAL)?
-	)
-	;
-
-packageScopeSpecification
-	: (
-	COLLECTION collectionName
-	PACKAGE packageScopePackageName
-	(VERSION versionName)?
-	(COPY NONNUMERICLITERAL)?
-	)
-	;
-
-collectionName
-	: (:hostVariable | NONNUMERICLITERAL)
-	;
-
-packageScopePackageName
-	: (:hostVariable | NONNUMERICLITERAL)
-	;
-
-versionName
-	: (:hostVariable | NONNUMERICLITERAL)
-	;
+//explainStmtcacheClause
+//	: (
+//	STMTCACHE
+//		(ALL
+//		| (STMTID (hostVariable | INTEGERLITERAL))
+//		| (STMTTOKEN (hostVariable | NONNUMERICLITERAL)))
+//	)
+//	;
+//
+//explainPackageClause
+//	: (
+//	PACKAGE packageScopeSpecification
+//	)
+//	;
+//
+//explainStabilizedDynamicQueryClause
+//	: (
+//	STABILIZED DYNAMIC QUERY STMTID
+//	(hostVariable | INTEGERLITERAL)
+//	(COPY NONNUMERICLITERAL)?
+//	)
+//	;
+//
+//packageScopeSpecification
+//	: (
+//	COLLECTION collectionName
+//	PACKAGE packageScopePackageName
+//	(VERSION versionName)?
+//	(COPY NONNUMERICLITERAL)?
+//	)
+//	;
+//
+//collectionName
+//	: (:hostVariable | NONNUMERICLITERAL)
+//	;
+//
+//packageScopePackageName
+//	: (:hostVariable | NONNUMERICLITERAL)
+//	;
+//
+//versionName
+//	: (:hostVariable | NONNUMERICLITERAL)
+//	;
 
 
 /*
@@ -2127,13 +2314,13 @@ triggerDefinition
 	triggerActivationTime triggerEvent ON tableName
 	(REFERENCING
 		((OLD | NEW | OLD_TABLE | NEW_TABLE | (OLD TABLE) | (NEW TABLE)) AS? correlationName)+)?
-	triggerGranularity MODE_ DB2SQL triggerDefinitionOption? triggeredAction
+	triggerGranularity triggerDefinitionOption? triggeredAction
 	)
 	;
 
 triggerActivationTime
 	: (
-	(NO CASCADE BEFORE)
+	((NO CASCADE)? BEFORE)
 	| AFTER
 	| (INSTEAD OF)
 	)
@@ -2331,7 +2518,7 @@ asResultTable
 declareGlobalTemporaryTableAsResultTable
 	: (
 	AS LPAREN fullSelect RPAREN
-	WITH NO DATA
+	WITH NO DATA copyOptions?
 	)
 	;
 
@@ -3725,18 +3912,18 @@ storclasOption
 
 //
 
-alterStogroupOptionList
-	: (
-	(ADD VOLUMES LPAREN volumeID (COMMA volumeID)* RPAREN)
-	| (ADD VOLUMES LPAREN NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)* RPAREN)
-	| (REMOVE VOLUMES LPAREN volumeID (COMMA volumeID)* RPAREN)
-	| (REMOVE VOLUMES LPAREN NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)* RPAREN)
-	| keyLabelOption
-	| dataclasOption
-	| mgmtclasOption
-	| storclasOption
-	)
-	;
+//alterStogroupOptionList
+//	: (
+//	(ADD VOLUMES LPAREN volumeID (COMMA volumeID)* RPAREN)
+//	| (ADD VOLUMES LPAREN NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)* RPAREN)
+//	| (REMOVE VOLUMES LPAREN volumeID (COMMA volumeID)* RPAREN)
+//	| (REMOVE VOLUMES LPAREN NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)* RPAREN)
+//	| keyLabelOption
+//	| dataclasOption
+//	| mgmtclasOption
+//	| storclasOption
+//	)
+//	;
 
 /*
 Added..
@@ -3862,7 +4049,7 @@ trustedContextOptionList
 	| (ALTER ATTRIBUTES LPAREN alterAttributesOptions (COMMA alterAttributesOptions)* RPAREN)
 	| (ADD ATTRIBUTES LPAREN addAttributesOptions (COMMA addAttributesOptions)* RPAREN)
 	| (DROP ATTRIBUTES LPAREN dropAttributesOptions (COMMA dropAttributesOptions)* RPAREN)
-	| userClause
+//	| userClause
 	)
 	;
 
@@ -4134,13 +4321,6 @@ multipleColumnList
 	columnName IS NONNUMERICLITERAL
 	(COMMA columnName IS NONNUMERICLITERAL)*
 	RPAREN
-	)
-	;
-
-functionDesignator
-	: (
-	(FUNCTION functionName (LPAREN (parameterType (COMMA parameterType)*)? RPAREN)?)
-	| (SPECIFIC FUNCTION specificName)
 	)
 	;
 
@@ -6789,6 +6969,7 @@ sqlKeyword
 	| CHARACTER
 	| CHECK
 	| CHECKING
+	| CLASS
 	| CLAUSE
 	| CLIENT
 	| CLOB
@@ -6942,13 +7123,16 @@ sqlKeyword
 	| DESCRIBE
 	| DESCRIPTOR
 	| DETERMINISTIC
+	| DEVICE
 	| DIAGNOSTICS
 	| DISABLE
 	| DISALLOW
+	| DISCONNECT
 	| DISPATCH
 	| DISPLAY
 	| DISPLAYDB
 	| DISTINCT
+	| DISTRIBUTE
 	| DO
 	| DOCUMENT
 	| DOUBLE
@@ -7116,6 +7300,7 @@ sqlKeyword
 	| LOOP
 	| MAIN
 	| MAINTAINED
+	| MAPPING
 	| MASK
 	| MATCHED
 	| MATERIALIZED
@@ -7194,6 +7379,7 @@ sqlKeyword
 	| OUTER
 	| OUTPUT
 	| OVER
+	| OVERHEAD
 	| OVERLAPS
 	| OVERRIDING
 	| OWNER
@@ -7246,8 +7432,10 @@ sqlKeyword
 	| QUALIFIER
 	| QUERY
 	| QUERYNO
+	| QUERYTAG
 	| RANGE
 	| RANK
+	| RATE
 	| RATIO_TO_REPORT
 	| READ
 	| READS
@@ -7323,6 +7511,7 @@ sqlKeyword
 	| SBCS
 	| SCHEMA
 	| SCHEME
+	| SCOPE
 	| SCRATCHPAD
 	| SCROLL
 	| SECOND
@@ -7346,7 +7535,9 @@ sqlKeyword
 	| SHARE
 	| SIGNAL
 	| SIMPLE
+	| SINGLE
 	| SIZE
+	| SNAPSHOT
 	| SKIP_
 	| SMALLINT
 	| SOME
@@ -7405,6 +7596,7 @@ sqlKeyword
 	| TABLE
 	| TABLESPACE
 	| TABLESPACES
+	| TAG
 	| TEMPLATE
 	| TEMPORARY
 	| THEN
@@ -7475,7 +7667,9 @@ sqlKeyword
 	| WLM
 	| WORK
 	| WORKFILE
+	| WORKLOAD
 	| WRAPPED
+	| WRAPPER
 	| WRITE
 	| XML
 	| XMLAGG
@@ -7486,6 +7680,7 @@ sqlKeyword
 	| XMLNAMESPACES
 	| XMLPATTERN
 	| XMLSCHEMA
+	| XSROBJECT
 	| YEAR
 	| YEARS
 	| YES
