@@ -816,9 +816,15 @@ returnClause
     ;
 
 statementBlock
-    : defineStatement* onException* (executeFunction | executeProcedure
-    | subsetSplStatement | subsetSqlStatement | BEGIN statementBlock END
-    )*
+    : defineStatement* onException* statementBlockClause*
+    ;
+
+statementBlockClause
+    : executeFunction
+    | executeProcedure
+    | subsetSplStatement
+    | subsetSqlStatement
+    | BEGIN statementBlock END
     ;
 
 defineStatement
