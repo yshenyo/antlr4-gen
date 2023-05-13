@@ -62,7 +62,7 @@ CLOSESQBRACKET
 	;
 
 QUESTIONMARK
-	: '?' {!getText().equals(statementTerminator)}?
+	: '?' //{!getText().equals(statementTerminator)}?
 	;
 
 fragment BANG
