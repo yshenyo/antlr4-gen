@@ -4514,6 +4514,54 @@ TRANSFORMS
     : T R A N S F O R M S
     ;
 
+ATTACH
+    : A T T A C H
+    ;
+
+BUILD
+    : B U I L D
+    ;
+
+MISSING
+    : M I S S I N G
+    ;
+
+INDEXES
+    : I N D E X E S
+    ;
+
+REQUIRE
+    : R E Q U I R E
+    ;
+
+MATCHING
+    : M A T C H I N G
+    ;
+
+DETACH
+    : D E T A C H
+    ;
+
+DISTRIBUTION
+    : D I S T R I B U T I O N
+    ;
+
+LONGVAR
+    : L O N G V A R
+    ;
+
+BLOCKINSERT
+    : B L O C K I N S E R T
+    ;
+
+ADAPTIVE
+    : A D A P T I V E
+    ;
+
+COMPRESSION
+    : C O M P R E S S I O N
+    ;
+
 //SQL_STATEMENT_TERMINATOR
 //	: .
 //	{getText().equals(statementTerminator)}?

@@ -84,7 +84,7 @@ sqlStatement
 //	| alterServerStatement
 //	| alterServiceClassStatement
 	| alterStogroupStatement
-	| alterTableStatement//TODO
+	| alterTableStatement
 	| alterTablespaceStatement//TODO
 //	| alterThresholdStatement
 	| alterTriggerStatement
@@ -114,7 +114,7 @@ sqlStatement
 	| createDatabaseStatement
 //	| createDatabasePartitionGroupStatement
 //	| createEventMonitorStatement
-	| createFunctionStatement//TODO
+	| createFunctionStatement
 //	| createFunctionMappingStatement
 	| createGlobalTemporaryTableStatement
 //	| createHistogramTemplateStatement
@@ -126,7 +126,7 @@ sqlStatement
 //    | createModuleStatement
 //    | createNicknameStatement
 	| createPermissionStatement
-	| createProcedureStatement//TODO
+	| createProcedureStatement
 //	| createProcedureSQLPLStatement
 	| createRoleStatement
 //	| createSchemaStatement
@@ -501,9 +501,41 @@ alterStogroupStatement
 
 alterTableStatement
 	: (
-	ALTER TABLE tableName alterTableOptionList+
+	ALTER TABLE tableName (alterTableOptionList+
+	| ADD PARTITION addPartition
+	| ATTACH PARTITION attachPartition
+	| DETACH PARTITION identifier INTO tableName
+	| ADD SECURITY POLICY identifier
+	| DROP SECURITY POLICY
+	| ADD VERSIONING USE HISTORY TABLE tableName
+	| DROP VERSIONING
+	)
 	)
 	;
+
+addPartition
+    : identifier? boundarySpec (IN tablespaceName)?
+    (INDEX IN tablespaceName (LONG IN tablespaceName)?)?
+    ;
+
+boundarySpec
+    : startingClause endingClause
+    | endingClause
+    ;
+
+startingClause
+    : STARTING FROM? (LPAREN (numeric | MINVALUE | MAXVALUE) (COMMA (numeric | MINVALUE | MAXVALUE))* RPAREN
+    | numeric | MINVALUE | MAXVALUE)
+    ;
+
+endingClause
+    : ENDING AT? (LPAREN (numeric | MINVALUE | MAXVALUE) (COMMA (numeric | MINVALUE | MAXVALUE))* RPAREN
+    | numeric | MINVALUE | MAXVALUE) (INCLUSIVE | EXCLUSIVE)?
+    ;
+
+attachPartition
+    : identifier? boundarySpec FROM tableName (BUILD MISSING INDEXES | REQUIRE MATCHING INDEXES)?
+    ;
 
 /*
 2022-11-04 Changed subrule operator for alterPartitionClause from
@@ -670,7 +702,7 @@ createFunctionStatement
 
 createFunctionStatementExternalScalar
 	: (
-	CREATE FUNCTION functionName
+	CREATE (OR REPLACE)? FUNCTION functionName
 	LPAREN (parameterDeclaration1 (COMMA parameterDeclaration1)*)? RPAREN
 	createFunctionStatementExternalScalarReturnsPhrase
 	createFunctionStatementExternalScalarOptions+
@@ -687,7 +719,7 @@ createFunctionStatementExternalScalarReturnsPhrase
 
 createFunctionStatementExternalTable
 	: (
-	CREATE FUNCTION functionName
+	CREATE (OR REPLACE)? FUNCTION functionName
 	LPAREN (parameterDeclaration1 (COMMA parameterDeclaration1)*)? RPAREN
 	createFunctionStatementExternalTableReturnsPhrase
 	createFunctionStatementExternalTableOptions+
@@ -710,7 +742,7 @@ externalTableFunctionColumn
 
 createFunctionStatementSourced
 	: (
-	CREATE FUNCTION functionName
+	CREATE (OR REPLACE)? FUNCTION functionName
 	LPAREN (parameterDeclaration1 (COMMA parameterDeclaration1)*)? RPAREN
 	createFunctionStatementSourcedReturnsPhrase
 	createFunctionStatementSourcedOptions*
@@ -732,7 +764,7 @@ createFunctionStatementSourcedSourcePhrase
 
 createFunctionStatementInlineSqlScalar
 	: (
-	CREATE FUNCTION functionName
+	CREATE (OR REPLACE)? FUNCTION functionName
 	LPAREN ((parameterDeclaration1 (COMMA parameterDeclaration1)*)?) RPAREN
 	((WRAPPED obfuscatedStatementText) | inlineSqlScalarFunctionDefinition)
 	)
@@ -740,7 +772,7 @@ createFunctionStatementInlineSqlScalar
 
 createFunctionStatementCompiledSqlScalar
 	: (
-	CREATE FUNCTION functionName
+	CREATE (OR REPLACE)? FUNCTION functionName
 	LPAREN ((parameterDeclaration2 (COMMA parameterDeclaration2)*)?) RPAREN
 	((WRAPPED obfuscatedStatementText) | compiledSqlScalarFunctionDefinition)
 	)
@@ -748,7 +780,7 @@ createFunctionStatementCompiledSqlScalar
 
 createFunctionStatementSqlTable
 	: (
-	CREATE FUNCTION functionName
+	CREATE (OR REPLACE)? FUNCTION functionName
 	LPAREN ((parameterDeclaration2 (COMMA parameterDeclaration2)*)?) RPAREN
 	((WRAPPED obfuscatedStatementText) | sqlTableFunctionDefinition)
 	)
@@ -2469,7 +2501,7 @@ obidClause
 	;
 
 dataCaptureClause
-	: (DATA CAPTURE (NONE | CHANGES))
+	: (DATA CAPTURE (NONE | CHANGES (INCLUDE LONGVAR COLUMNS)?))
 	;
 
 restrictOnDropClause
@@ -2489,7 +2521,7 @@ cardinalityClause
 	;
 
 appendClause
-	: (APPEND (YES | NO))
+	: (APPEND (ON | OFF))
 	;
 
 memberClause
@@ -3987,39 +4019,56 @@ alterTableOptionList
 	(ADD COLUMN? alterTableColumnDefinition)
 	| (ALTER COLUMN? columnAlteration)
 	| (RENAME COLUMN sourceColumnName TO targetColumnName)
-	| (DROP COLUMN? columnName RESTRICT)
+	| (DROP COLUMN? columnName (CASCADE | RESTRICT)?)
 	| (ADD periodDefinition)
-	| (ADD (uniqueConstraint | referentialConstraint | checkConstraint))
+	| DROP PERIOD identifier
+	| (ADD (uniqueConstraint | referentialConstraint | checkConstraint | distributionClause))
 	| (referentialConstraint)
 	| (DROP ((PRIMARY KEY) | ((UNIQUE | (FOREIGN KEY) | CHECK | CONSTRAINT) constraintName)))
 	| (ADD partitioningClause)
-	| (ADD PARTITION partitionClause)
-	| (ALTER PARTITION INTEGERLITERAL partitionClause)
-	| (ROTATE PARTITION (FIRST | INTEGERLITERAL) TO LAST rotatePartitionClause)
-	| (DROP ORGANIZATION)
-	| (alterHashOrganization)
-	| (ADD SYSTEM? VERSIONING USE HISTORY TABLE historyTableName extraRowOption?)
-	| (DROP SYSTEM? VERSIONING)
+	| ADD (CHECK | (FOREIGN KEY)) constraintName constraintAlteration
+	| DROP DISTRIBUTION
+//	| (ADD PARTITION partitionClause)
+//	| (ALTER PARTITION INTEGERLITERAL partitionClause)
+//	| (ROTATE PARTITION (FIRST | INTEGERLITERAL) TO LAST rotatePartitionClause)
+//	| (DROP ORGANIZATION)
+//	| (alterHashOrganization)
+//	| (ADD SYSTEM? VERSIONING USE HISTORY TABLE historyTableName extraRowOption?)
+//	| (DROP SYSTEM? VERSIONING)
 	| (ADD ((MATERIALIZED QUERY) | QUERY)? materializedQueryDefinition)
-	| (ALTER MATERIALIZED? QUERY materializedQueryAlteration)
+//	| (ALTER MATERIALIZED? QUERY materializedQueryAlteration)
 	| (DROP MATERIALIZED? QUERY)
 	| dataCaptureClause
-	| cardinalityClause
-	| (ADD CLONE cloneTableName)
-	| (DROP CLONE)
+	| ACTIVATE NOT LOGGED INITIALLY (WITH EMPTY TABLE)?
+	| PCTFREE INTEGERLITERAL
+	| LOCKSIZE (ROW | TABLE | BLOCKINSERT)
+//	| cardinalityClause
+//	| (ADD CLONE cloneTableName)
+//	| (DROP CLONE)
 	| (ADD RESTRICT ON DROP)
 	| (DROP RESTRICT ON DROP)
 	| ((ACTIVATE | DEACTIVATE) ROW ACCESS CONTROL)
 	| ((ACTIVATE | DEACTIVATE) COLUMN ACCESS CONTROL)
 	| appendClause
-	| auditClause
-	| validprocClause
-	| (ENABLE ARCHIVE USE archiveTableName)
-	| (DISABLE ARCHIVE)
-	| (NO KEY LABEL)
-	| (KEY LABEL keyLabelName)
+	| NO? VOLATILE CARDINALITY?
+	| COMPRESS (YES (ADAPTIVE | STATIC)? | NO)
+	| (ACTIVATE | DEACTIVATE) VALUE COMPRESSION
+	| LOG INDEX BUILD (NULL | ON | OFF)
+//	| auditClause
+//	| validprocClause
+//	| (ENABLE ARCHIVE USE archiveTableName)
+//	| (DISABLE ARCHIVE)
+//	| (NO KEY LABEL)
+//	| (KEY LABEL keyLabelName)
 	)
 	;
+
+constraintAlteration
+    : ((ENABLE | DISABLE) QUERY OPTIMIZATION
+    | ENFORCED
+    | NOT ENFORCED (NOT? TRUSTED)?
+    )+
+    ;
 
 alterTablespaceOptionList
 	: (
@@ -4385,11 +4434,23 @@ alterTableColumnDefinitionOptionList1
 	| (columnConstraint)
 	| (generatedClause)
 	| implicitlyHiddenClause
-	| asSecurityLabelClause
-	| fieldprocClause
-	| inlineLengthClause
+//	| asSecurityLabelClause
+//	| fieldprocClause
+//	| inlineLengthClause
+    | COMPRESS SYSTEM DEFAULT
+    | COLUMN? SECURED WITH identifier
+    | NOT HIDDEN_
+    | SCOPE tableName
+    | lobOptions
 	)
 	;
+
+lobOptions
+    : (
+     NOT? LOGGED
+    | NOT? COMPACT
+    )+
+    ;
 
 /*
 Changed to refer to defaultClause instead of defaultClause2
@@ -4402,9 +4463,14 @@ alterTableColumnDefinitionOptionList2
 	| (columnConstraint)
 	| (generatedClause)
 	| implicitlyHiddenClause
-	| asSecurityLabelClause
-	| fieldprocClause
-	| inlineLengthClause
+//	| asSecurityLabelClause
+//	| fieldprocClause
+//	| inlineLengthClause
+    | COMPRESS SYSTEM DEFAULT
+    | COLUMN? SECURED WITH identifier
+    | NOT HIDDEN_
+    | SCOPE tableName
+    | lobOptions
 	)
 	;
 
@@ -5300,6 +5366,7 @@ scalarFunction
 	| ASCIISTR
 	| ASCII_STR
 	| ASIN
+	| ATTACH
 	| ATAN
 	| ATAN2
 	| ATANH
@@ -7744,7 +7811,19 @@ sqlKeyword
 	| YEAR
 	| YEARS
 	| YES
-	| ZONE	)
+	| ZONE
+	| BUILD
+	| MISSING
+    | INDEXES
+    | REQUIRE
+    | MATCHING
+    | DETACH
+    | DISTRIBUTION
+    | LONGVAR
+    | BLOCKINSERT
+    | ADAPTIVE
+    | COMPRESSION
+	)
 	;
 
 
