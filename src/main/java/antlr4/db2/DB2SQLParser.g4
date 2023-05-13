@@ -44,7 +44,7 @@ stored procedures and functions.
 */
 
 
-parser grammar DB2zSQLParser;
+parser grammar DB2SQLParser;
 
 options {tokenVocab=DB2SQLLexer;}
 
@@ -161,10 +161,10 @@ sqlStatement
 //	| declareTableStatement
 //	| declareVariableStatement
 //	| declareStatementStatement
-	| deleteStatement//TODO
+	| deleteStatement
 	| describeStatement
 	| disconnectStatement
-	| dropStatement//TODO
+	| dropStatement
 	| endDeclareSectionStatement
 //	| exchangeStatement
 	| executeStatement
@@ -478,7 +478,7 @@ alterWhichProcedureSQLPL2
 	;
 
 applicationCompatibilityPhrase
-	: (USING APPLICATION COMPATIBILITY CP_APPLCOMPAT_LEVEL)
+	: (USING APPLICATION COMPATIBILITY APPLCOMPAT_LEVEL)
 	;
 alterSequenceStatement
 	: (
@@ -604,13 +604,13 @@ commentStatement
 	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
 	| (TRUSTED CONTEXT contextName)
 	| (TYPE typeName)
-	| TYPE MAPPINE identifier
-	| (VARIABLE variableName))
+	| TYPE MAPPING identifier
+	| (VARIABLE variableName)
 	| WORK ACTION SET identifier
 	| WORK CLASS SET identifier
 	| WORKLOAD identifier
 	| WRAPPER identifier
-	| XSROBJECT identifier
+	| XSROBJECT identifier)
 	IS NONNUMERICLITERAL)
 	| multipleColumnList)
 	)
@@ -838,9 +838,10 @@ probablySQLPL
 	| COMMA 
 	| COLON
 	| SPLAT
-	| CP_SEMICOLON
-	| CEP_SEMICOLON
-	| CP_UNIDENTIFIED 
+	| SEMICOLON
+//	| CP_SEMICOLON
+//	| CEP_SEMICOLON
+//	| CP_UNIDENTIFIED
 	| LPAREN 
 	| RPAREN
 	)
@@ -1022,7 +1023,7 @@ declareGlobalTemporaryTableStatement
 		| declareGlobalTemporaryTableLikeClause
 		| declareGlobalTemporaryTableAsResultTable)
 		(//ccsidClause1
-		| onCommitClause
+		onCommitClause
 		| loggedWithRollbackClause
 		| WITH REPLACE
 		| IN identifier
@@ -1102,24 +1103,69 @@ dropStatement
 	: (
 	DROP
 		(aliasDesignation
-		| dropDatabaseClause
-		| dropFunctionClause
-		| dropIndexClause
-		| dropMaskClause
-		| dropPackageClause
-		| dropPermissionClause
-		| dropProcedureClause
-		| dropRoleClause
-		| dropSequenceClause
-		| dropStogroupClause
-		| dropSynonymClause
-		| dropTableClause
-		| dropTablespaceClause
-		| dropTriggerClause
-		| dropTrustedContextClause
-		| dropTypeClause
-		| dropVariableClause
-		| dropViewClause)
+		| AUDIT POLICY identifier
+		| BUFFERPOOL identifier
+		| DATABASE PARTITION GROUP identifier
+		| EVENT MONITOR identifier
+		| functionDesignator RESTRICT?
+		| FUNCTION MAPPING identifier
+		| HISTOGRAM TEMPLATE identifier
+		| INDEX indexName
+		| INDEX EXTENSION identifier RESTRICT
+		| MASK maskName
+		| methodDesignator RESTRICT?
+		| MODULE identifier
+		| NICKNAME identifier
+		| PACKAGE identifier
+		| PERMISSION identifier
+		| procedureDesignator RESTRICT?
+		| ROLE roleName
+		| SCHEMA schemaName RESTRICT
+		| SECURITY LABEL identifier
+		| SECURITY LABEL COMPONENT identifier
+		| SECURITY POLICY identifier
+		| SEQUENCE sequenceName
+		| SERVER identifier
+//		| serviceClassDesignator RESTRICT?
+		| STOGROUP identifier
+		| TABLE tableName
+		| TABLE HIERARCHY identifier
+		| (TABLESPACE | TABLESPACES) tablespaceName (COMMA TABLESPACE)*
+		| (TRANSFORM | TRANSFORMS) (ALL | identifier) FOR identifier
+		| THRESHOLD identifier
+		| TRIGGER triggerName
+		| TRUSTED CONTEXT identifier
+		| TYPE typeName RESTRICT?
+		| TYPE MAPPING identifier
+		| USAGE LIST identifier
+		| USER MAPPING FOR (identifier | USER) SERVER identifier
+		| VARIABLE variableName
+		| VIEW viewName
+		| VIEW HIERARCHY identifier
+		| WORK ACTION SET identifier
+		| WORK CLASS SET identifier
+		| WORKLOAD identifier
+		| WRAPPER identifier
+		| XSROBJECT identifier
+		)
+//		| dropDatabaseClause
+//		| dropFunctionClause
+//		| dropIndexClause
+//		| dropMaskClause
+//		| dropPackageClause
+//		| dropPermissionClause
+//		| dropProcedureClause
+//		| dropRoleClause
+//		| dropSequenceClause
+//		| dropStogroupClause
+//		| dropSynonymClause
+//		| dropTableClause
+//		| dropTablespaceClause
+//		| dropTriggerClause
+//		| dropTrustedContextClause
+//		| dropTypeClause
+//		| dropVariableClause
+//		| dropViewClause
 	)
 	;
 
@@ -1225,7 +1271,7 @@ insertStatement
 	| ((WITH commonTableExpression (COMMA commonTableExpression)*)?
 		fullSelect isolationClause? querynoClause?)
 	| multipleRowInsert)
-	(WITH (R R | R S | C S | U R))?
+	(WITH (RR | RS | CS | UR))?
 	)
 	;
 
@@ -1264,7 +1310,7 @@ mergeStatement
 	(WHEN matchingCondition THEN (modificationOperation | signalStatement))+ (ELSE IGNORE)?
 //	notAtomicPhrase?
 //	querynoClause?
-	(WITH (R R | R S | C S | U R))?
+	(WITH (RR | RS | CS | UR))?
 	)
 	;
 
@@ -1449,49 +1495,46 @@ valuesIntoTargetVariable
 	;
 
 ownedObject
-	:( (
-      	(aliasDesignator
-      	| AUDIT POLICY identifier
-      	| (COLUMN tableName DOT columnName)
-      	| CONSTRAINT tableName DOT constraintName
-      	| DATABASE PARTITION GROUP identifier
-      //	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
-      	| functionDesignator
-      	| FUNCTION MAPPING identifier
-      	| HISTOGRAM TEMPLATE identifier
-      	| (INDEX indexName)
-      	| MASK identifier
-      	| MODULE identifier
-      	| NICKNAME identifier
-      	| (PACKAGE packageDesignator)
-      	| PERMISSION identifier
-      //	| (PLAN planName)
-      //	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
-      	| procedureDesignator
-      	| (ROLE roleName)
-      	| SCHEMA identifier
-      	| SECURITY LABEL identifier
-      	| SECURITY LABEL COMPONENT identifier
-      	| SECURITY POLICY identifier
-      	| (SEQUENCE sequenceName)
-      	| SERVER identifier
-      //	| SERVER OPTION identifier FOR remoteServer TODO
-      //    | serviceClassDesignator TODO
-      	| (TABLE tableName)
-      	| TABLESPACE identifier
-      	| THRESHOLD identifier
-      	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
-      	| (TRUSTED CONTEXT contextName)
-      	| (TYPE typeName)
-      	| TYPE MAPPINE identifier
-      	| (VARIABLE variableName))
-      	| WORK ACTION SET identifier
-      	| WORK CLASS SET identifier
-      	| WORKLOAD identifier
-      	| WRAPPER identifier
-      	| XSROBJECT identifier
-      	IS NONNUMERICLITERAL)
-      	| multipleColumnList
+	:( aliasDesignator
+       	| AUDIT POLICY identifier
+       	| (COLUMN tableName DOT columnName)
+       	| CONSTRAINT tableName DOT constraintName
+       	| DATABASE PARTITION GROUP identifier
+       //	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+       	| functionDesignator
+       	| FUNCTION MAPPING identifier
+       	| HISTOGRAM TEMPLATE identifier
+       	| (INDEX indexName)
+       	| MASK identifier
+       	| MODULE identifier
+       	| NICKNAME identifier
+       	| (PACKAGE packageDesignator)
+       	| PERMISSION identifier
+       //	| (PLAN planName)
+       //	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
+       	| procedureDesignator
+       	| (ROLE roleName)
+       	| SCHEMA identifier
+       	| SECURITY LABEL identifier
+       	| SECURITY LABEL COMPONENT identifier
+       	| SECURITY POLICY identifier
+       	| (SEQUENCE sequenceName)
+       	| SERVER identifier
+       //	| SERVER OPTION identifier FOR remoteServer TODO
+       //    | serviceClassDesignator TODO
+       	| (TABLE tableName)
+       	| TABLESPACE identifier
+       	| THRESHOLD identifier
+       	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
+       	| (TRUSTED CONTEXT contextName)
+       	| (TYPE typeName)
+       	| TYPE MAPPING identifier
+       	| (VARIABLE variableName)
+       	| WORK ACTION SET identifier
+       	| WORK CLASS SET identifier
+       	| WORKLOAD identifier
+       	| WRAPPER identifier
+       	| XSROBJECT identifier
       	)
 	;
 
@@ -2982,9 +3025,12 @@ Noted by Martijn Rutte 2023-01-09.
 */
 searchedDelete
 	: (
-	DELETE FROM? tableName periodClause? AS? correlationName? includeColumns?
-	(SET assignmentClause)? (WHERE searchCondition)? fetchClause?
-	(isolationClause | skipLockedDataClause)* querynoClause?
+	DELETE FROM? (tableName periodClause? | ONLY LPAREN tableName RPAREN | LPAREN fullSelect RPAREN) AS?
+	correlationClause? includeColumns? (assignmentClause)? (WHERE searchCondition)?
+	(WITH (RR | RS | CS | UR))?
+//	fetchClause?
+//	(isolationClause | skipLockedDataClause)* querynoClause?
+
 	)
 	;
 
@@ -2993,25 +3039,29 @@ Alternate syntax allows omission of FROM.  Noted by Martijn Rutte 2023-01-09.
 */
 positionedDelete
 	: (
-	DELETE FROM? tableName AS? correlationName? WHERE CURRENT OF cursorName
-	(FOR ROW (hostVariable | INTEGERLITERAL) OF ROWSET)?
+	DELETE FROM? (tableName | ONLY LPAREN tableName RPAREN)
+	AS? correlationClause? WHERE CURRENT OF cursorName
+//	(FOR ROW (hostVariable | INTEGERLITERAL) OF ROWSET)?
 	)
 	;
 
 searchedUpdate
 	: (
-	UPDATE tableName periodClause? AS? correlationName? includeColumns?
-	SET assignmentClause (WHERE searchCondition)? 
-	(isolationClause | skipLockedDataClause)* querynoClause?
+	UPDATE (tableName periodClause? | ONLY LPAREN tableName RPAREN | LPAREN fullSelect RPAREN)
+	AS? correlationClause? includeColumns?
+	SET assignmentClause (WHERE searchCondition)?
+	(WITH (RR | RS | CS | UR))?
+//	(isolationClause | skipLockedDataClause)* querynoClause?
 	)
 	;
 
 positionedUpdate
 	: (
-	UPDATE tableName AS? correlationName? 
+	UPDATE (tableName | ONLY LPAREN tableName RPAREN)
+	AS? correlationClause?
 	SET assignmentClause
 	WHERE CURRENT OF cursorName
-	(FOR ROW (hostVariable | INTEGERLITERAL) OF ROWSET)?
+//	(FOR ROW (hostVariable | INTEGERLITERAL) OF ROWSET)?
 	)
 	;
 
@@ -3680,7 +3730,7 @@ immediateWriteOption
 	;
 
 explainOption
-	: ((WITH | WITHOUT) CP_EXPLAIN)
+	: ((WITH | WITHOUT) EXPLAIN)
 	;
 
 reoptOption
@@ -3692,7 +3742,7 @@ packageOwnerOption
 	;
 
 deferPrepareOption
-	: ((DEFER CP_PREPARE) | (NODEFER CP_PREPARE))
+	: ((DEFER PREPARE) | (NODEFER PREPARE))
 	;
 
 degreeOption
@@ -3779,7 +3829,7 @@ archiveSensitiveOption
 	;
 
 applcompatOption
-	: (APPLCOMPAT CP_APPLCOMPAT_LEVEL)
+	: (APPLCOMPAT APPLCOMPAT_LEVEL)
 	;
 
 validateOption
@@ -5238,6 +5288,7 @@ scalarFunction
 	| AI_ANALOGY
 	| AI_SEMANTIC_CLUSTER
 	| AI_SIMILARITY
+	| APPLCOMPAT_LEVEL
 	| ARRAY_DELETE
 	| ARRAY_FIRST
 	| ARRAY_LAST
@@ -6987,6 +7038,7 @@ sqlKeyword
 	| COMMIT
 	| COMMITTED
 	| COMPATIBILITY
+	| COMPONENT
 	| COMPRESS
 	| CONCAT
 	| CONCENTRATE
@@ -6995,6 +7047,7 @@ sqlKeyword
 	| CONDITION_NUMBER
 	| CONNECT
 	| CONNECTION
+	| CONSTANT
 	| CONSTRAINT
 	| CONTAINS
 	| CONTENT
@@ -7322,6 +7375,7 @@ sqlKeyword
 	| MODEL
 	| MODIFIERS
 	| MODIFIES
+	| MODULE
 	| MONITOR
 	| MONITOR1
 	| MONITOR2
@@ -7329,6 +7383,7 @@ sqlKeyword
 	| MONTHS
 	| MORE_
 	| MOVE
+	| MOVEMENT
 	| MULTIPLIER
 	| NAME
 	| NAMES
@@ -7337,6 +7392,7 @@ sqlKeyword
 	| NEW_TABLE
 	| NEXT
 	| NEXTVAL
+	| NICKNAME
 	| NO
 	| NODEFER
 	| NONE
@@ -7527,6 +7583,7 @@ sqlKeyword
 	| SENSITIVE
 	| SEQUENCE
 	| SERVAUTH
+	| SERVER
 	| SERVER_NAME
 	| SESSION
 	| SESSION_USER
@@ -7601,6 +7658,7 @@ sqlKeyword
 	| TEMPORARY
 	| THEN
 	| THREADSAFE
+	| THRESHOLD
 	| TIME
 	| TIMESTAMP
 	| TIMEZONE
@@ -7610,6 +7668,8 @@ sqlKeyword
 	| TRACKMOD
 	| TRANSACTION
 	| TRANSFER
+	| TRANSFORM
+	| TRANSFORMS
 	| TRIGGER
 	| TRIGGERS
 	| TRUNCATE
