@@ -124,9 +124,9 @@ COLON
 
 SEMICOLON
 	: ';'
-	{
-		createOrAlterSeen = false;
-	}
+//	{
+//		createOrAlterSeen = false;
+//	}
 	;
 
 COMMA
