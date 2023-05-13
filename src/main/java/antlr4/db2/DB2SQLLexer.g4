@@ -4562,6 +4562,22 @@ COMPRESSION
     : C O M P R E S S I O N
     ;
 
+EXTENSION
+    : E X T E N S I O N
+    ;
+
+HIERARCHY
+    : H I E R A R C H Y
+    ;
+
+LIST
+    : L I S T
+    ;
+
+COMPACT
+    : C O M P A C T
+    ;
+
 //SQL_STATEMENT_TERMINATOR
 //	: .
 //	{getText().equals(statementTerminator)}?

@@ -7823,6 +7823,10 @@ sqlKeyword
     | BLOCKINSERT
     | ADAPTIVE
     | COMPRESSION
+    | EXTENSION
+    | HIERARCHY
+    | LIST
+    | COMPACT
 	)
 	;
 
