@@ -214,7 +214,7 @@ tdsqlOptions
     ;
 
 tdsqlValueOption
-    : uid VALUES (LESS THEN tdsqlValueList | IN '(' constant (',' constant)* ')')
+    : uid VALUES (LESS THAN tdsqlValueList | IN '(' constant (',' constant)* ')')
     ;
 
 tdsqlValueList
