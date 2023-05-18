@@ -152,18 +152,18 @@ unitStatement
     | selectStatement
     | setAutofree
     | setCollation
-//    | setConnection
-//    | setConstraints
-//    | setDatabaseObjectMode
-//    | setDataskip
-//    | setDebugFile
-//    | setDeferredPrepare
-//    | setDescriptor
-//    | setEncryption
-//    | setEnvironment
-//    | setExplain
-//    | setIndexes
-//    | setIsolation
+    | setConnection
+    | setConstraints
+    | setDatabaseObjectMode
+    | setDataskip
+    | setDebugFile
+    | setDeferredPrepare
+    | setDescriptor
+    | setEncryptionPassword
+    | setEnvironment
+    | setExplain
+    | setIndexes
+    | setIsolation
     | setLockMode
     | setLog
     | setOptimization
@@ -1719,6 +1719,136 @@ setCollation
     : SET (COLLATION quotedString | NO COLLATION)
     ;
 
+setConnection
+    : SET CONNECTION (
+    (identifier | quotedString | DEFAULT | databaseEnvironment) DORMANT?
+    | CURRENT DORMANT
+    )
+    ;
+
+setConstraints
+    : SET CONSTRAINTS
+    ((ALL | constraintName=identifier (COMMA constraintName=identifier)*) (DEFERRED | IMMEDIATE)?
+    | (FOR tableName | constraintName=identifier (COMMA constraintName=identifier)*) constraintMode
+    )
+    ;
+
+constraintMode
+    : DISABLED
+    | (ENABLED
+    | FILTERING (WITHOUT ERROR | WITH ERROR)
+    ) NOVALIDATE?
+    ;
+
+setDatabaseObjectMode
+    : SET (objectListFormat| tableFormat)
+    ;
+
+objectListFormat
+    : CONSTRAINTS constraintName=identifier (COMMA constraintName=identifier)* constraintsAndUniqueIndexesMode
+    | INDEXES indexName (COMMA indexName)* (constraintsAndUniqueIndexesMode | triggersAndDuplicateIndexesMode)
+    | TRIGGERS triggerName=identifier (COMMA triggerName=identifier)* triggersAndDuplicateIndexesMode
+    ;
+
+constraintsAndUniqueIndexesMode
+    : DISABLED
+    | (ENABLED
+    | FILTERING (WITHOUT ERROR | WITH ERROR)
+    ) NOVALIDATE?
+    ;
+
+triggersAndDuplicateIndexesMode
+    : DISABLED
+    | ENABLED
+    ;
+
+tableFormat
+    : (CONSTRAINTS | INDEXES | TRIGGERS) (COMMA (CONSTRAINTS | INDEXES | TRIGGERS))*
+    FOR tableName
+    (constraintsAndUniqueIndexesMode | triggersAndDuplicateIndexesMode)
+    ;
+
+setDataskip
+    : SET DATASKIP (ON (identifier (COMMA identifier)*)?
+    | OFF
+    | DEFAULT
+    )
+    ;
+
+setDebugFile
+    : SET DEBUG FILE TO (identifier | expression | quotedString) (WITH APPEND)?
+    ;
+
+setDeferredPrepare
+    : SET DEFERRED_PREPARE (ENABLED | DISABLED)?
+    ;
+
+setDescriptor
+    : SET DESCRIPTOR (identifier | quotedString)
+    (COUNT ASSIGN (identifier | numeric)
+    | VALUE (identifier | numeric) itemDescriptor (COMMA itemDescriptor)*
+    )
+    ;
+
+itemDescriptor
+    : (TYPE | LENGTH | PRECISION | SCALE | NULLABLE | INDICATOR | ITYPE | ILENGTH) ASSIGN (identifier | numeric)
+    | (DATA | IDATA) ASSIGN (identifier | quotedString | literalDatetime | literalInterval | numeric)
+    | (NAME | EXTYPENAME | EXTYPEOWNERNAME) ASSIGN (identifier | quotedString)
+    | (SOURCEID | SOURCETYPE | EXTYPEID | EXTYPELENGTH | EXTYPEOWNERLENGTH) ASSIGN (identifier | numeric)
+    ;
+
+setEncryptionPassword
+    : SET ENCRYPTION PASSWORD SYM6 expression SYM6 (WITH HINT SYM6 expression SYM6)?
+    ;
+
+setEnvironment
+    : SET ENVIRONMENT (
+    | (AUTOLOCATE | IFX_SESSION_LIMIT_LOCKS) quotedString
+    | (AUTO_READAHEAD | IFX_BATCHEDREAD_INDEX | IFX_BATCHEDREAD_TABLE) quotedString (COMMA quotedString)?
+    | (EXTDIRECTIVES | IFX_AUTO_REPREPARE | NOVALIDATE | USTLOW_SAMPLE) (ON | OFF | quotedString | DEFAULT)
+    | (AUTO_STAT_MODE | BOUND_IMPL_PDQ | IMPLICIT_PDQ) (ON | OFF | quotedString)
+    | CLUSTER_TXN_SCOPE (quotedString | DEFAULT)
+    | DEFAULTESCCHAR quotedString
+    | FORCE_DDL_EXEC (ON | OFF | quotedString)
+    | GRID_NODE_SKIP (ON | OFF | DEFAULT)
+    | HDR_TXN_SCOPE quotedString
+    | (INFORMIXCONRETRY | INFORMIXCONTIME) quotedString?
+    | (OPTCOMPIND | STATCHANGE) (DEFAULT | quotedString)
+    | (RETAINUPDATELOCKS | USELASTCOMMITTED) quotedString
+    | (SELECT_GRID | SELECT_GRID_ALL) (quotedString | DEFAULT)
+    | USE_DWA sessionEnvironmentOptions
+    | USE_SHARDING (ON | OFF)
+    )
+    ;
+
+sessionEnvironmentOptions
+    : SESSION numeric
+    ((ACCELERATE | DEBUG | FALLBACK | UNIQUECHECK) (ON | OFF)?
+    | DEBUG FILE identifier?
+    | PROBE (STOP | START)?
+    )
+    | PROBE CLEANUP
+    ;
+
+setExplain
+    : SET EXPLAIN (ON AVOID_EXECUTE? | OFF | FILE TO (identifier | expression | quotedString))
+    ;
+
+setIndexes
+    : SET INDEXES (indexName (COMMA indexName)* | FOR tableName)
+    (DISABLED | ENABLED | FILTERING (WITHOUT ERROR | WITH ERROR))
+    ;
+
+setIsolation
+    : SET ISOLATION TO?
+    ( REPEATABLE READ
+    | (COMMITTED READ (LAST COMMITTED)?
+    | CURSOR STABILITY
+    | DIRTY READ (WITH WARNING)?
+    ) (RETAIN UPDATE LOCKS)?
+    )
+    ;
+
 setLockMode
     : SET LOCK MODE TO (WAIT numeric | NOWAIT)
     ;
@@ -1732,7 +1862,7 @@ setOptimization
     ;
 
 environmentOptions
-    : ENVIROMENT (STAR_JOIN SYM6 (ENABLED | DISABLED | FORCED) SYM6
+    : ENVIRONMENT (STAR_JOIN SYM6 (ENABLED | DISABLED | FORCED) SYM6
     | (FACT | AVOID_FACT | NON_DIM) (SYM6 tableName (COMMA tableName)* SYM6 | DEFAULT | SYM7))
     ;
 
@@ -2172,6 +2302,7 @@ keyword
     : AAO
     | ABORT
     | ABSOLUTE
+    | ACCELERATE
     | ACCESS
     | ACCESS_METHOD
     | ACCOUNT
@@ -2190,6 +2321,7 @@ keyword
     | AND
     | ANSI
     | ANY
+    | APPEND
     | ARRAY
     | AS
     | ASC
@@ -2204,7 +2336,11 @@ keyword
     | AUTO
     | AUTOFREE
     | AUTOINCREMENT
+    | AUTOLOCATE
+    | AUTO_READAHEAD
+    | AUTO_STAT_MODE
     | AVG
+    | AVOID_EXECUTE
     | AVOID_FACT
     | BARGROUP
     | BASED
@@ -2216,6 +2352,7 @@ keyword
     | BLOB
     | BLOBDIR
     | BUFFERED
+    | BOUND_IMPL_PDQ
     | BOOLEAN
     | BSON
     | BSON_GET
@@ -2243,10 +2380,12 @@ keyword
     | CHARACTER
     | CHECK
     | CLASS
+    | CLEANUP
     | CLOB
     | CLOBDIR
     | CLOSE
     | CLUSTER
+    | CLUSTER_TXN_SCOPE
     | COLLATE
     | COLLATION
     | COLLECTION
@@ -2281,6 +2420,7 @@ keyword
     | DATA
     | DATABASE
     | DATAFILES
+    | DATASKIP
     | DATE
     | DATETIME
     | DAY
@@ -2290,13 +2430,16 @@ keyword
     | DBSECADM
     | DBSSO
     | DEALLOCATE
+    | DEBUG
     | DEC
     | DECIMAL
     | DECLARE
     | DEFAULT
+    | DEFAULTESCCHAR
     | DEFAULT_ROLE
     | DEFERRABLE
     | DEFERRED
+    | DEFERRED_PREPARE
     | DEFINE
     | DELETE
     | DELETING
@@ -2309,6 +2452,7 @@ keyword
     | DETACH
     | DIAGNOSTICS
     | DIRECTIVES
+    | DIRTY
     | DISABLE
     | DISABLED
     | DISCARD
@@ -2317,6 +2461,7 @@ keyword
     | DISTINCT
     | DISTRIBUTIONS
     | DOCUMENT
+    | DORMANT
     | DOUBLE
     | DROP
     | EACH
@@ -2324,8 +2469,9 @@ keyword
     | ELSE
     | ENABLE
     | ENABLED
+    | ENCRYPTION
     | END
-    | ENVIROMENT
+    | ENVIRONMENT
     | ERKEY
     | ERROR
     | ESCAPE
@@ -2340,6 +2486,7 @@ keyword
     | EXPLICIT
     | EXPRESS
     | EXPRESSION
+    | EXTDIRECTIVES
     | EXTENT
     | EXTERNAL
     | EXTYPEID
@@ -2349,7 +2496,9 @@ keyword
     | EXTYPEOWNERNAME
     | FACT
     | FAIL
+    | FALLBACK
     | FETCH
+    | FILE
     | FILLFACTOR
     | FILTERING
     | FINAL
@@ -2359,6 +2508,7 @@ keyword
     | FLUSH
     | FORCE
     | FORCED
+    | FORCE_DDL_EXEC
     | FOUND
     | FOR
     | FOREACH
@@ -2377,12 +2527,15 @@ keyword
     | GOTO
     | GRANT
     | GRID
+    | GRID_NODE_SKIP
     | GROUP
     | HANDLESNULLS
     | HASH
     | HAVING
+    | HDR_TXN_SCOPE
     | HEADINGS
     | HIGH
+    | HINT
     | HOLD
     | HOME
     | HOUR
@@ -2396,10 +2549,15 @@ keyword
     | IDSLBACWRITETREE
     | IDSSECURITYLABEL
     | IF
+    | IFX_AUTO_REPREPARE
+    | IFX_BATCHEDREAD_INDEX
+    | IFX_BATCHEDREAD_TABLE
+    | IFX_SESSION_LIMIT_LOCKS
     | IGNORE
     | ILENGTH
     | IMMEDIATE
     | IMPLICIT
+    | IMPLICIT_PDQ
     | IN
     | INACTIVE
     | INCREMENT
@@ -2409,6 +2567,8 @@ keyword
     | INDICATOR
     | INFO
     | INFORMIX
+    | INFORMIXCONRETRY
+    | INFORMIXCONTIME
     | INIT
     | INITIALLY
     | INNER
@@ -2453,6 +2613,7 @@ keyword
     | LISTING
     | LOAD
     | LOCK
+    | LOCKS
     | LOG
     | LOOP
     | LOW
@@ -2510,6 +2671,7 @@ keyword
     | OPAQUE
     | OPCLASS
     | OPEN
+    | OPTCOMPIND
     | OPTIMIZATION
     | OPTION
     | OR
@@ -2535,6 +2697,7 @@ keyword
     | PRIVATE
     | PRIVILEGE
     | PRIVILEGES
+    | PROBE
     | PROCEDURE
     | PROPERTIES
     | PUBLIC
@@ -2566,6 +2729,8 @@ keyword
     | RESOURCE
     | RESOLUTION
     | RESUME
+    | RETAIN
+    | RETAINUPDATELOCKS
     | RETURN
     | RETURNING
     | RETURNS
@@ -2596,6 +2761,8 @@ keyword
     | SECURITY
     | SELCONST
     | SELECT
+    | SELECT_GRID
+    | SELECT_GRID_ALL
     | SELECTING
     | SELFUNC
     | SENSITIVE
@@ -2618,6 +2785,7 @@ keyword
     | SQL
     | SQLERROR
     | SQLWARNING
+    | STABILITY
     | STACK
     | STANDARD
     | STAR_JOIN
@@ -2663,6 +2831,7 @@ keyword
     | UNDER
     | UNION
     | UNIQUE
+    | UNIQUECHECK
     | UNITS
     | UNLOAD
     | UNLOCK
@@ -2671,8 +2840,12 @@ keyword
     | UPON
     | USAGE
     | USE
+    | USE_DWA
+    | USELASTCOMMITTED
     | USER
+    | USE_SHARDING
     | USING
+    | USTLOW_SAMPLE
     | VACUUM
     | VALUE
     | VALUES
@@ -2686,6 +2859,7 @@ keyword
     | VIOLATIONS
     | VIRTUAL
     | WAIT
+    | WARNING
     | WHEN
     | WHENEVER
     | WHERE
