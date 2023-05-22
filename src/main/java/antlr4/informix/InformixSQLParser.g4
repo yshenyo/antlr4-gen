@@ -1181,11 +1181,11 @@ disconnectStatement
     ;
 
 dropAccessMethod
-    : DROP ACCESS_METHOD (IF EXISTS)? identifier RESTRICT
+    : DROP ACCESS_METHOD (IF EXISTS)? accessMethodName=identifier RESTRICT
     ;
 
 dropAggregate
-    : DROP AGGREGATE (IF EXISTS)? identifier
+    : DROP AGGREGATE (IF EXISTS)? aggregateName=identifier
     ;
 
 dropCast
@@ -1193,7 +1193,7 @@ dropCast
     ;
 
 dropDatabase
-    : DROP DATABASE (IF EXISTS)? identifier
+    : DROP DATABASE (IF EXISTS)? databaseName=identifier
     ;
 
 dropFunction
