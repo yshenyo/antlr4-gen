@@ -700,7 +700,7 @@ beginWork
     ;
 
 closeStatement
-    : CLOSE identifier
+    : CLOSE cursorId=identifier
     ;
 
 closeDatabase
@@ -1125,7 +1125,7 @@ createXadatasourceType
     ;
 
 databaseStatement
-    : DATABASE identifier EXCLUSIVE?
+    : DATABASE databaseName=anyName EXCLUSIVE?
     ;
 
 deallocateCollection
