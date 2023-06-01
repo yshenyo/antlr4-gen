@@ -1242,7 +1242,7 @@ dropSequence
     ;
 
 dropSynonym
-    : DROP SYNONYM (IF EXISTS)? identifier
+    : DROP SYNONYM (IF EXISTS)? synonymName=identifier
     ;
 
 //https://www.ibm.com/docs/en/informix-servers/14.10?topic=statements-drop-table-statement
@@ -1251,11 +1251,11 @@ dropTable
     ;
 
 dropTrigger
-    : DROP TRIGGER (IF EXISTS)? identifier
+    : DROP TRIGGER (IF EXISTS)? triggerName=identifier
     ;
 
 dropTrustedContext
-    : DROP TRUSTED CONTEXT identifier
+    : DROP TRUSTED CONTEXT contextName=anyName
     ;
 
 //https://www.ibm.com/docs/en/informix-servers/14.10?topic=statements-drop-type-statement
@@ -1274,11 +1274,11 @@ dropView
     ;
 
 dropXadatasource
-    : DROP XADATASOURCE (IF EXISTS)? identifier RESTRICT
+    : DROP XADATASOURCE (IF EXISTS)? xaSourceName=identifier RESTRICT
     ;
 
 dropXadatasourceType
-    : DROP XADATASOURCE TYPE (IF EXISTS)? identifier RESTRICT
+    : DROP XADATASOURCE TYPE (IF EXISTS)? xaSourceName=identifier RESTRICT
     ;
 
 executeStatement
