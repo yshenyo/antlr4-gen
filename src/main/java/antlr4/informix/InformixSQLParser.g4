@@ -578,11 +578,11 @@ basicTableOption
     ;
 
 addColumnClause
-    : ADD newColumn (COMMA newColumn)*
+    : ADD newColumnClause (COMMA newColumnClause)*
     ;
 
-newColumn
-    : newColumnName=columnName dataType (defaultClause | singleColumnConstraint)* (BEFORE columnName)? (COLUMN? SECURED WITH identifier)?
+newColumnClause
+    : newColumn=columnName dataType (defaultClause | singleColumnConstraint)* (BEFORE columnName)? (COLUMN? SECURED WITH identifier)?
     ;
 
 defaultClause
@@ -1518,23 +1518,23 @@ putStatement
     ;
 
 releaseSavepoint
-    : RELEASE SAVEPOINT identifier
+    : RELEASE SAVEPOINT savepointName=identifier
     ;
 
 renameColumn
-    : RENAME COLUMN old_column=columnName TO new_column=columnName
+    : RENAME COLUMN oldColumn=columnName TO newColumn=columnName
     ;
 
 renameConstraint
-    : RENAME CONSTRAINT old_constraint=identifier TO new_constraint=identifier
+    : RENAME CONSTRAINT oldConstraint=identifier TO newConstraint=identifier
     ;
 
 renameDatabase
-    : RENAME DATABASE old_database=identifier TO new_database=identifier
+    : RENAME DATABASE oldDatabase=identifier TO newDatabase=identifier
     ;
 
 renameIndex
-    : RENAME INDEX old_index=indexName TO new_index=indexName
+    : RENAME INDEX oldIndex=indexName TO newIndex=indexName
     ;
 
 renameSecurity
