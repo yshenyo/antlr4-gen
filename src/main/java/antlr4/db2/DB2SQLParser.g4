@@ -4063,6 +4063,13 @@ alterTableOptionList
 	)
 	;
 
+constraintAttributes
+    : ((ENABLE | DISABLE) QUERY OPTIMIZATION
+    | ENFORCED
+    | NOT ENFORCED (NOT? TRUSTED)?
+    )+
+    ;
+
 constraintAlteration
     : ((ENABLE | DISABLE) QUERY OPTIMIZATION
     | ENFORCED
@@ -4695,6 +4702,7 @@ uniqueConstraint
 	columnName (COMMA columnName)* 
 	(COMMA BUSINESS_TIME WITHOUT OVERLAPS)? 
 	RPAREN
+	constraintAttributes?
 	)
 	;
 
