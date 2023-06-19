@@ -1538,7 +1538,7 @@ renameIndex
     ;
 
 renameSecurity
-    : RENAME SECURITY (POLICY | LABEL identifier | LABEL COMPONENT) old_name=identifier TO new_name=identifier
+    : RENAME SECURITY (POLICY | LABEL policy=identifier | LABEL COMPONENT) oldSecurity=identifier TO newSecurity=identifier
     ;
 
 renameSequence

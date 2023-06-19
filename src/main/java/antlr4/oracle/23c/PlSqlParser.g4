@@ -80,6 +80,7 @@ unit_statement
     | alter_type
     | alter_user
     | alter_view
+    | alter_kill_session
 
     | create_analytic_view
     | create_attribute_dimension
@@ -3344,6 +3345,10 @@ alter_view //区别：多了IF EXISTS annotations_clause
 
 editionable_noneditionable
     : (EDITIONABLE | NONEDITIONABLE)
+    ;
+
+alter_kill_session
+    : ALTER SYSTEM KILL SESSION quoted_string
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-VIEW.html
