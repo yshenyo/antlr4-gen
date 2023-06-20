@@ -1538,7 +1538,7 @@ renameIndex
     ;
 
 renameSecurity
-    : RENAME SECURITY (POLICY | LABEL policy=identifier | LABEL COMPONENT) oldSecurity=identifier TO newSecurity=identifier
+    : RENAME SECURITY (POLICY | LABEL identifier | LABEL COMPONENT) old_name=identifier TO new_name=identifier
     ;
 
 renameSequence
@@ -1594,7 +1594,7 @@ projectionClause
 
 selectList
     : (expression | columnName) (AS? displayLabel=identifier)?
-    | tableName DOT (columnName (AS? alias)? | STAR)
+    | (tableName DOT)? (columnName (AS? alias)? | STAR)
 //    | external=identifier DOT STAR
     | OPEN_PAR (collectionSubquery | selectStatement) CLOSE_PAR
     ;

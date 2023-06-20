@@ -2987,6 +2987,7 @@ security_statement
     | GRANT (ALL PRIVILEGES? | grant_permission ('(' column_name_list ')')?) (ON (class_type_for_grant '::')? on_id=table_name)? TO to_principal+=principal_id (',' to_principal+=principal_id)* (WITH GRANT OPTION)? (AS as_principal=principal_id)? ';'?
     // https://msdn.microsoft.com/en-us/library/ms178632.aspx
     | REVERT (WITH COOKIE '=' LOCAL_ID)? ';'?
+    | REVOKE (ALL PRIVILEGES? | grant_permission ('(' column_name_list ')')?) (ON (class_type_for_grant '::')? on_id=table_name)? (TO | FROM) principal_id (',' principal_id)* (CASCADE)? (AS principal_id)? ';'?
     | open_key
     | close_key
     | create_key
