@@ -190,6 +190,9 @@ sqlStatement
 	| releaseConnectionStatement
 	| renameStatement
 //	| renameStogroupStatement
+    | reorgTableStatement
+    | reorgIndexStatement
+    | reorgchkStatement
 	| revokeStatement
 	| rollbackStatement
 	| savepointStatement
@@ -1391,6 +1394,57 @@ renameStatement
 	RENAME ((TABLE? tableName TO tableName) | (INDEX indexName TO indexName))
 	)
 	;
+
+reorgTableStatement
+    : (
+    REORG TABLE tableName tableClause tablePartitioningClause? databasePartitionClause?
+    )
+    ;
+
+tableClause
+    : CLASSIC? classicOptions?
+    | INPLACE? (inplaceOptions | STOP | PAUSE)?
+    | RECLAIM EXTENTS (ALLOW WRITE ACCESS | ALLOW READ ACCESS | ALLOW NO ACCESS)?
+    ;
+
+classicOptions
+    : (ALLOW READ ACCESS | ALLOW NO ACCESS) (USE identifier)? (INDEX identifier)? INDEXSCAN?
+    (LONGLOBDATA (USE identifier)?)? (KEEPDICTIONARY | RESETDICTIONARY)? (START | RESUME)?
+    ;
+
+inplaceOptions
+    : (ALLOW WRITE ACCESS | ALLOW READ ACCESS)
+    (FULL (INDEX identifier)? (TRUNCATE TABLE | NOTRUNCATE TABLE)? | CLEANUP OVERFLOWS)
+    ;
+
+tablePartitioningClause
+    : ON DATA PARTITION partitionName=identifier
+    ;
+
+databasePartitionClause
+    : (DBPARTITIONNUM | DBPARTITIONNUMS) partitionSelectionClause
+    | ALL DBPARTITIONNUMS (EXCEPT (DBPARTITIONNUM | DBPARTITIONNUMS) partitionSelectionClause)?
+    ;
+
+partitionSelectionClause
+    : numeric (TO numeric)? (COMMA numeric (TO numeric)?)*
+    ;
+
+reorgIndexStatement
+    : (
+    REORG (INDEX indexName (FOR TABLE tableName)? | INDEXES ALL FOR TABLE tableName)?
+    indexClause tablePartitioningClause? databasePartitionClause?
+    )
+    ;
+
+indexClause
+    : (ALLOW NO ACCESS | ALLOW READ ACCESS | ALLOW WRITE ACCESS)?
+    (REBUILD | CLEANUP (ALL | PAGES) (RECLAIM EXTENTS)? | (CLEANUP (ALL | PAGES))? RECLAIM EXTENTS)?
+    ;
+
+reorgchkStatement
+    : REORGCHK (UPDATE STATISTICS | CURRENT STATISTICS)? (ON TABLE USER | ON (SCHEMA identifier | TABLE (USER | SYSTEM | ALL | identifier)))?
+    ;
 
 revokeStatement
 	: (
@@ -7835,6 +7889,21 @@ sqlKeyword
     | HIERARCHY
     | LIST
     | COMPACT
+    | CLASSIC
+    | INPLACE
+    | RECLAIM
+    | EXTENTS
+    | PAUSE
+    | INDEXSCAN
+    | RESETDICTIONARY
+    | KEEPDICTIONARY
+    | LONGLOBDATA
+    | CLEANUP
+    | OVERFLOWS
+    | NOTRUNCATE
+    | RESUME
+    | REORGCHK
+    | STATISTICS
 	)
 	;
 

@@ -4578,6 +4578,74 @@ COMPACT
     : C O M P A C T
     ;
 
+CLASSIC
+    : C L A S S I C
+    ;
+
+INPLACE
+    : I N P L A C E
+    ;
+
+RECLAIM
+    : R E C L A I M
+    ;
+
+EXTENTS
+    : E X T E N T S
+    ;
+
+PAUSE
+    : P A U S E
+    ;
+
+INDEXSCAN
+    : I N D E X S C A N
+    ;
+
+RESETDICTIONARY
+    : R E S E T D I C T I O N A R Y
+    ;
+
+KEEPDICTIONARY
+    : K E E P D I C T I O N A R Y
+    ;
+
+LONGLOBDATA
+    : L O N G L O B D A T A
+    ;
+
+CLEANUP
+    : C L E A N U P
+    ;
+
+OVERFLOWS
+    : O V E R F L O W S
+    ;
+
+NOTRUNCATE
+    : N O T R U N C A T E
+    ;
+
+RESUME
+    : R E S U M E
+    ;
+
+REORGCHK
+    : R E O R G C H K
+    ;
+
+STATISTICS
+    : S T A T I S T I C S
+    ;
+
+REBUILD
+    : R E B U I L D
+    ;
+
+PAGES
+    : P A G E S
+    ;
+
 //SQL_STATEMENT_TERMINATOR
 //	: .
 //	{getText().equals(statementTerminator)}?
