@@ -1542,7 +1542,7 @@ renameSecurity
     ;
 
 renameSequence
-    : RENAME SEQUENCE old_sequence=identifier TO new_sequence=identifier
+    : RENAME SEQUENCE oldSequence=identifier TO newSequence=identifier
     ;
 
 renameTable
