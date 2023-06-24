@@ -1546,7 +1546,7 @@ renameSequence
     ;
 
 renameTable
-    : RENAME TABLE old_table=tableName TO new_table=tableName
+    : RENAME TABLE oldTableName=tableName TO newTableName=tableName
     ;
 
 renameTrustedContext
