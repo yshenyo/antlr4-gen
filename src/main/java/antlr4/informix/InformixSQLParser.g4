@@ -1550,7 +1550,7 @@ renameTable
     ;
 
 renameTrustedContext
-    : RENAME TRUSTED CONTEXT old_name=identifier TO new_name=identifier
+    : RENAME TRUSTED CONTEXT oldTrustedContextName=identifier TO newTrustedContextName=identifier
     ;
 
 renameUser
