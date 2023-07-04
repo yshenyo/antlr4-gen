@@ -164,6 +164,7 @@ unit_statement
     | comment_on_column
     | comment_on_materialized
     | comment_on_table
+    | execute_immediate
     | data_manipulation_language_statements
     | disassociate_statistics
     | flashback_table
