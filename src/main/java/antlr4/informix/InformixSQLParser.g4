@@ -1554,7 +1554,7 @@ renameTrustedContext
     ;
 
 renameUser
-    : RENAME USER old_name=userName TO new_name=userName
+    : RENAME USER oldUserName=identifier TO newUserName=identifier
     ;
 
 revokeStatement
@@ -1566,7 +1566,7 @@ revokeFragment
     ;
 
 rollbackWork
-    : ROLLBACK WORK? (TO SAVEPOINT identifier?)?
+    : ROLLBACK WORK? (TO SAVEPOINT savepoint=identifier?)?
     ;
 
 saveExternalDirectives
