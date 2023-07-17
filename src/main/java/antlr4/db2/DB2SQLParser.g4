@@ -242,13 +242,13 @@ returnability
 	: ((WITHOUT RETURN) | (WITH RETURN ((TO CALLER) | (TO CLIENT))?))
 	;
 
-rowsetPositioning
-	: ((WITHOUT ROWSET POSITIONING) | (WITH ROWSET POSITIONING))
-	;
+//rowsetPositioning
+//	: ((WITHOUT ROWSET POSITIONING) | (WITH ROWSET POSITIONING))
+//	;
 
-notNullPhrase
-	: ((NOT NULL) | (NOT NULL WITH DEFAULT))
-	;
+//notNullPhrase
+//	: ((NOT NULL) | (NOT NULL WITH DEFAULT))
+//	;
 
 allocateCursorStatement
 	: (ALLOCATE cursorName CURSOR FOR RESULT SET rsLocatorVariable)
@@ -453,36 +453,36 @@ parameterAlteration
     : identifier SET DATA TYPE dataType
     ;
 
-alterProcedureSQLPLStatement
-	: (
-	ALTER PROCEDURE procedureName (
-		(ALTER? alterWhichProcedureSQLPL1? procedureSQLPLOptionList+)
-		| (REPLACE alterWhichProcedureSQLPL2? 
-			(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-			procedureSQLPLOptionList*
-			sqlRoutineBody)
-		| (ADD versionOption
-			(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-			procedureSQLPLOptionList*
-			sqlRoutineBody)
-		| (ACTIVATE versionOption)
-		| (REGENERATE alterWhichProcedureSQLPL2 applicationCompatibilityPhrase?)
-		| (DROP versionOption)
-		)
-	)
-	;
+//alterProcedureSQLPLStatement
+//	: (
+//	ALTER PROCEDURE procedureName (
+//		(ALTER? alterWhichProcedureSQLPL1? procedureSQLPLOptionList+)
+//		| (REPLACE alterWhichProcedureSQLPL2?
+//			(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
+//			procedureSQLPLOptionList*
+//			sqlRoutineBody)
+//		| (ADD versionOption
+//			(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
+//			procedureSQLPLOptionList*
+//			sqlRoutineBody)
+//		| (ACTIVATE versionOption)
+//		| (REGENERATE alterWhichProcedureSQLPL2 applicationCompatibilityPhrase?)
+//		| (DROP versionOption)
+//		)
+//	)
+//	;
 
-alterWhichProcedureSQLPL1
-	: ((ACTIVE VERSION) | (ALL VERSIONS) | versionOption)
-	;
-
-alterWhichProcedureSQLPL2
-	: ((ACTIVE VERSION) | versionOption)
-	;
-
-applicationCompatibilityPhrase
-	: (USING APPLICATION COMPATIBILITY APPLCOMPAT_LEVEL)
-	;
+//alterWhichProcedureSQLPL1
+//	: ((ACTIVE VERSION) | (ALL VERSIONS) | versionOption)
+//	;
+//
+//alterWhichProcedureSQLPL2
+//	: ((ACTIVE VERSION) | versionOption)
+//	;
+//
+//applicationCompatibilityPhrase
+//	: (USING APPLICATION COMPATIBILITY APPLCOMPAT_LEVEL)
+//	;
 alterSequenceStatement
 	: (
 	ALTER SEQUENCE sequenceName alterSequenceOptionList+
@@ -527,13 +527,13 @@ boundarySpec
     ;
 
 startingClause
-    : STARTING FROM? (LPAREN (numeric | MINVALUE | MAXVALUE) (COMMA (numeric | MINVALUE | MAXVALUE))* RPAREN
-    | numeric | MINVALUE | MAXVALUE)
+    : STARTING FROM? (LPAREN (literal | MINVALUE | MAXVALUE) (COMMA (literal | MINVALUE | MAXVALUE))* RPAREN
+    | literal | MINVALUE | MAXVALUE)
     ;
 
 endingClause
-    : ENDING AT? (LPAREN (numeric | MINVALUE | MAXVALUE) (COMMA (numeric | MINVALUE | MAXVALUE))* RPAREN
-    | numeric | MINVALUE | MAXVALUE) (INCLUSIVE | EXCLUSIVE)?
+    : ENDING AT? (LPAREN (literal | MINVALUE | MAXVALUE) (COMMA (literal | MINVALUE | MAXVALUE))* RPAREN
+    | literal | MINVALUE | MAXVALUE) (INCLUSIVE | EXCLUSIVE)?
     ;
 
 attachPartition
@@ -679,12 +679,12 @@ moduleAlias
     : identifier FOR MODULE identifier
     ;
 
-createAuxiliaryTableStatement
-	: (
-	CREATE (AUX | AUXILIARY) TABLE auxTableName IN (databaseName DOT)? tablespaceName
-	STORES tableName appendClause? COLUMN columnName PART INTEGERLITERAL
-	)
-	;
+//createAuxiliaryTableStatement
+//	: (
+//	CREATE (AUX | AUXILIARY) TABLE auxTableName IN (databaseName DOT)? tablespaceName
+//	STORES tableName appendClause? COLUMN columnName PART INTEGERLITERAL
+//	)
+//	;
 
 createDatabaseStatement
 	: (
@@ -819,11 +819,11 @@ createIndexStatement
 	)
 	;
 
-createLobTablespaceStatement
-	: (
-	CREATE LOB TABLESPACE tablespaceName createLobTablespaceOptionList*
-	)
-	;
+//createLobTablespaceStatement
+//	: (
+//	CREATE LOB TABLESPACE tablespaceName createLobTablespaceOptionList*
+//	)
+//	;
 
 createMaskStatement
 	: (
@@ -848,15 +848,15 @@ Note that...
 match sqlRoutineBody because WRAPPED is a sqlKeyword.  This
 is incorrect and misleading.
 */
-createProcedureSQLPLStatement
-	: (
-	CREATE (OR REPLACE)? PROCEDURE procedureName
-	(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-	versionOption?
-	(procedureSQLPLOptionList* languageOption1? procedureSQLPLOptionList*)
-	((WRAPPED obfuscatedStatementText) | sqlRoutineBody)
-	)
-	;
+//createProcedureSQLPLStatement
+//	: (
+//	CREATE (OR REPLACE)? PROCEDURE procedureName
+//	(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
+//	versionOption?
+//	(procedureSQLPLOptionList* languageOption1? procedureSQLPLOptionList*)
+//	((WRAPPED obfuscatedStatementText) | sqlRoutineBody)
+//	)
+//	;
 
 sqlRoutineBody
 	: probablySQLPL+
@@ -902,20 +902,20 @@ createSequenceStatement
 	)
 	;
 
-createStogroupStatement
-	: (
-	CREATE STOGROUP stogroupName
-	(VOLUMES 
-		(LPAREN (volumeID | NONNUMERICLITERAL | SPLAT) 
-		(COMMA (volumeID | NONNUMERICLITERAL | SPLAT))* 
-		RPAREN))?
-	VCAT catalogName
-	dataclasOption?
-	mgmtclasOption?
-	storclasOption?
-	keyLabelOption?
-	)
-	;
+//createStogroupStatement
+//	: (
+//	CREATE STOGROUP stogroupName
+//	(VOLUMES
+//		(LPAREN (volumeID | NONNUMERICLITERAL | SPLAT)
+//		(COMMA (volumeID | NONNUMERICLITERAL | SPLAT))*
+//		RPAREN))?
+//	VCAT catalogName
+//	dataclasOption?
+//	mgmtclasOption?
+//	storclasOption?
+//	keyLabelOption?
+//	)
+//	;
 
 /*
 Moved options to createTableOptions rule so they could
@@ -1066,25 +1066,25 @@ declareGlobalTemporaryTableStatement
 	)
 	;
 
-declareTableStatement
-	: (
-	DECLARE tableName TABLE LPAREN
-	(columnName dataType notNullPhrase?)
-	(COMMA columnName dataType notNullPhrase?)*
-	RPAREN
-	)
-	;
+//declareTableStatement
+//	: (
+//	DECLARE tableName TABLE LPAREN
+//	(columnName dataType notNullPhrase?)
+//	(COMMA columnName dataType notNullPhrase?)*
+//	RPAREN
+//	)
+//	;
 
-declareStatementStatement
-	: (DECLARE statementName (COMMA statementName)* STATEMENT)
-	;
-
-declareVariableStatement
-	: (
-	DECLARE hostVariable (COMMA hostVariable)* VARIABLE
-	((ccsidClause1 forDataQualifier) | ccsidClause1 | forDataQualifier | ccsidClause2)?
-	)
-	;
+//declareStatementStatement
+//	: (DECLARE statementName (COMMA statementName)* STATEMENT)
+//	;
+//
+//declareVariableStatement
+//	: (
+//	DECLARE hostVariable (COMMA hostVariable)* VARIABLE
+//	((ccsidClause1 forDataQualifier) | ccsidClause1 | forDataQualifier | ccsidClause2)?
+//	)
+//	;
 
 deleteStatement
 	: (searchedDelete | positionedDelete)
@@ -1208,9 +1208,9 @@ endDeclareSectionStatement
 	: (END DECLARE SECTION)
 	;
 
-exchangeStatement
-	: (EXCHANGE DATA BETWEEN TABLE tableName AND tableName)
-	;
+//exchangeStatement
+//	: (EXCHANGE DATA BETWEEN TABLE tableName AND tableName)
+//	;
 
 executeStatement
 	: (
@@ -1267,9 +1267,9 @@ getDiagnosticsStatement
 	)
 	;
 
-gotoStatement
-    : (GOTO identifier)
-    ;
+//gotoStatement
+//    : (GOTO identifier)
+//    ;
 
 grantStatement
 	: (
@@ -1288,9 +1288,9 @@ grantStatement
 	)
 	;
 
-holdLocatorStatement
-	: (HOLD LOCATOR hostVariable (COMMA hostVariable)*)
-	;
+//holdLocatorStatement
+//	: (HOLD LOCATOR hostVariable (COMMA hostVariable)*)
+//	;
 
 includeStatement
 	: (INCLUDE memberName)
@@ -1310,9 +1310,9 @@ insertStatement
 	)
 	;
 
-iterateStatement
-    : (ITERATE identifier)
-    ;
+//iterateStatement
+//    : (ITERATE identifier)
+//    ;
 
 //labelStatement
 //	: (
@@ -1328,9 +1328,9 @@ iterateStatement
 //	)
 //	;
 
-leaveStatement
-    : (LEAVE identifier)
-    ;
+//leaveStatement
+//    : (LEAVE identifier)
+//    ;
 
 lockTableStatement
 	: (
@@ -2138,32 +2138,32 @@ combinedInformationOption
 	)
 	;
 
-fetchOrientation
-	: (BEFORE | AFTER | rowPositioned | rowsetPositioned)
-	;
+//fetchOrientation
+//	: (BEFORE | AFTER | rowPositioned | rowsetPositioned)
+//	;
 
-rowPositioned
-	: (
-	NEXT
-	| PRIOR
-	| FIRST
-	| LAST
-	| (CURRENT CONTINUE?)
-	| (ABSOLUTE (hostVariable | INTEGERLITERAL))
-	| (RELATIVE (hostVariable | INTEGERLITERAL))
-	)
-	;
+//rowPositioned
+//	: (
+//	NEXT
+//	| PRIOR
+//	| FIRST
+//	| LAST
+//	| (CURRENT CONTINUE?)
+//	| (ABSOLUTE (hostVariable | INTEGERLITERAL))
+//	| (RELATIVE (hostVariable | INTEGERLITERAL))
+//	)
+//	;
 
-rowsetPositioned
-	: (
-	(NEXT ROWSET)
-	| (PRIOR ROWSET)
-	| (FIRST ROWSET)
-	| (LAST ROWSET)
-	| (CURRENT  ROWSET)
-	| (ROWSET STARTING AT (ABSOLUTE | RELATIVE) (hostVariable | INTEGERLITERAL))
-	)
-	;
+//rowsetPositioned
+//	: (
+//	(NEXT ROWSET)
+//	| (PRIOR ROWSET)
+//	| (FIRST ROWSET)
+//	| (LAST ROWSET)
+//	| (CURRENT  ROWSET)
+//	| (ROWSET STARTING AT (ABSOLUTE | RELATIVE) (hostVariable | INTEGERLITERAL))
+//	)
+//	;
 
 singleRowFetch
 	: (
@@ -2189,21 +2189,21 @@ form "rule can match the empty string."  So my interpretation is
 to have a rule that allows one, the other, or both, and then the
 entire rule is optional in the fetchStatement rule. 
 */
-multipleRowFetch
-	: (
-	(multipleRowFetchForClause? multipleRowFetchIntoClause)
-	| (multipleRowFetchForClause multipleRowFetchIntoClause?)
-	| (multipleRowFetchForClause multipleRowFetchIntoClause)
-	)
-	;
+//multipleRowFetch
+//	: (
+//	(multipleRowFetchForClause? multipleRowFetchIntoClause)
+//	| (multipleRowFetchForClause multipleRowFetchIntoClause?)
+//	| (multipleRowFetchForClause multipleRowFetchIntoClause)
+//	)
+//	;
 
-multipleRowFetchForClause
-	: (FOR (hostVariable | INTEGERLITERAL) ROWS)
-	;
-
-multipleRowFetchIntoClause
-	: ((INTO hostVariable (COMMA hostVariable)*) | ((INTO | USING) DESCRIPTOR descriptorName))
-	;
+//multipleRowFetchForClause
+//	: (FOR (hostVariable | INTEGERLITERAL) ROWS)
+//	;
+//
+//multipleRowFetchIntoClause
+//	: ((INTO hostVariable (COMMA hostVariable)*) | ((INTO | USING) DESCRIPTOR descriptorName))
+//	;
 
 explainPlanClause
 	: (
@@ -2275,82 +2275,82 @@ aliasDesignation
 	: (PUBLIC? ALIAS aliasName (FOR (TABLE | SEQUENCE))?)
 	;
 
-dropDatabaseClause
-	: (DATABASE databaseName)
-	;
+//dropDatabaseClause
+//	: (DATABASE databaseName)
+//	;
+//
+//dropFunctionClause
+//	: (
+//		(FUNCTION functionName
+//			(LPAREN functionParameterType (COMMA functionParameterType)* RPAREN)?
+//			RESTRICT?)
+//		| (SPECIFIC FUNCTION specificName RESTRICT?)
+//	)
+//	;
 
-dropFunctionClause
-	: (
-		(FUNCTION functionName
-			(LPAREN functionParameterType (COMMA functionParameterType)* RPAREN)?
-			RESTRICT?)
-		| (SPECIFIC FUNCTION specificName RESTRICT?)
-	)
-	;
+//dropIndexClause
+//	: (INDEX indexName)
+//	;
+//
+//dropMaskClause
+//	: (MASK maskName)
+//	;
+//
+//dropPackageClause
+//	: (PACKAGE packageDesignator)
+//	;
 
-dropIndexClause
-	: (INDEX indexName)
-	;
+//dropPermissionClause
+//	: (PERMISSION permissionName)
+//	;
+//
+//dropProcedureClause
+//	: (PROCEDURE procedureName RESTRICT?)
+//	;
+//
+//dropRoleClause
+//	: (ROLE roleName RESTRICT?)
+//	;
+//
+//dropSequenceClause
+//	: (SEQUENCE sequenceName RESTRICT?)
+//	;
+//
+//dropStogroupClause
+//	: (STOGROUP stogroupName)
+//	;
 
-dropMaskClause
-	: (MASK maskName)
-	;
+//dropSynonymClause
+//	: (SYNONYM synonym)
+//	;
+//
+//dropTableClause
+//	: (TABLE tableName)
+//	;
+//
+//dropTablespaceClause
+//	: (TABLESPACE (databaseName DOT)? tablespaceName)
+//	;
+//
+//dropTriggerClause
+//	: (TRIGGER triggerName)
+//	;
+//
+//dropTrustedContextClause
+//	: (TRUSTED CONTEXT contextName)
+//	;
 
-dropPackageClause
-	: (PACKAGE packageDesignator)
-	;
-
-dropPermissionClause
-	: (PERMISSION permissionName)
-	;
-
-dropProcedureClause
-	: (PROCEDURE procedureName RESTRICT?)
-	;
-
-dropRoleClause
-	: (ROLE roleName RESTRICT?)
-	;
-
-dropSequenceClause
-	: (SEQUENCE sequenceName RESTRICT?)
-	;
-
-dropStogroupClause
-	: (STOGROUP stogroupName)
-	;
-
-dropSynonymClause
-	: (SYNONYM synonym)
-	;
-
-dropTableClause
-	: (TABLE tableName)
-	;
-
-dropTablespaceClause
-	: (TABLESPACE (databaseName DOT)? tablespaceName)
-	;
-
-dropTriggerClause
-	: (TRIGGER triggerName)
-	;
-
-dropTrustedContextClause
-	: (TRUSTED CONTEXT contextName)
-	;
-
-dropTypeClause
-	: (TYPE typeName RESTRICT?)
-	;
-
-dropVariableClause
-	: (VARIABLE variableName RESTRICT?)
-	;
-
-dropViewClause
-	: (VIEW viewName)
-	;
+//dropTypeClause
+//	: (TYPE typeName RESTRICT?)
+//	;
+//
+//dropVariableClause
+//	: (VARIABLE variableName RESTRICT?)
+//	;
+//
+//dropViewClause
+//	: (VIEW viewName)
+//	;
 
 packageDesignator
 	: (collectionID DOT packageName (VERSION? versionID)?)
@@ -2752,9 +2752,9 @@ externalNameOption1
 	: (EXTERNAL (NAME (externalProgramName | identifier))?)
 	;
 
-externalNameOption2
-	: (EXTERNAL NAME (externalProgramName | identifier))
-	;
+//externalNameOption2
+//	: (EXTERNAL NAME (externalProgramName | identifier))
+//	;
 
 dynamicResultSetOption
 	: (DYNAMIC? RESULT (SET |SETS) INTEGERLITERAL)
@@ -2772,9 +2772,9 @@ languageOption3
 	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI))
 	;
 
-languageOption4
-	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI | SQL))
-	;
+//languageOption4
+//	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI | SQL))
+//	;
 
 languageOption5
 	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI | REXX))
@@ -2808,13 +2808,13 @@ nullInputOption2
 	: ((CALLED ON NULL INPUT) | (NULL CALL))
 	;
 
-nullInputOption3
-	: ((RETURNS NULL ON NULL INPUT) | (CALLED ON NULL INPUT))
-	;
-
-nullInputOption4
-	: (CALLED ON NULL INPUT)
-	;
+//nullInputOption3
+//	: ((RETURNS NULL ON NULL INPUT) | (CALLED ON NULL INPUT))
+//	;
+//
+//nullInputOption4
+//	: (CALLED ON NULL INPUT)
+//	;
 
 debugOption
 	: ((DISALLOW | ALLOW | DISABLE) DEBUG MODE_)
@@ -2916,9 +2916,9 @@ specialRegistersOption
 	: ((INHERIT | DEFAULT) SPECIAL REGISTERS)
 	;
 
-specialRegistersOption2
-	: (INHERIT SPECIAL REGISTERS)
-	;
+//specialRegistersOption2
+//	: (INHERIT SPECIAL REGISTERS)
+//	;
 
 dispatchOption
 	: (STATIC DISPATCH)
@@ -3298,35 +3298,35 @@ multipleRowInsert
 	)
 	;
 
-regenerateClause
-	: (REGENERATE (USING APPLICATION COMPATIBILITY applCompatValue)?)
-	;
+//regenerateClause
+//	: (REGENERATE (USING APPLICATION COMPATIBILITY applCompatValue)?)
+//	;
 
 /*
 2022-11-04 Issue 125 Changed usingSpecification1 to usingBlock for consistency.
 */
-alterIndexOptions
-	:(
-	bufferpoolOption
-	| closeOption
-	| copyOption
-	| dssizeOption
-	| piecesizeOption
-	| usingBlock
-	| freeSpecification
-	| gbpcacheSpecification
-	| clusterOption
-	| paddedOption
-	| compressOption
-	| (ADD
-		((COLUMN
-		LPAREN
-		columnName (ASC | DESC | RANDOM)?
-		RPAREN)
-		| (INCLUDE COLUMN LPAREN columnName RPAREN))
-	  )
-	)
-	;
+//alterIndexOptions
+//	:(
+//	bufferpoolOption
+//	| closeOption
+//	| copyOption
+//	| dssizeOption
+//	| piecesizeOption
+//	| usingBlock
+//	| freeSpecification
+//	| gbpcacheSpecification
+//	| clusterOption
+//	| paddedOption
+//	| compressOption
+//	| (ADD
+//		((COLUMN
+//		LPAREN
+//		columnName (ASC | DESC | RANDOM)?
+//		RPAREN)
+//		| (INCLUDE COLUMN LPAREN columnName RPAREN))
+//	  )
+//	)
+//	;
 
 //
 bufferpoolOption
@@ -3414,15 +3414,15 @@ notAtomicPhrase
 /*
 2022-11-04 Issue 125 Changed usingSpecification1 to usingBlock for consistency.
 */
-alterIndexPartitionOptions
-	: (
-	ALTER partitionElement
-		(usingBlock
-		| freeSpecification+
-		| gbpcacheSpecification
-		| dssizeOption)*
-	)
-	;
+//alterIndexPartitionOptions
+//	: (
+//	ALTER partitionElement
+//		(usingBlock
+//		| freeSpecification+
+//		| gbpcacheSpecification
+//		| dssizeOption)*
+//	)
+//	;
 
 usingSpecification1
 	: (
@@ -3455,13 +3455,13 @@ partitionElement
 	)
 	;
 
-applCompatValue
-	: (functionLevel)
-	;
+//applCompatValue
+//	: (functionLevel)
+//	;
 
-functionLevel
-	: sqlidentifier
-	;
+//functionLevel
+//	: sqlidentifier
+//	;
 
 functionParameterType
 	: (functionDataType (AS LOCATOR)?)
@@ -3578,134 +3578,134 @@ sourceDataType
 	: procedureBuiltinType
 	;
 
-functionExternalOptionList
-	: (
-	externalNameOption2
-	| languageOption4
-	| parameterStyleOption2
-	| deterministicOption
-	| nullInputOption3
-	| sqlDataOption3
-	| externalActionOption
-	| packagePathOption
-	| scratchpadOption
-	| finalCallOption
-	| parallelOption2
-	| dbinfoOption
-	| cardinalityOption
-	| collectionIdOption
-	| wlmEnvironmentOption2
-	| asuTimeOption
-	| stayResidentOption
-	| programTypeOption
-	| securityOption
-	| stopAfterFailureOption
-	| runOptionsOption
-	| specialRegistersOption
-	| dispatchOption
-	| securedOption
-	)
-	;
-
-functionCompiledSqlScalarOptionList
-	: (
-	deterministicOption
-	| externalActionOption
-	| sqlDataOption4
-	| nullInputOption3
-	| dispatchOption
-	| parallelOption2
-	| debugOption
-	| schemaQualifierOption
-	| packageOwnerOption
-	| asuTimeOption
-	| specialRegistersOption
-	| wlmEnvironmentOption3
-	| currentDataOption
-	| degreeOption
-	| concurrentAccessOption
-	| dynamicRulesOption
-	| applicationEncodingOption
-	| explainOption
-	| immediateWriteOption
-	| isolationLevelOption
-	| opthintOption
-	| sqlPathOption
-	| queryAccelerationOption
-	| getAccelArchiveOption
-	| accelerationOption
-	| acceleratorOption
-	| releaseAtOption
-	| reoptOption
-	| validateOption
-	| roundingOption
-	| dateFormatOption
-	| decimalOption
-	| forUpdateOption
-	| timeFormatOption
-	| securedOption
-	| businessTimeSensitiveOption
-	| systemTimeSensitiveOption
-	| archiveSensitiveOption
-	| applcompatOption
-	| concentrateStatementsOption
-	)
-	;
-
-functionInlineSqlScalarOptionList
-	: (
-	deterministicOption
-	| externalActionOption
-	| sqlDataOption1
-	| dispatchOption
-	| nullInputOption4
-	| securedOption
-	)
-	;
-
-functionSqlTableOptionList
-	: (
-	deterministicOption
-	| externalActionOption
-	| sqlDataOption1
-	| nullInputOption4
-	| specialRegistersOption2
-	| dispatchOption
-	| cardinalityOption
-	| securedOption
-	)
-	;
+//functionExternalOptionList
+//	: (
+//	externalNameOption2
+//	| languageOption4
+//	| parameterStyleOption2
+//	| deterministicOption
+//	| nullInputOption3
+//	| sqlDataOption3
+//	| externalActionOption
+//	| packagePathOption
+//	| scratchpadOption
+//	| finalCallOption
+//	| parallelOption2
+//	| dbinfoOption
+//	| cardinalityOption
+//	| collectionIdOption
+//	| wlmEnvironmentOption2
+//	| asuTimeOption
+//	| stayResidentOption
+//	| programTypeOption
+//	| securityOption
+//	| stopAfterFailureOption
+//	| runOptionsOption
+//	| specialRegistersOption
+//	| dispatchOption
+//	| securedOption
+//	)
+//	;
+//
+//functionCompiledSqlScalarOptionList
+//	: (
+//	deterministicOption
+//	| externalActionOption
+//	| sqlDataOption4
+//	| nullInputOption3
+//	| dispatchOption
+//	| parallelOption2
+//	| debugOption
+//	| schemaQualifierOption
+//	| packageOwnerOption
+//	| asuTimeOption
+//	| specialRegistersOption
+//	| wlmEnvironmentOption3
+//	| currentDataOption
+//	| degreeOption
+//	| concurrentAccessOption
+//	| dynamicRulesOption
+//	| applicationEncodingOption
+//	| explainOption
+//	| immediateWriteOption
+//	| isolationLevelOption
+//	| opthintOption
+//	| sqlPathOption
+//	| queryAccelerationOption
+//	| getAccelArchiveOption
+//	| accelerationOption
+//	| acceleratorOption
+//	| releaseAtOption
+//	| reoptOption
+//	| validateOption
+//	| roundingOption
+//	| dateFormatOption
+//	| decimalOption
+//	| forUpdateOption
+//	| timeFormatOption
+//	| securedOption
+//	| businessTimeSensitiveOption
+//	| systemTimeSensitiveOption
+//	| archiveSensitiveOption
+//	| applcompatOption
+//	| concentrateStatementsOption
+//	)
+//	;
+//
+//functionInlineSqlScalarOptionList
+//	: (
+//	deterministicOption
+//	| externalActionOption
+//	| sqlDataOption1
+//	| dispatchOption
+//	| nullInputOption4
+//	| securedOption
+//	)
+//	;
+//
+//functionSqlTableOptionList
+//	: (
+//	deterministicOption
+//	| externalActionOption
+//	| sqlDataOption1
+//	| nullInputOption4
+//	| specialRegistersOption2
+//	| dispatchOption
+//	| cardinalityOption
+//	| securedOption
+//	)
+//	;
 
 /*
 Changed hard-coded debugOption and nullInputOption2
 to use their parser rule equivalents.  Hopefully this
 isn't too painful for anyone.
 */
-procedureOptionList
-	: (
-	dynamicResultSetOption
-	| parameterOption1
-	| externalNameOption2
-	| languageOption5
-	| parameterStyleOption3
-	| deterministicOption
-	| packagePathOption
-	| sqlDataOption3
-	| dbinfoOption
-	| collectionIdOption
-	| wlmEnvironmentOption2
-	| asuTimeOption
-	| stayResidentOption
-	| programTypeOption
-	| securityOption
-	| runOptionsOption
-	| commitOnReturnOption
-	| specialRegistersOption
-	| nullInputOption2
-	| stopAfterFailureOption
-	| debugOption
-	)
-	;
+//procedureOptionList
+//	: (
+//	dynamicResultSetOption
+//	| parameterOption1
+//	| externalNameOption2
+//	| languageOption5
+//	| parameterStyleOption3
+//	| deterministicOption
+//	| packagePathOption
+//	| sqlDataOption3
+//	| dbinfoOption
+//	| collectionIdOption
+//	| wlmEnvironmentOption2
+//	| asuTimeOption
+//	| stayResidentOption
+//	| programTypeOption
+//	| securityOption
+//	| runOptionsOption
+//	| commitOnReturnOption
+//	| specialRegistersOption
+//	| nullInputOption2
+//	| stopAfterFailureOption
+//	| debugOption
+//	)
+//	;
 
 /*
 Removed languageOption5 from createProcedureOptionList so a
@@ -3739,69 +3739,69 @@ createProcedureOptionList
 	)
 	;
 
-procedureSQLPLOptionList
-	: (
-	specificNameOption2
-	| deterministicOption
-	| sqlDataOption4
-	| nullInputOption2
-	| dynamicResultSetOption
-	| debugOption
-	| parameterOption2
-	| schemaQualifierOption
-	| packageOwnerOption
-	| asuTimeOption
-	| commitOnReturnOptionSQLPL
-	| specialRegistersOption
-	| wlmEnvironmentOption3
-	| deferPrepareOption
-	| currentDataOption
-	| degreeOption
-	| concurrentAccessOption
-	| dynamicRulesOption
-	| applicationEncodingOption
-	| explainOption
-	| immediateWriteOption
-	| isolationLevelOption
-	| keepDynamicOption
-	| opthintOption
-	| sqlPathOption
-	| queryAccelerationOption
-	| getAccelArchiveOption
-	| accelerationOption
-	| acceleratorOption
-	| releaseAtOption
-	| reoptOption
-	| validateOption
-	| roundingOption
-	| dateFormatOption
-	| decimalOption
-	| forUpdateOption
-	| timeFormatOption
-	| businessTimeSensitiveOption
-	| systemTimeSensitiveOption
-	| archiveSensitiveOption
-	| applcompatOption
-	| concentrateStatementsOption
-	| externalNameOption1    //deprecated as of db2 13
-	| fencedOption           //deprecated as of db2 13
-	| dbinfoOption           //for compatibility only
-	| collectionIdOption     //for compatibility only
-	| stopAfterFailureOption //for compatibility only
-	| stayResidentOption     //for compatibility only
-	| programTypeOption      //for compatibility only
-	| securityOption         //for compatibility only
-	| runOptionsOption       //for compatibility only
-	)
-	;
+//procedureSQLPLOptionList
+//	: (
+//	specificNameOption2
+//	| deterministicOption
+//	| sqlDataOption4
+//	| nullInputOption2
+//	| dynamicResultSetOption
+//	| debugOption
+//	| parameterOption2
+//	| schemaQualifierOption
+//	| packageOwnerOption
+//	| asuTimeOption
+//	| commitOnReturnOptionSQLPL
+//	| specialRegistersOption
+//	| wlmEnvironmentOption3
+//	| deferPrepareOption
+//	| currentDataOption
+//	| degreeOption
+//	| concurrentAccessOption
+//	| dynamicRulesOption
+//	| applicationEncodingOption
+//	| explainOption
+//	| immediateWriteOption
+//	| isolationLevelOption
+//	| keepDynamicOption
+//	| opthintOption
+//	| sqlPathOption
+//	| queryAccelerationOption
+//	| getAccelArchiveOption
+//	| accelerationOption
+//	| acceleratorOption
+//	| releaseAtOption
+//	| reoptOption
+//	| validateOption
+//	| roundingOption
+//	| dateFormatOption
+//	| decimalOption
+//	| forUpdateOption
+//	| timeFormatOption
+//	| businessTimeSensitiveOption
+//	| systemTimeSensitiveOption
+//	| archiveSensitiveOption
+//	| applcompatOption
+//	| concentrateStatementsOption
+//	| externalNameOption1    //deprecated as of db2 13
+//	| fencedOption           //deprecated as of db2 13
+//	| dbinfoOption           //for compatibility only
+//	| collectionIdOption     //for compatibility only
+//	| stopAfterFailureOption //for compatibility only
+//	| stayResidentOption     //for compatibility only
+//	| programTypeOption      //for compatibility only
+//	| securityOption         //for compatibility only
+//	| runOptionsOption       //for compatibility only
+//	)
+//	;
 
 versionOption
 	: (VERSION (identifier | literal))
 	;
 
-commitOnReturnOptionSQLPL
-	: (AUTONOMOUS | commitOnReturnOption)
-	;
+//commitOnReturnOptionSQLPL
+//	: (AUTONOMOUS | commitOnReturnOption)
+//	;
 
 schemaQualifierOption
 	: (QUALIFIER schemaName)
@@ -3827,9 +3827,9 @@ packageOwnerOption
 	: (PACKAGE OWNER authorizationName (AS (ROLE | USER))?)
 	;
 
-deferPrepareOption
-	: ((DEFER PREPARE) | (NODEFER PREPARE))
-	;
+//deferPrepareOption
+//	: ((DEFER PREPARE) | (NODEFER PREPARE))
+//	;
 
 degreeOption
 	: (DEGREE (ANY | INTEGERLITERAL))
@@ -3861,9 +3861,9 @@ isolationLevelOption
 	: (ISOLATION LEVEL (CS | RS | RR | UR))
 	;
 
-keepDynamicOption
-	: ((WITH | WITHOUT) KEEP DYNAMIC)
-	;
+//keepDynamicOption
+//	: ((WITH | WITHOUT) KEEP DYNAMIC)
+//	;
 
 opthintOption
 	: (OPTHINT NONNUMERICLITERAL)
@@ -3898,9 +3898,9 @@ accelerationOption
 	: (ACCELERATION WAITFORDATA NUMERICLITERAL)
 	;
 
-releaseAtOption
-	: (RELEASE AT (COMMIT | DEALLOCATE))
-	;
+//releaseAtOption
+//	: (RELEASE AT (COMMIT | DEALLOCATE))
+//	;
 
 businessTimeSensitiveOption
 	: (BUSINESS_TIME SENSITIVE (YES | NO))
@@ -4034,17 +4034,17 @@ keyLabelOption
 	: ((NO KEY LABEL) | (KEY LABEL keyLabelName))
 	;
 
-dataclasOption
-	: (DATACLAS dcName)
-	;
+//dataclasOption
+//	: (DATACLAS dcName)
+//	;
 
-mgmtclasOption
-	: (MGMTCLAS mcName)
-	;
+//mgmtclasOption
+//	: (MGMTCLAS mcName)
+//	;
 
-storclasOption
-	: (STORCLAS scName)
-	;
+//storclasOption
+//	: (STORCLAS scName)
+//	;
 
 //
 
@@ -4248,21 +4248,21 @@ createIndexOptionList
 	)
 	;
 
-createLobTablespaceOptionList
-	: (
-	inDatabaseOption
-	| bufferpoolOption
-	| closeOption
-	| compressOption
-	| defineOption
-	| dssizeOption
-	| gbpcacheSpecification
-	| lockmaxOption
-	| locksizeOption
-	| loggedOption
-	| usingSpecification2
-	)
-	;
+//createLobTablespaceOptionList
+//	: (
+//	inDatabaseOption
+//	| bufferpoolOption
+//	| closeOption
+//	| compressOption
+//	| defineOption
+//	| dssizeOption
+//	| gbpcacheSpecification
+//	| lockmaxOption
+//	| locksizeOption
+//	| loggedOption
+//	| usingSpecification2
+//	)
+//	;
 
 inDatabaseOption
 	: (IN databaseName)
@@ -4391,39 +4391,39 @@ includeColumnPhrase
 	: (INCLUDE LPAREN columnName (COMMA columnName)* RPAREN)
 	;
 
-userClause
-	: (
-	(ADD USE FOR userClauseAddOptions (COMMA userClauseAddOptions)*)
-	| (REPLACE USE FOR userClauseReplaceOptions (COMMA userClauseReplaceOptions)*)
-	| (DROP USE FOR userClauseDropOptions (COMMA userClauseDropOptions)*)
-	)
-	;
+//userClause
+//	: (
+//	(ADD USE FOR userClauseAddOptions (COMMA userClauseAddOptions)*)
+//	| (REPLACE USE FOR userClauseReplaceOptions (COMMA userClauseReplaceOptions)*)
+//	| (DROP USE FOR userClauseDropOptions (COMMA userClauseDropOptions)*)
+//	)
+//	;
 
-userClauseAddOptions
-	: (
-	(authorizationName useOptions?)
-	| (EXTERNAL SECURITY PROFILE profileName useOptions?)
-	| (PUBLIC (WITH | WITHOUT) AUTHENTICATION)
-	)
-	;
+//userClauseAddOptions
+//	: (
+//	(authorizationName useOptions?)
+//	| (EXTERNAL SECURITY PROFILE profileName useOptions?)
+//	| (PUBLIC (WITH | WITHOUT) AUTHENTICATION)
+//	)
+//	;
 
-userClauseReplaceOptions
-	: (userClauseAddOptions)
-	;
+//userClauseReplaceOptions
+//	: (userClauseAddOptions)
+//	;
 
-userClauseDropOptions
-	: (
-	(authorizationName)
-	| (EXTERNAL SECURITY PROFILE profileName)
-	| (PUBLIC)
-	)
-	;
+//userClauseDropOptions
+//	: (
+//	(authorizationName)
+//	| (EXTERNAL SECURITY PROFILE profileName)
+//	| (PUBLIC)
+//	)
+//	;
 
-useOptions
-	: (
-	(ROLE roleName)? (SECURITY LABEL seclabelName)? (WITH | WITHOUT) AUTHENTICATION
-	)
-	;
+//useOptions
+//	: (
+//	(ROLE roleName)? (SECURITY LABEL seclabelName)? (WITH | WITHOUT) AUTHENTICATION
+//	)
+//	;
 
 alterPartitionClause
 	: (
@@ -4484,9 +4484,9 @@ multipleColumnList
 	)
 	;
 
-parameterType
-	: (dataType (AS LOCATOR)?)
-	;
+//parameterType
+//	: (dataType (AS LOCATOR)?)
+//	;
 
 alterTableColumnDefinitionOptionList1
 	: (
@@ -4828,53 +4828,65 @@ Changed...
 ...because the literal must match the data type of the column
 it references.  Found by Martijn Rutte 2022-01-09.
 */
-partitionLimitKey
-	: (literal | MAXVALUE | MINVALUE)
-	;
+//partitionLimitKey
+//	: (literal | MAXVALUE | MINVALUE)
+//	;
 
 /*
 The partitionHashSpace rule can be before the INCLUSIVE token in
 the create table statement, or after the INCLUSIVE token in the
 alter table statement.  Also, it's deprecated as of Db2 12.
 */
-partitioningPhrase
-	: (ENDING AT? LPAREN partitionLimitKey (COMMA partitionLimitKey)* RPAREN partitionHashSpace? INCLUSIVE? partitionHashSpace?)
-	;
+//partitioningPhrase
+//	: (ENDING AT? LPAREN partitionLimitKey (COMMA partitionLimitKey)* RPAREN partitionHashSpace? INCLUSIVE? partitionHashSpace?)
+//	;
 
 //deprecated as of Db2 12
 //#KMG
-partitionHashSpace
-	: (HASH SPACE INTEGERLITERAL? sqlidentifier)
-	;
+//partitionHashSpace
+//	: (HASH SPACE INTEGERLITERAL? sqlidentifier)
+//	;
 
 //deprecated as of Db2 12
 //#KMG
-alterHashOrganization
-	: (
-	(ADD ORGANIZE BY HASH UNIQUE LPAREN columnName (COMMA columnName)* RPAREN HASH SPACE INTEGERLITERAL? sqlidentifier)
-	| (ALTER ORGANIZATION SET HASH SPACE INTEGERLITERAL? sqlidentifier)
-	)
-	;
+//alterHashOrganization
+//	: (
+//	(ADD ORGANIZE BY HASH UNIQUE LPAREN columnName (COMMA columnName)* RPAREN HASH SPACE INTEGERLITERAL? sqlidentifier)
+//	| (ALTER ORGANIZATION SET HASH SPACE INTEGERLITERAL? sqlidentifier)
+//	)
+//	;
 
 partitioningClauseElement
 	: (
-	PARTITION INTEGERLITERAL partitioningPhrase
+	(PARTITION partitionName=identifier)? boundarySpec partitionTablespaceOptions?
+	| boundarySpec EVERY (
+	LPAREN literal durationSuffix? RPAREN
+	| literal durationSuffix?
+	)
 	)
 	;
 
-partitionClause
-	: (
-	partitioningPhrase | partitionHashSpace
-	)
-	;
+partitionTablespaceOptions
+    : (IN tablespaceName)
+      (INDEX IN tablespaceName (LONG IN tablespaceName)?)?
+    |
+     (IN tablespaceName)?
+           (INDEX IN tablespaceName (LONG IN tablespaceName)?)
+    ;
 
-rotatePartitionClause
-	: (partitioningPhrase RESET)
-	;
+//partitionClause
+//	: (
+//	partitioningPhrase | partitionHashSpace
+//	)
+//	;
+//
+//rotatePartitionClause
+//	: (partitioningPhrase RESET)
+//	;
 
-extraRowOption
-	: (ON DELETE ADD EXTRA ROW)
-	;
+//extraRowOption
+//	: (ON DELETE ADD EXTRA ROW)
+//	;
 
 materializedQueryDefinition
 	: (
@@ -4882,9 +4894,9 @@ materializedQueryDefinition
 	)
 	;
 
-materializedQueryAlteration
-	: (SET refreshableTableOptionsList+)
-	;
+//materializedQueryAlteration
+//	: (SET refreshableTableOptionsList+)
+//	;
 
 refreshableTableOptions
 	: (dataInitiallyDeferredPhrase refreshDeferredPhrase refreshableTableOptionsList*)
@@ -4905,9 +4917,9 @@ refreshableTableOptionsList
 	)
 	;
 
-materializedQueryTableAlteration
-	: (SET refreshableTableOptionsList+)
-	;
+//materializedQueryTableAlteration
+//	: (SET refreshableTableOptionsList+)
+//	;
 
 periodDefinition
 	: (
@@ -6333,9 +6345,9 @@ numeric
     | INTEGERLITERAL
     ;
 
-ccsidValue
-	: INTEGERLITERAL
-	;
+//ccsidValue
+//	: INTEGERLITERAL
+//	;
 
 columnName
 	: (((correlationName | tableName) DOT)? identifier1)
@@ -6378,25 +6390,25 @@ tableName
 	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
 	;
 
-alterTableName
-	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
-	;
+//alterTableName
+//	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
+//	;
 
 auxTableName
 	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
 	;
 
-historyTableName
-	: tableName
-	;
+//historyTableName
+//	: tableName
+//	;
 
-cloneTableName
-	: tableName
-	;
+//cloneTableName
+//	: tableName
+//	;
 
-archiveTableName
-	: tableName
-	;
+//archiveTableName
+//	: tableName
+//	;
 
 viewName
 	: ((locationName DOT schemaName DOT) | (schemaName DOT))? identifier correlationName?
@@ -6442,9 +6454,9 @@ constraintName
 	: identifier
 	;
 
-routineVersionID
-	: (identifier | NUMERICLITERAL | INTEGERLITERAL) (DOT? (identifier | NUMERICLITERAL | INTEGERLITERAL))*
-	;
+//routineVersionID
+//	: (identifier | NUMERICLITERAL | INTEGERLITERAL) (DOT? (identifier | NUMERICLITERAL | INTEGERLITERAL))*
+//	;
 
 versionID
 	: (identifier | NUMERICLITERAL | INTEGERLITERAL) (DOT? (identifier | NUMERICLITERAL | INTEGERLITERAL))*
@@ -6542,21 +6554,21 @@ stogroupName
 	: identifier
 	;
 
-dcName
-	: identifier
-	;
+//dcName
+//	: identifier
+//	;
 
-mcName
-	: identifier
-	;
+//mcName
+//	: identifier
+//	;
 
-scName
-	: identifier
-	;
+//scName
+//	: identifier
+//	;
 
-volumeID
-	: identifier
-	;
+//volumeID
+//	: identifier
+//	;
 
 keyLabelName
 	: (identifier | NONNUMERICLITERAL)
@@ -6610,9 +6622,9 @@ transitionVariableName
 	: columnName
 	;
 
-synonym
-	: identifier
-	;
+//synonym
+//	: identifier
+//	;
 
 /*
 Trigger variables, global variables, SQL variables, all
@@ -6841,9 +6853,9 @@ associativeArrayExpression
 	: (expression)
 	;
 
-comparison
-	: columnName comparisonOperator (columnName | literal)
-	;
+//comparison
+//	: columnName comparisonOperator (columnName | literal)
+//	;
 
 whereClause
 	: WHERE searchCondition

@@ -1079,6 +1079,7 @@ POWER:                               'POWER';
 QUOTE:                               'QUOTE';
 RADIANS:                             'RADIANS';
 RAND:                                'RAND';
+RANDOM:                              'RANDOM';
 RANDOM_BYTES:                        'RANDOM_BYTES';
 RELEASE_LOCK:                        'RELEASE_LOCK';
 REVERSE:                             'REVERSE';
@@ -1319,8 +1320,8 @@ STRING_USER_NAME:                    (
                                      );
 IP_ADDRESS:                          (
                                        [0-9]+ '.' [0-9.]+
-                                       | [0-9A-F:]+ ':' [0-9A-F:]+
-                                     );
+                                        | [0-9A-F]* ':' [0-9A-F]* ':' [0-9A-F:]+
+                                      );
 LOCAL_ID:                               '@'
                                      (
                                         [A-Z0-9._$]+
