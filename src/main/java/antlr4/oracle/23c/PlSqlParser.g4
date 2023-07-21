@@ -30,7 +30,7 @@ options {
 }
 
 sql_script
-    : ((unit_statement | sql_plus_command) SEMICOLON?)* EOF
+    : sql_plus_command_no_semicolon? ((sql_plus_command | unit_statement) (SEMICOLON '/'? (sql_plus_command | unit_statement))* SEMICOLON? '/'?) EOF
     ;
 
 unit_statement
@@ -493,7 +493,7 @@ annotations_clause
 // Function DDLs
 
 drop_function //区别：多了IF EXISTS
-    : DROP FUNCTION (IF EXISTS)? function_name ';'
+    : DROP FUNCTION (IF EXISTS)? function_name
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-FLASHBACK-ARCHIVE.html
@@ -519,7 +519,6 @@ alter_function //区别：多了IF EXISTS
     | EDITIONABLE
     | NONEDITIONABLE
     )
-    ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-JAVA.html
@@ -683,21 +682,21 @@ drop_lockdown_profile
 // Package DDLs
 
 drop_package //区别：多了IF EXISTS
-    : DROP PACKAGE (IF EXISTS)? BODY? (schema_object_name '.')? package_name ';'
+    : DROP PACKAGE (IF EXISTS)? BODY? (schema_object_name '.')? package_name
     ;
 
 alter_package //区别：多了IF EXISTS
     : ALTER PACKAGE (IF EXISTS)? package_name (COMPILE DEBUG? (PACKAGE | BODY | SPECIFICATION)? compiler_parameters_clause* (REUSE SETTINGS)?
     | editionable_noneditionable
-    ) ';'
+    )
     ;
 
 create_package //区别：多了IF NOT EXISTS
-    : CREATE (OR REPLACE)? editionable_noneditionable? PACKAGE (IF NOT EXISTS)? (schema_object_name '.')? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name? ';'
+    : CREATE (OR REPLACE)? editionable_noneditionable? PACKAGE (IF NOT EXISTS)? (schema_object_name '.')? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name?
     ;
 
 create_package_body //区别：多了IF NOT EXISTS
-    : CREATE (OR REPLACE)? editionable_noneditionable? PACKAGE BODY (IF NOT EXISTS)? (schema_object_name '.')? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name? ';'
+    : CREATE (OR REPLACE)? editionable_noneditionable? PACKAGE BODY (IF NOT EXISTS)? (schema_object_name '.')? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name?
     ;
 
 // Create Package Specific Clauses
@@ -1083,13 +1082,13 @@ drop_pmem_filestore
 // Procedure DDLs
 
 drop_procedure //区别：多了IF EXISTS
-    : DROP PROCEDURE (IF EXISTS)? procedure_name ';'
+    : DROP PROCEDURE (IF EXISTS)? procedure_name
     ;
 
 alter_procedure //区别：多了IF EXISTS
     : ALTER PROCEDURE (IF EXISTS)? procedure_name (COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)?
     | editionable_noneditionable
-    ) ';'
+    )
     ;
 
 function_body
@@ -1152,7 +1151,7 @@ drop_rollback_segment
     ;
 
 drop_role
-    : DROP ROLE role_name ';'
+    : DROP ROLE role_name
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/create-pmem-filestore.html
@@ -1179,18 +1178,18 @@ create_rollback_segment
 // Trigger DDLs
 
 drop_trigger //区别：多了IF EXISTS
-    : DROP TRIGGER (IF EXISTS)? trigger_name ';'
+    : DROP TRIGGER (IF EXISTS)? trigger_name
     ;
 
 alter_trigger //区别：多了IF EXISTS
     : ALTER TRIGGER (IF EXISTS)? alter_trigger_name=trigger_name
-      (enable_or_disable | RENAME TO rename_trigger_name=trigger_name | COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)? | editionable_noneditionable) ';'
+      (enable_or_disable | RENAME TO rename_trigger_name=trigger_name | COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)? | editionable_noneditionable)
     ;
 
 create_trigger //区别：多了IF NOT EXISTS default_collation_clause
     : CREATE ( OR REPLACE )? TRIGGER (IF NOT EXISTS)? trigger_name default_collation_clause?
       (simple_dml_trigger | compound_dml_trigger | non_dml_trigger)
-      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body ';'
+      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body
     ;
 
 trigger_follows_clause
@@ -1234,10 +1233,10 @@ compound_trigger_block
     ;
 
 timing_point_section
-    : bk=BEFORE STATEMENT IS trigger_block BEFORE STATEMENT ';'
-    | bk=BEFORE EACH ROW IS trigger_block BEFORE EACH ROW ';'
-    | ak=AFTER STATEMENT IS trigger_block AFTER STATEMENT ';'
-    | ak=AFTER EACH ROW IS trigger_block AFTER EACH ROW ';'
+    : bk=BEFORE STATEMENT IS trigger_block BEFORE STATEMENT
+    | bk=BEFORE EACH ROW IS trigger_block BEFORE EACH ROW
+    | ak=AFTER STATEMENT IS trigger_block AFTER STATEMENT
+    | ak=AFTER EACH ROW IS trigger_block AFTER EACH ROW
     ;
 
 non_dml_event
@@ -1290,7 +1289,7 @@ referencing_element
 // DDLs
 
 drop_type //区别：多了IF EXISTS
-    : DROP TYPE BODY? (IF EXISTS)? type_name (FORCE | VALIDATE)? ';'
+    : DROP TYPE BODY? (IF EXISTS)? type_name (FORCE | VALIDATE)?
     ;
 
 alter_type //区别：多了IF EXISTS 结构不一样
@@ -1357,7 +1356,7 @@ dependent_exceptions_part
     ;
 
 create_type //区别：多了IF NOT EXISTS
-    : CREATE (OR REPLACE)? TYPE ( (IF NOT EXISTS)? type_definition | type_body) ';'
+    : CREATE (OR REPLACE)? TYPE ( (IF NOT EXISTS)? type_definition | type_body)
     ;
 
 // Create Type Specific Clauses
@@ -1496,11 +1495,11 @@ type_elements_parameter
 // Sequence DDLs
 
 drop_sequence //区别：多了IF EXISTS
-    : DROP SEQUENCE (IF EXISTS)? sequence_name ';'
+    : DROP SEQUENCE (IF EXISTS)? sequence_name
     ;
 
 alter_sequence //区别：多了IF EXISTS
-    : ALTER SEQUENCE (IF EXISTS)? sequence_name sequence_spec+ ';'
+    : ALTER SEQUENCE (IF EXISTS)? sequence_name sequence_spec+
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-SESSION.html
@@ -1535,7 +1534,7 @@ create_schema
     ;
 
 create_sequence //区别：多了IF NOT EXISTS
-    : CREATE SEQUENCE (IF NOT EXISTS)? sequence_name (sequence_start_clause | sequence_spec)* ';'
+    : CREATE SEQUENCE (IF NOT EXISTS)? sequence_name (sequence_start_clause | sequence_spec)*
     ;
 
 // Common Sequence
@@ -1777,7 +1776,11 @@ privilege_audit_clause
     ;
 
 action_audit_clause
-    : (standard_actions | component_actions)+
+    : (standard_actions | component_actions | system_actions)+
+    ;
+
+system_actions
+    : ACTIONS system_privilege (',' system_privilege)*
     ;
 
 standard_actions
@@ -2005,7 +2008,6 @@ create_index //区别：多了IF NOT EXISTS index_ilm_clause
        ON (cluster_index_clause | table_index_clause | bitmap_join_index_clause)
        (USABLE | UNUSABLE)?
        ((DEFERRED | IMMEDIATE) INVALIDATION)?
-       ';'
     ;
 
 cluster_index_clause
@@ -2130,7 +2132,7 @@ indextype
 
 //https://docs.oracle.com/cd/E11882_01/server.112/e41084/statements_1010.htm#SQLRF00805
 alter_index //区别：多了IF EXISTS index_ilm_clause
-    : ALTER INDEX (IF EXISTS)? index_name index_ilm_clause? (alter_index_ops_set1 | alter_index_ops_set2) ';'
+    : ALTER INDEX (IF EXISTS)? index_name index_ilm_clause? (alter_index_ops_set1 | alter_index_ops_set2)
     ;
 
 index_ilm_clause
@@ -2339,7 +2341,7 @@ create_user //区别：多了IF NOT EXISTS
         | user_editions_clause
         | container_clause
         | enable_or_disable DICTIONARY PROTECTION
-        )+ ';'
+        )+
     ;
 
 // The standard clauses only permit one user per statement.
@@ -2363,8 +2365,7 @@ alter_user //区别：多了IF EXISTS NO AUTHENTICATION
         | enable_or_disable DICTIONARY PROTECTION
         | container_data_clause
         )+
-      ';'
-      | user_object_name (',' user_object_name)* proxy_clause ';'
+      | user_object_name (',' user_object_name)* proxy_clause
     ;
 
 drop_user //区别：多了IF EXISTS
@@ -2456,7 +2457,6 @@ administer_key_management
                                 | secret_management_clauses
                                 | zero_downtime_software_patching_clauses
                                 )
-        ';'
     ;
 
 keystore_management_clauses
@@ -2689,7 +2689,6 @@ analyze
       | LIST CHAINED ROWS into_clause1?
       | DELETE SYSTEM? STATISTICS
       )
-      ';'
     ;
 
 partition_extention_clause
@@ -2746,7 +2745,6 @@ associate_statistics
     : ASSOCIATE STATISTICS
         WITH (column_association | function_association)
         storage_table_clause?
-      ';'
     ;
 
 column_association
@@ -2833,7 +2831,6 @@ audit_unified
     (',' CONTEXT NAMESPACE oracle_namespace ATTRIBUTES attribute_name (',' attribute_name)* )*
     ( BY user_object_name (',' user_object_name)*)?
     )
-      ';'
     ;
 
 noaudit_unified
@@ -2843,7 +2840,6 @@ noaudit_unified
     (',' CONTEXT NAMESPACE oracle_namespace ATTRIBUTES attribute_name (',' attribute_name)* )*
     ( BY user_object_name (',' user_object_name)*)?
     )
-      ';'
     ;
 
 by_users_with_roles
@@ -2858,7 +2854,6 @@ audit_traditional
             )
         (BY (SESSION | ACCESS) )? (WHENEVER NOT? SUCCESSFUL)?
         audit_container_clause?
-      ';'
     ;
 
 audit_direct_path
@@ -2976,7 +2971,7 @@ sql_statement_shortcut
     ;
 
 drop_index //区别：多了IF EXISTS
-    : DROP INDEX (IF EXISTS)? index_name ONLINE? FORCE? ((DEFERRED | IMMEDIATE) INVALIDATION)? ';'
+    : DROP INDEX (IF EXISTS)? index_name ONLINE? FORCE? ((DEFERRED | IMMEDIATE) INVALIDATION)?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DISASSOCIATE-STATISTICS.html
@@ -3043,7 +3038,7 @@ noaudit_statement
     ;
 
 rename_object
-    : RENAME object_name TO object_name ';'
+    : RENAME object_name TO object_name
     ;
 
 grant_statement
@@ -3150,7 +3145,6 @@ create_directory //区别：多了IF NOT EXISTS
     : CREATE (OR REPLACE)? DIRECTORY (IF NOT EXISTS)? directory_name
         (SHARING '=' (METADATA | NONE))?
         AS directory_path
-      ';'
     ;
 
 directory_name
@@ -3179,7 +3173,6 @@ alter_library //区别：多了IF EXISTS
        ( COMPILE library_debug? compiler_parameters_clause* (REUSE SETTINGS)?
        | editionable_noneditionable
        )
-     ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-JAVA.html
@@ -3341,7 +3334,6 @@ alter_view //区别：多了IF EXISTS annotations_clause
        | editionable_noneditionable
        | annotations_clause
        )
-      ';'
     ;
 
 editionable_noneditionable
@@ -3469,7 +3461,6 @@ alter_tablespace //区别：多了IF EXISTS alter_tablespace_encryption lost_wri
        | alter_tablespace_encryption
        | lost_write_protection
        )
-     ';'
     ;
 
 inmemory_clause
@@ -3519,7 +3510,6 @@ create_tablespace
         | temporary_tablespace_clause
         | undo_tablespace_clause
         )
-      ';'
     ;
 
 permanent_tablespace_clause //区别：多了IF NOT EXISTS
@@ -3705,7 +3695,6 @@ alter_materialized_view //区别：多了IF EXISTS alter_table_partitioning eval
        | COMPILE
        | CONSIDER FRESH
        )?
-     ';'
     ;
 
 alter_mv_option1 //区别：删除注释
@@ -3751,7 +3740,6 @@ alter_materialized_view_log //区别：多了IF EXISTS
        | cache_or_nocache
        )?
        mv_log_augmentation? mv_log_purge_clause? for_refresh_clause?
-      ';'
     ;
 add_mv_log_column_clause
     : ADD '(' column_name ')'
@@ -4007,7 +3995,6 @@ create_materialized_view //区别：多了IF NOT EXISTS
         ( (DISABLE | ENABLE) QUERY REWRITE unusable_editions_clause?)?
         ( (DISABLE | ENABLE) QUERY REFRESH )?
         AS select_only_statement
-        ';'
     ;
 
 scoped_table_ref_constraint
@@ -4036,7 +4023,6 @@ create_mv_refresh
 
 drop_materialized_view //区别：多了IF EXISTS
     : DROP MATERIALIZED VIEW (IF EXISTS)? tableview_name (PRESERVE TABLE)?
-        ';'
     ;
 
 create_context
@@ -4044,7 +4030,6 @@ create_context
            (INITIALIZED (EXTERNALLY | GLOBALLY)
            | ACCESSED GLOBALLY
            )?
-      ';'
     ;
 
 oracle_namespace
@@ -4062,7 +4047,6 @@ create_cluster //区别：多了IF NOT EXISTS
           )*
           parallel_clause? (ROWDEPENDENCIES | NOROWDEPENDENCIES)?
           (CACHE | NOCACHE)? cluster_range_partitions
-          ';'
     ;
 
 cluster_range_partitions
@@ -4216,7 +4200,6 @@ create_table //区别：多了IF NOT EXISTS
         (',' DOMAIN? (domain_owner=id_expression '.')? domain column_list)?
         (USING column_list)?
         (REFRESH INTERVAL numeric (SECOND | MINUTE | HOUR) | SYNCHRONOUS)?
-      ';'
     ;
 
 xmltype_table
@@ -4879,11 +4862,11 @@ upgrade_table_clause
     ;
 
 truncate_table //区别：结构复杂了
-    : TRUNCATE TABLE tableview_name ( (PRESERVE | PURGE) MATERIALIZED VIEW LOG )? ( (DROP ALL? | REUSE) STORAGE )? CASCADE? SEMICOLON
+    : TRUNCATE TABLE tableview_name ( (PRESERVE | PURGE) MATERIALIZED VIEW LOG )? ( (DROP ALL? | REUSE) STORAGE )? CASCADE?
     ;
 
 drop_table //区别：多了IF EXISTS
-    : DROP TABLE (IF EXISTS)? tableview_name (CASCADE CONSTRAINTS)? PURGE? SEMICOLON
+    : DROP TABLE (IF EXISTS)? tableview_name (CASCADE CONSTRAINTS)? PURGE?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-TABLESPACE.html
@@ -4903,7 +4886,7 @@ including_contents_clause
     ;
 
 drop_view //区别：多了IF EXISTS
-    : DROP VIEW (IF EXISTS)? tableview_name (CASCADE CONSTRAINT)? SEMICOLON
+    : DROP VIEW (IF EXISTS)? tableview_name (CASCADE CONSTRAINT)?
     ;
 
 comment_on_column
@@ -4938,7 +4921,7 @@ alter_synonym //区别：多了IF EXISTS
 create_synonym //区别：多了IF NOT EXISTS
     // Synonym's schema cannot be specified for public synonyms
     : CREATE (OR REPLACE)? PUBLIC SYNONYM (IF NOT EXISTS)? synonym_name sharing_clause? FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
-    | CREATE (OR REPLACE)? SYNONYM (IF NOT EXISTS)? (schema_name PERIOD)? synonym_name sharing_clause? FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
+    | CREATE (OR REPLACE)? SYNONYM (IF NOT EXISTS)? (schema_name PERIOD)? synonym_name sharing_clause? FOR (schema_name PERIOD)? schema_object_name (AT_SIGN (schema_name PERIOD)? link_name)?
     ;
 
 drop_synonym //区别：多了IF EXISTS
@@ -5135,7 +5118,6 @@ alter_cluster //区别：多了IF EXISTS MODIFY PARTITION
         | cache_or_nocache
         )+
         parallel_clause?
-        ';'
     ;
 
 drop_analytic_view // 区别：多了IF EXISTS
@@ -5220,7 +5202,6 @@ alter_database
        | property_clauses
        | replay_upgrade_clauses
        )
-      ';'
     ;
 
 database_clause
@@ -5732,7 +5713,6 @@ alter_table //区别：多了IF EXISTS 等
       | blockchain_table_clauses
       )
       ((enable_disable_clause | enable_or_disable ( TABLE LOCK | ALL TRIGGERS | CONTAINER_MAP | CONTAINERS_DEFAULT ) )+)?
-      ';'
     ;
 
 memoptimize_read_write_clause
@@ -6036,13 +6016,19 @@ drop_column_clause
 
 modify_column_clauses
     : MODIFY ('(' modify_col_properties (',' modify_col_properties)* ')'
+             |'(' modify_col_visibility (',' modify_col_visibility)* ')'
              | modify_col_properties
+             | modify_col_visibility
              | modify_col_substitutable
              )
     ;
 
 modify_col_properties
     : column_name datatype? (DEFAULT expression)? (ENCRYPT encryption_spec | DECRYPT)? inline_constraint* lob_storage_clause? //TODO alter_xmlschema_clause
+    ;
+
+modify_col_visibility
+    : column_name (VISIBLE | INVISIBLE)
     ;
 
 modify_col_substitutable
@@ -6375,7 +6361,7 @@ primary_key_clause
 // Anonymous PL/SQL code block
 
 anonymous_block
-    : (DECLARE seq_of_declare_specs)? BEGIN seq_of_statements (EXCEPTION exception_handler+)? END SEMICOLON
+    : (DECLARE seq_of_declare_specs)? BEGIN seq_of_statements (EXCEPTION exception_handler+)? END
     ;
 
 // Common DDL Clauses
@@ -6603,7 +6589,7 @@ return_statement
     ;
 
 call_statement
-    : CALL? routine_name function_argument? (INTO bind_variable)?
+    : CALL? routine_name function_argument? ('.' routine_name function_argument?)* (INTO bind_variable)?
     ;
 
 pipe_row_statement
@@ -6711,7 +6697,7 @@ set_role
 // https://docs.oracle.com/cd/E18283_01/server.112/e17118/statements_4010.htm#SQLRF01110
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/COMMIT.html
 commit_statement //区别：结构不一样
-    : COMMIT WORK?
+    : COMMIT WORK? write_clause?
       ( (COMMENT CHAR_STRING)? write_clause?
       | FORCE ( CHAR_STRING (',' numeric)?
 //              | CORRUPT_XID CHAR_STRING
@@ -7737,15 +7723,20 @@ xmlserialize_param_ident_part
 
 // SqlPlus
 
+sql_plus_command_no_semicolon
+    : set_command
+    ;
 sql_plus_command
-    : '/'
-    | EXIT
+    : EXIT
     | PROMPT_MESSAGE
     | SHOW (ERR | ERRORS)
-//    | START_CMD
     | whenever_command
-    | set_command
     | timing_command
+    | start_command
+    ;
+
+start_command
+    : START_CMD id_expression PERIOD (SQL | FILE_EXT)
     ;
 
 whenever_command

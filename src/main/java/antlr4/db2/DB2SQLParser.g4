@@ -71,125 +71,65 @@ sqlStatement
 	| alterIndexStatement
 	| alterMaskStatement
 	| alterMethodStatement
-//	| alterModuleStatement
-//	| alterNicknameStatement
 	| alterPackageStatement
 	| alterPermissionStatement
 	| alterProcedureStatement
-//	| alterProcedureSQLPLStatement
-//    | alterSchemaStatement
-//    | alterSecurityLabelComponentStatement
-//    | alterSecurityPolicyStatement
 	| alterSequenceStatement
-//	| alterServerStatement
-//	| alterServiceClassStatement
 	| alterStogroupStatement
 	| alterTableStatement
-	| alterTablespaceStatement//TODO
-//	| alterThresholdStatement
+	| alterTablespaceStatement
 	| alterTriggerStatement
 	| alterTrustedContextStatement
-//	| alterTypeStatement
-//	| alterUsageListStatement
-//	| alterUserMappingStatement
 	| alterViewStatement
-//	| alterWorkActionSetStatement
-//	| alterWorkClassSetStatement
-//	| alterWorkloadStatement
-//	| alterWrapperStatement
-//    | alterXsrobjectStatement
 	| associateLocatorsStatement
-//	| auditStatement
 	| beginDeclareSectionStatement
 	| callStatement
-//	| caseStatement
 	| closeStatement
 	| commitStatement
 	| commentStatement
 	| connectStatement
 	| createAliasStatement
-//	| createAuxiliaryTableStatement
-//    | createAuditPolicyStatement
-//    | createBufferpoolStatement
 	| createDatabaseStatement
-//	| createDatabasePartitionGroupStatement
-//	| createEventMonitorStatement
 	| createFunctionStatement
-//	| createFunctionMappingStatement
 	| createGlobalTemporaryTableStatement
-//	| createHistogramTemplateStatement
 	| createIndexStatement
-//	| createIndexExtensionStatement
-//	| createLobTablespaceStatement
     | createMaskStatement
-//    | createMethodStatement
-//    | createModuleStatement
-//    | createNicknameStatement
 	| createPermissionStatement
 	| createProcedureStatement
-//	| createProcedureSQLPLStatement
 	| createRoleStatement
-//	| createSchemaStatement
-//	| createSecurityLabelComponentStatement
-//	| createSecurityLabelStatement
-//	| createSecurityPolicyStatement
 	| createRoleStatement
 	| createSequenceStatement
-//	| createServerStatement
-//	| createServiceClassStatement
-//	| createStogroupStatement
-//    | createSynonymStatement
-	| createTableStatement//TODO
-	| createTablespaceStatement//TODO
-//	| createThresholdStatement
-//  | createTransformStatement
+	| createTableStatement
+	| createTablespaceStatement
 	| createTriggerStatement
 	| createTrustedContextStatement
 	| createTypeArrayStatement
 	| createTypeDistinctStatement
-//	| createTypeMappingStatement
-//    | createUsageListStatement
-//    | createUserMappingStatement
 	| createVariableStatement
 	| createViewStatement
-//	| createWorkActionSetStatement
-//	| createWorkClassSetStatement
-//	| createWorkloadStatement
-//	| createWrapperStatement
 	| declareCursorStatement
 	| declareGlobalTemporaryTableStatement
-//	| declareTableStatement
-//	| declareVariableStatement
-//	| declareStatementStatement
 	| deleteStatement
 	| describeStatement
 	| disconnectStatement
 	| dropStatement
 	| endDeclareSectionStatement
-//	| exchangeStatement
 	| executeStatement
 	| executeImmediateStatement
 	| explainStatement
 	| fetchStatement
-//	| flushBufferpoolsStatement
-//	| flushEventMonitorStatement
-//	| flushFederatedCacheStatement
-//    | forStatement
 	| freeLocatorStatement
 	| getDiagnosticsStatement
 	| grantStatement
-//	| holdLocatorStatement
 	| includeStatement
 	| insertStatement
 	| lockTableStatement
 	| mergeStatement
 	| openStatement
 	| prepareStatement
-//	| refreshTableStatement
 	| releaseSavepointStatement
 	| releaseConnectionStatement
 	| renameStatement
-//	| renameStogroupStatement
     | reorgTableStatement
     | reorgIndexStatement
     | reorgchkStatement
@@ -241,14 +181,6 @@ holdability
 returnability
 	: ((WITHOUT RETURN) | (WITH RETURN ((TO CALLER) | (TO CLIENT))?))
 	;
-
-//rowsetPositioning
-//	: ((WITHOUT ROWSET POSITIONING) | (WITH ROWSET POSITIONING))
-//	;
-
-//notNullPhrase
-//	: ((NOT NULL) | (NOT NULL WITH DEFAULT))
-//	;
 
 allocateCursorStatement
 	: (ALLOCATE cursorName CURSOR FOR RESULT SET rsLocatorVariable)
@@ -317,68 +249,6 @@ alterFunctionStatement
 	)+
 	;
 
-//alterFunctionStatementExternal
-//	: (
-//	ALTER
-//	functionDesignator
-//	functionExternalOptionList+
-//	)
-//	;
-//
-//alterFunctionStatementCompiledSqlScalar
-//	: (
-//	ALTER
-//	functionDesignator
-//		((ALTER? alterWhichFunction1? functionCompiledSqlScalarOptionList+)
-//		| (REPLACE alterWhichFunction2?
-//			functionCompiledSqlScalarRoutineSpecification)
-//		| (ADD versionOption
-//			functionCompiledSqlScalarRoutineSpecification)
-//		| (ACTIVATE versionOption)
-//		| (REGENERATE alterWhichFunction2 applicationCompatibilityPhrase?)
-//		| (DROP versionOption)
-//		)
-//	)
-//	;
-//
-//alterWhichFunction1
-//	: ((ACTIVE VERSION) | (ALL VERSIONS) | versionOption)
-//	;
-//
-//alterWhichFunction2
-//	: ((ACTIVE VERSION) | versionOption)
-//	;
-//
-//functionCompiledSqlScalarRoutineSpecification
-//	: (
-//	LPAREN (parameterDeclaration2 (COMMA parameterDeclaration2)*)? RPAREN
-//	functionReturnsClause
-//	functionCompiledSqlScalarOptionList*
-//	sqlRoutineBody
-//	)
-//	;
-//
-//alterFunctionStatementInlineSqlScalar
-//	: (
-//	ALTER
-//	functionDesignator
-//	functionInlineSqlScalarOptionList+
-//	)
-//	;
-//
-//alterFunctionStatementSqlTable
-//	: (
-//	ALTER
-//	functionDesignator
-//	RESTRICT
-//	functionSqlTableOptionList+
-//	)
-//	;
-//
-//functionReturnsClause
-//	: (RETURNS functionDataType)
-//	;
-
 functionDesignator
 	: (
 	((FUNCTION functionName (LPAREN functionParameterType (COMMA functionParameterType)* RPAREN)?) 
@@ -391,17 +261,13 @@ alterHistogramTemplateStatement
     ;
 
 alterIndexStatement
-	: //(
+	:
 	ALTER INDEX indexName COMPRESS (NO | YES)
-//	regenerateClause?
-//	alterIndexOptions*
-//	(alterIndexPartitionOptions (COMMA alterIndexPartitionOptions)*)?
-//	)
 	;
 
 alterMaskStatement
 	: (
-	ALTER MASK maskName (ENABLE | DISABLE )//| regenerateClause)
+	ALTER MASK maskName (ENABLE | DISABLE )
 	)
 	;
 
@@ -423,14 +289,11 @@ alterPackageStatement
 
 alterPermissionStatement
 	: (
-	ALTER PERMISSION permissionName (ENABLE | DISABLE)// | regenerateClause)
+	ALTER PERMISSION permissionName (ENABLE | DISABLE)
 	)
 	;
 
 alterProcedureStatement
-//	: (
-//	ALTER PROCEDURE procedureName procedureOptionList+
-//	)
     : ALTER PROCEDURE procedureDesignator
 	(EXTERNAL NAME identifier
 	| NOT? FENCED
@@ -453,36 +316,6 @@ parameterAlteration
     : identifier SET DATA TYPE dataType
     ;
 
-//alterProcedureSQLPLStatement
-//	: (
-//	ALTER PROCEDURE procedureName (
-//		(ALTER? alterWhichProcedureSQLPL1? procedureSQLPLOptionList+)
-//		| (REPLACE alterWhichProcedureSQLPL2?
-//			(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-//			procedureSQLPLOptionList*
-//			sqlRoutineBody)
-//		| (ADD versionOption
-//			(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-//			procedureSQLPLOptionList*
-//			sqlRoutineBody)
-//		| (ACTIVATE versionOption)
-//		| (REGENERATE alterWhichProcedureSQLPL2 applicationCompatibilityPhrase?)
-//		| (DROP versionOption)
-//		)
-//	)
-//	;
-
-//alterWhichProcedureSQLPL1
-//	: ((ACTIVE VERSION) | (ALL VERSIONS) | versionOption)
-//	;
-//
-//alterWhichProcedureSQLPL2
-//	: ((ACTIVE VERSION) | versionOption)
-//	;
-//
-//applicationCompatibilityPhrase
-//	: (USING APPLICATION COMPATIBILITY APPLCOMPAT_LEVEL)
-//	;
 alterSequenceStatement
 	: (
 	ALTER SEQUENCE sequenceName alterSequenceOptionList+
@@ -491,7 +324,7 @@ alterSequenceStatement
 
 alterStogroupStatement
 	: (
-	ALTER STOGROUP stogroupName //alterStogroupOptionList+
+	ALTER STOGROUP stogroupName
 	(ADD NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)*
 	| DROP NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)*
 	| OVERHEAD INTEGERLITERAL
@@ -569,7 +402,7 @@ alterTrustedContextStatement
 alterViewStatement
 	: (
 	ALTER VIEW viewName
-	(//USING APPLICATION COMPATIBILITY applCompatValue)?
+	(
 	ALTER COLUMN? columnName ADD SCOPE identifier
 	| (ENABLE | DISABLE) QUERY OPTIMIZATION
 	)
@@ -611,7 +444,6 @@ commentStatement
 	| (COLUMN tableName DOT columnName)
 	| CONSTRAINT tableName DOT constraintName
 	| DATABASE PARTITION GROUP identifier
-//	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
 	| functionDesignator
 	| FUNCTION MAPPING identifier
 	| HISTOGRAM TEMPLATE identifier
@@ -621,8 +453,6 @@ commentStatement
 	| NICKNAME identifier
 	| (PACKAGE packageDesignator)
 	| PERMISSION identifier
-//	| (PLAN planName)
-//	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
 	| procedureDesignator
 	| (ROLE roleName)
 	| SCHEMA identifier
@@ -631,12 +461,10 @@ commentStatement
 	| SECURITY POLICY identifier
 	| (SEQUENCE sequenceName)
 	| SERVER identifier
-//	| SERVER OPTION identifier FOR remoteServer TODO
-//    | serviceClassDesignator TODO
 	| (TABLE tableName)
 	| TABLESPACE identifier
 	| THRESHOLD identifier
-	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
+	| (TRIGGER triggerName )
 	| (TRUSTED CONTEXT contextName)
 	| (TYPE typeName)
 	| TYPE MAPPING identifier
@@ -678,13 +506,6 @@ createAliasStatement
 moduleAlias
     : identifier FOR MODULE identifier
     ;
-
-//createAuxiliaryTableStatement
-//	: (
-//	CREATE (AUX | AUXILIARY) TABLE auxTableName IN (databaseName DOT)? tablespaceName
-//	STORES tableName appendClause? COLUMN columnName PART INTEGERLITERAL
-//	)
-//	;
 
 createDatabaseStatement
 	: (
@@ -795,7 +616,6 @@ createGlobalTemporaryTableStatement
 	((LPAREN createGlobalTemporaryTableColumnDefinition (COMMA createGlobalTemporaryTableColumnDefinition)* RPAREN)
 	| (LIKE tableName copyOptions?)
 	| AS LPAREN fullSelect RPAREN WITH NO DATA copyOptions?)
-//	ccsidClause1?
     (ON COMMIT DELETE ROWS | ON COMMIT PRESERVE ROWS)?
     (NOT LOGGED (ON ROLLBACK DELETE ROWS)? | NOT LOGGED ON ROLLBACK PRESERVE ROWS | LOGGED)?
     (IN identifier)? distributionClause?
@@ -818,12 +638,6 @@ createIndexStatement
 	createIndexOptionList*
 	)
 	;
-
-//createLobTablespaceStatement
-//	: (
-//	CREATE LOB TABLESPACE tablespaceName createLobTablespaceOptionList*
-//	)
-//	;
 
 createMaskStatement
 	: (
@@ -848,15 +662,6 @@ Note that...
 match sqlRoutineBody because WRAPPED is a sqlKeyword.  This
 is incorrect and misleading.
 */
-//createProcedureSQLPLStatement
-//	: (
-//	CREATE (OR REPLACE)? PROCEDURE procedureName
-//	(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-//	versionOption?
-//	(procedureSQLPLOptionList* languageOption1? procedureSQLPLOptionList*)
-//	((WRAPPED obfuscatedStatementText) | sqlRoutineBody)
-//	)
-//	;
 
 sqlRoutineBody
 	: probablySQLPL+
@@ -874,9 +679,6 @@ probablySQLPL
 	| COLON
 	| SPLAT
 	| SEMICOLON
-//	| CP_SEMICOLON
-//	| CEP_SEMICOLON
-//	| CP_UNIDENTIFIED
 	| LPAREN 
 	| RPAREN
 	)
@@ -901,21 +703,6 @@ createSequenceStatement
 	CREATE SEQUENCE sequenceName createSequenceOptionList+
 	)
 	;
-
-//createStogroupStatement
-//	: (
-//	CREATE STOGROUP stogroupName
-//	(VOLUMES
-//		(LPAREN (volumeID | NONNUMERICLITERAL | SPLAT)
-//		(COMMA (volumeID | NONNUMERICLITERAL | SPLAT))*
-//		RPAREN))?
-//	VCAT catalogName
-//	dataclasOption?
-//	mgmtclasOption?
-//	storclasOption?
-//	keyLabelOption?
-//	)
-//	;
 
 /*
 Moved options to createTableOptions rule so they could
@@ -1044,7 +831,6 @@ createViewStatement
 declareCursorStatement
 	: (
 	DECLARE cursorName
-//	((NO SCROLL) | ((ASENSITIVE | INSENSITIVE | (SENSITIVE (DYNAMIC | STATIC))) SCROLL))?
     (ASENSITIVE | INSENSITIVE)?
 	CURSOR (holdability | returnability)* FOR (selectStatement | statementName)
 	)
@@ -1057,7 +843,7 @@ declareGlobalTemporaryTableStatement
 			(COMMA declareGlobalTemporaryTableColumnDefinition)* RPAREN)
 		| declareGlobalTemporaryTableLikeClause
 		| declareGlobalTemporaryTableAsResultTable)
-		(//ccsidClause1
+		(
 		onCommitClause
 		| loggedWithRollbackClause
 		| WITH REPLACE
@@ -1065,26 +851,6 @@ declareGlobalTemporaryTableStatement
 		| distributionClause)*
 	)
 	;
-
-//declareTableStatement
-//	: (
-//	DECLARE tableName TABLE LPAREN
-//	(columnName dataType notNullPhrase?)
-//	(COMMA columnName dataType notNullPhrase?)*
-//	RPAREN
-//	)
-//	;
-
-//declareStatementStatement
-//	: (DECLARE statementName (COMMA statementName)* STATEMENT)
-//	;
-//
-//declareVariableStatement
-//	: (
-//	DECLARE hostVariable (COMMA hostVariable)* VARIABLE
-//	((ccsidClause1 forDataQualifier) | ccsidClause1 | forDataQualifier | ccsidClause2)?
-//	)
-//	;
 
 deleteStatement
 	: (searchedDelete | positionedDelete)
@@ -1161,7 +927,6 @@ dropStatement
 		| SECURITY POLICY identifier
 		| SEQUENCE sequenceName
 		| SERVER identifier
-//		| serviceClassDesignator RESTRICT?
 		| STOGROUP identifier
 		| TABLE tableName
 		| TABLE HIERARCHY identifier
@@ -1183,34 +948,12 @@ dropStatement
 		| WRAPPER identifier
 		| XSROBJECT identifier
 		)
-//		| dropDatabaseClause
-//		| dropFunctionClause
-//		| dropIndexClause
-//		| dropMaskClause
-//		| dropPackageClause
-//		| dropPermissionClause
-//		| dropProcedureClause
-//		| dropRoleClause
-//		| dropSequenceClause
-//		| dropStogroupClause
-//		| dropSynonymClause
-//		| dropTableClause
-//		| dropTablespaceClause
-//		| dropTriggerClause
-//		| dropTrustedContextClause
-//		| dropTypeClause
-//		| dropVariableClause
-//		| dropViewClause
 	)
 	;
 
 endDeclareSectionStatement
 	: (END DECLARE SECTION)
 	;
-
-//exchangeStatement
-//	: (EXCHANGE DATA BETWEEN TABLE tableName AND tableName)
-//	;
 
 executeStatement
 	: (
@@ -1230,16 +973,13 @@ entire PL/I language here.
 
 */
 executeImmediateStatement
-	: (EXECUTE IMMEDIATE expression)//(variable | NONNUMERICLITERAL))
+	: (EXECUTE IMMEDIATE expression)
 	;
 
 explainStatement
 	: (
 	EXPLAIN
 		(explainPlanClause
-//		| explainStmtcacheClause
-//		| explainPackageClause
-//		| explainStabilizedDynamicQueryClause
 		)
 	)
 	;
@@ -1252,7 +992,6 @@ optional.
 fetchStatement
 	: (
 	FETCH FROM? cursorName singleRowFetch
-//	(singleRowFetch | multipleRowFetch)?
 	)
 	;
 
@@ -1266,10 +1005,6 @@ getDiagnosticsStatement
 	(statementInformation | conditionInformation | combinedInformation)
 	)
 	;
-
-//gotoStatement
-//    : (GOTO identifier)
-//    ;
 
 grantStatement
 	: (
@@ -1288,10 +1023,6 @@ grantStatement
 	)
 	;
 
-//holdLocatorStatement
-//	: (HOLD LOCATOR hostVariable (COMMA hostVariable)*)
-//	;
-
 includeStatement
 	: (INCLUDE memberName)
 	;
@@ -1300,7 +1031,6 @@ insertStatement
 	: (
 	INSERT INTO (tableName | LPAREN fullSelect RPAREN) (LPAREN columnName (COMMA columnName)* RPAREN)?
 	includeColumns?
-//	(OVERRIDING USER VALUE)?
 	((VALUES (valuesList1 |
 		(LPAREN valuesList1 (COMMA valuesList1)* RPAREN)))
 	| ((WITH commonTableExpression (COMMA commonTableExpression)*)?
@@ -1309,28 +1039,6 @@ insertStatement
 	(WITH (RR | RS | CS | UR))?
 	)
 	;
-
-//iterateStatement
-//    : (ITERATE identifier)
-//    ;
-
-//labelStatement
-//	: (
-//	LABEL ON
-//	((((TABLE tableName)
-//	| (ALIAS aliasName)
-//	| (COLUMN tableName DOT columnName))
-//	IS NONNUMERICLITERAL)
-//	| (tableName LPAREN
-//		columnName IS NONNUMERICLITERAL
-//		(COMMA columnName IS NONNUMERICLITERAL)*
-//		RPAREN))
-//	)
-//	;
-
-//leaveStatement
-//    : (LEAVE identifier)
-//    ;
 
 lockTableStatement
 	: (
@@ -1343,8 +1051,6 @@ mergeStatement
 	MERGE INTO tableName correlationClause? includeColumns?
 	USING ((LPAREN* tableReference RPAREN*) | sourceValues) ON searchCondition
 	(WHEN matchingCondition THEN (modificationOperation | signalStatement))+ (ELSE IGNORE)?
-//	notAtomicPhrase?
-//	querynoClause?
 	(WITH (RR | RS | CS | UR))?
 	)
 	;
@@ -1367,8 +1073,7 @@ prepareStatement
 	: (
 	PREPARE statementName 
 	(OUTPUT? INTO descriptorName)?
-	(INPUT INTO descriptorName)?// (USING (NAMES | LABELS | ANY | BOTH))?)?
-//	(ATTRIBUTES hostVariable)?
+	(INPUT INTO descriptorName)?
 	FROM variable
 	)
 	;
@@ -1586,7 +1291,6 @@ ownedObject
        	| (COLUMN tableName DOT columnName)
        	| CONSTRAINT tableName DOT constraintName
        	| DATABASE PARTITION GROUP identifier
-       //	| (functionDesignator ((ACTIVE VERSION) | (VERSION routineVersionID))?)
        	| functionDesignator
        	| FUNCTION MAPPING identifier
        	| HISTOGRAM TEMPLATE identifier
@@ -1596,8 +1300,6 @@ ownedObject
        	| NICKNAME identifier
        	| (PACKAGE packageDesignator)
        	| PERMISSION identifier
-       //	| (PLAN planName)
-       //	| (PROCEDURE procedureName ((ACTIVE VERSION) | (VERSION routineVersionID))?)
        	| procedureDesignator
        	| (ROLE roleName)
        	| SCHEMA identifier
@@ -1606,12 +1308,10 @@ ownedObject
        	| SECURITY POLICY identifier
        	| (SEQUENCE sequenceName)
        	| SERVER identifier
-       //	| SERVER OPTION identifier FOR remoteServer TODO
-       //    | serviceClassDesignator TODO
        	| (TABLE tableName)
        	| TABLESPACE identifier
        	| THRESHOLD identifier
-       	| (TRIGGER triggerName )//((ACTIVE VERSION) | (VERSION routineVersionID))?)
+       	| (TRIGGER triggerName )
        	| (TRUSTED CONTEXT contextName)
        	| (TYPE typeName)
        	| TYPE MAPPING identifier
@@ -2138,33 +1838,6 @@ combinedInformationOption
 	)
 	;
 
-//fetchOrientation
-//	: (BEFORE | AFTER | rowPositioned | rowsetPositioned)
-//	;
-
-//rowPositioned
-//	: (
-//	NEXT
-//	| PRIOR
-//	| FIRST
-//	| LAST
-//	| (CURRENT CONTINUE?)
-//	| (ABSOLUTE (hostVariable | INTEGERLITERAL))
-//	| (RELATIVE (hostVariable | INTEGERLITERAL))
-//	)
-//	;
-
-//rowsetPositioned
-//	: (
-//	(NEXT ROWSET)
-//	| (PRIOR ROWSET)
-//	| (FIRST ROWSET)
-//	| (LAST ROWSET)
-//	| (CURRENT  ROWSET)
-//	| (ROWSET STARTING AT (ABSOLUTE | RELATIVE) (hostVariable | INTEGERLITERAL))
-//	)
-//	;
-
 singleRowFetch
 	: (
 	(INTO ((fetchTargetVariable (COMMA fetchTargetVariable)*) | arrayElementSpecification))
@@ -2189,21 +1862,6 @@ form "rule can match the empty string."  So my interpretation is
 to have a rule that allows one, the other, or both, and then the
 entire rule is optional in the fetchStatement rule. 
 */
-//multipleRowFetch
-//	: (
-//	(multipleRowFetchForClause? multipleRowFetchIntoClause)
-//	| (multipleRowFetchForClause multipleRowFetchIntoClause?)
-//	| (multipleRowFetchForClause multipleRowFetchIntoClause)
-//	)
-//	;
-
-//multipleRowFetchForClause
-//	: (FOR (hostVariable | INTEGERLITERAL) ROWS)
-//	;
-//
-//multipleRowFetchIntoClause
-//	: ((INTO hostVariable (COMMA hostVariable)*) | ((INTO | USING) DESCRIPTOR descriptorName))
-//	;
 
 explainPlanClause
 	: (
@@ -2211,51 +1869,6 @@ explainPlanClause
 	(query | insertStatement | mergeStatement | searchedDelete | searchedUpdate)
 	)
 	;
-
-//explainStmtcacheClause
-//	: (
-//	STMTCACHE
-//		(ALL
-//		| (STMTID (hostVariable | INTEGERLITERAL))
-//		| (STMTTOKEN (hostVariable | NONNUMERICLITERAL)))
-//	)
-//	;
-//
-//explainPackageClause
-//	: (
-//	PACKAGE packageScopeSpecification
-//	)
-//	;
-//
-//explainStabilizedDynamicQueryClause
-//	: (
-//	STABILIZED DYNAMIC QUERY STMTID
-//	(hostVariable | INTEGERLITERAL)
-//	(COPY NONNUMERICLITERAL)?
-//	)
-//	;
-//
-//packageScopeSpecification
-//	: (
-//	COLLECTION collectionName
-//	PACKAGE packageScopePackageName
-//	(VERSION versionName)?
-//	(COPY NONNUMERICLITERAL)?
-//	)
-//	;
-//
-//collectionName
-//	: (:hostVariable | NONNUMERICLITERAL)
-//	;
-//
-//packageScopePackageName
-//	: (:hostVariable | NONNUMERICLITERAL)
-//	;
-//
-//versionName
-//	: (:hostVariable | NONNUMERICLITERAL)
-//	;
-
 
 /*
 For purposes of this grammar there is no difference between a
@@ -2274,83 +1887,6 @@ sourceRowData
 aliasDesignation
 	: (PUBLIC? ALIAS aliasName (FOR (TABLE | SEQUENCE))?)
 	;
-
-//dropDatabaseClause
-//	: (DATABASE databaseName)
-//	;
-//
-//dropFunctionClause
-//	: (
-//		(FUNCTION functionName
-//			(LPAREN functionParameterType (COMMA functionParameterType)* RPAREN)?
-//			RESTRICT?)
-//		| (SPECIFIC FUNCTION specificName RESTRICT?)
-//	)
-//	;
-
-//dropIndexClause
-//	: (INDEX indexName)
-//	;
-//
-//dropMaskClause
-//	: (MASK maskName)
-//	;
-//
-//dropPackageClause
-//	: (PACKAGE packageDesignator)
-//	;
-
-//dropPermissionClause
-//	: (PERMISSION permissionName)
-//	;
-//
-//dropProcedureClause
-//	: (PROCEDURE procedureName RESTRICT?)
-//	;
-//
-//dropRoleClause
-//	: (ROLE roleName RESTRICT?)
-//	;
-//
-//dropSequenceClause
-//	: (SEQUENCE sequenceName RESTRICT?)
-//	;
-//
-//dropStogroupClause
-//	: (STOGROUP stogroupName)
-//	;
-
-//dropSynonymClause
-//	: (SYNONYM synonym)
-//	;
-//
-//dropTableClause
-//	: (TABLE tableName)
-//	;
-//
-//dropTablespaceClause
-//	: (TABLESPACE (databaseName DOT)? tablespaceName)
-//	;
-//
-//dropTriggerClause
-//	: (TRIGGER triggerName)
-//	;
-//
-//dropTrustedContextClause
-//	: (TRUSTED CONTEXT contextName)
-//	;
-
-//dropTypeClause
-//	: (TYPE typeName RESTRICT?)
-//	;
-//
-//dropVariableClause
-//	: (VARIABLE variableName RESTRICT?)
-//	;
-//
-//dropViewClause
-//	: (VIEW viewName)
-//	;
 
 packageDesignator
 	: (collectionID DOT packageName (VERSION? versionID)?)
@@ -2673,7 +2209,6 @@ createTableColumnConstraint
 /*
 Deprecated as of Db2 12.
 */
-//#KMG
 organizationClause
 	: (
 	ORGANIZE BY HASH UNIQUE
@@ -2747,14 +2282,9 @@ createFunctionStatementExternalScalarOptions
 	)
 	;
 
-//
 externalNameOption1
 	: (EXTERNAL (NAME (externalProgramName | identifier))?)
 	;
-
-//externalNameOption2
-//	: (EXTERNAL NAME (externalProgramName | identifier))
-//	;
 
 dynamicResultSetOption
 	: (DYNAMIC? RESULT (SET |SETS) INTEGERLITERAL)
@@ -2771,10 +2301,6 @@ languageOption2
 languageOption3
 	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI))
 	;
-
-//languageOption4
-//	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI | SQL))
-//	;
 
 languageOption5
 	: (LANGUAGE (ASSEMBLE | C_ | COBOL | JAVA | PLI | REXX))
@@ -2807,14 +2333,6 @@ nullInputOption1
 nullInputOption2
 	: ((CALLED ON NULL INPUT) | (NULL CALL))
 	;
-
-//nullInputOption3
-//	: ((RETURNS NULL ON NULL INPUT) | (CALLED ON NULL INPUT))
-//	;
-//
-//nullInputOption4
-//	: (CALLED ON NULL INPUT)
-//	;
 
 debugOption
 	: ((DISALLOW | ALLOW | DISABLE) DEBUG MODE_)
@@ -2916,10 +2434,6 @@ specialRegistersOption
 	: ((INHERIT | DEFAULT) SPECIAL REGISTERS)
 	;
 
-//specialRegistersOption2
-//	: (INHERIT SPECIAL REGISTERS)
-//	;
-
 dispatchOption
 	: (STATIC DISPATCH)
 	;
@@ -2945,8 +2459,6 @@ parameterOption1
 parameterOption2
 	: (PARAMETER ccsidClause1)
 	;
-
-//
 
 createFunctionStatementExternalTableOptions
 	: (
@@ -3114,9 +2626,6 @@ searchedDelete
 	DELETE FROM? (tableName periodClause? | ONLY LPAREN tableName RPAREN | LPAREN fullSelect RPAREN) AS?
 	correlationClause? includeColumns? (assignmentClause)? (WHERE searchCondition)?
 	(WITH (RR | RS | CS | UR))?
-//	fetchClause?
-//	(isolationClause | skipLockedDataClause)* querynoClause?
-
 	)
 	;
 
@@ -3127,7 +2636,6 @@ positionedDelete
 	: (
 	DELETE FROM? (tableName | ONLY LPAREN tableName RPAREN)
 	AS? correlationClause? WHERE CURRENT OF cursorName
-//	(FOR ROW (hostVariable | INTEGERLITERAL) OF ROWSET)?
 	)
 	;
 
@@ -3137,7 +2645,6 @@ searchedUpdate
 	AS? correlationClause? includeColumns?
 	SET assignmentClause (WHERE searchCondition)?
 	(WITH (RR | RS | CS | UR))?
-//	(isolationClause | skipLockedDataClause)* querynoClause?
 	)
 	;
 
@@ -3147,7 +2654,6 @@ positionedUpdate
 	AS? correlationClause?
 	SET assignmentClause
 	WHERE CURRENT OF cursorName
-//	(FOR ROW (hostVariable | INTEGERLITERAL) OF ROWSET)?
 	)
 	;
 
@@ -3298,37 +2804,10 @@ multipleRowInsert
 	)
 	;
 
-//regenerateClause
-//	: (REGENERATE (USING APPLICATION COMPATIBILITY applCompatValue)?)
-//	;
 
 /*
 2022-11-04 Issue 125 Changed usingSpecification1 to usingBlock for consistency.
 */
-//alterIndexOptions
-//	:(
-//	bufferpoolOption
-//	| closeOption
-//	| copyOption
-//	| dssizeOption
-//	| piecesizeOption
-//	| usingBlock
-//	| freeSpecification
-//	| gbpcacheSpecification
-//	| clusterOption
-//	| paddedOption
-//	| compressOption
-//	| (ADD
-//		((COLUMN
-//		LPAREN
-//		columnName (ASC | DESC | RANDOM)?
-//		RPAREN)
-//		| (INCLUDE COLUMN LPAREN columnName RPAREN))
-//	  )
-//	)
-//	;
-
-//
 bufferpoolOption
 	: (BUFFERPOOL bpName)
 	;
@@ -3341,7 +2820,6 @@ copyOption
 	: (COPY (YES | NO))
 	;
 
-//#KMG
 dssizeOption
 	: (DSSIZE INTEGERLITERAL? sqlidentifier)
 	;
@@ -3414,15 +2892,6 @@ notAtomicPhrase
 /*
 2022-11-04 Issue 125 Changed usingSpecification1 to usingBlock for consistency.
 */
-//alterIndexPartitionOptions
-//	: (
-//	ALTER partitionElement
-//		(usingBlock
-//		| freeSpecification+
-//		| gbpcacheSpecification
-//		| dssizeOption)*
-//	)
-//	;
 
 usingSpecification1
 	: (
@@ -3454,14 +2923,6 @@ partitionElement
 	RPAREN INCLUSIVE?)?
 	)
 	;
-
-//applCompatValue
-//	: (functionLevel)
-//	;
-
-//functionLevel
-//	: sqlidentifier
-//	;
 
 functionParameterType
 	: (functionDataType (AS LOCATOR)?)
@@ -3578,135 +3039,6 @@ sourceDataType
 	: procedureBuiltinType
 	;
 
-//functionExternalOptionList
-//	: (
-//	externalNameOption2
-//	| languageOption4
-//	| parameterStyleOption2
-//	| deterministicOption
-//	| nullInputOption3
-//	| sqlDataOption3
-//	| externalActionOption
-//	| packagePathOption
-//	| scratchpadOption
-//	| finalCallOption
-//	| parallelOption2
-//	| dbinfoOption
-//	| cardinalityOption
-//	| collectionIdOption
-//	| wlmEnvironmentOption2
-//	| asuTimeOption
-//	| stayResidentOption
-//	| programTypeOption
-//	| securityOption
-//	| stopAfterFailureOption
-//	| runOptionsOption
-//	| specialRegistersOption
-//	| dispatchOption
-//	| securedOption
-//	)
-//	;
-//
-//functionCompiledSqlScalarOptionList
-//	: (
-//	deterministicOption
-//	| externalActionOption
-//	| sqlDataOption4
-//	| nullInputOption3
-//	| dispatchOption
-//	| parallelOption2
-//	| debugOption
-//	| schemaQualifierOption
-//	| packageOwnerOption
-//	| asuTimeOption
-//	| specialRegistersOption
-//	| wlmEnvironmentOption3
-//	| currentDataOption
-//	| degreeOption
-//	| concurrentAccessOption
-//	| dynamicRulesOption
-//	| applicationEncodingOption
-//	| explainOption
-//	| immediateWriteOption
-//	| isolationLevelOption
-//	| opthintOption
-//	| sqlPathOption
-//	| queryAccelerationOption
-//	| getAccelArchiveOption
-//	| accelerationOption
-//	| acceleratorOption
-//	| releaseAtOption
-//	| reoptOption
-//	| validateOption
-//	| roundingOption
-//	| dateFormatOption
-//	| decimalOption
-//	| forUpdateOption
-//	| timeFormatOption
-//	| securedOption
-//	| businessTimeSensitiveOption
-//	| systemTimeSensitiveOption
-//	| archiveSensitiveOption
-//	| applcompatOption
-//	| concentrateStatementsOption
-//	)
-//	;
-//
-//functionInlineSqlScalarOptionList
-//	: (
-//	deterministicOption
-//	| externalActionOption
-//	| sqlDataOption1
-//	| dispatchOption
-//	| nullInputOption4
-//	| securedOption
-//	)
-//	;
-//
-//functionSqlTableOptionList
-//	: (
-//	deterministicOption
-//	| externalActionOption
-//	| sqlDataOption1
-//	| nullInputOption4
-//	| specialRegistersOption2
-//	| dispatchOption
-//	| cardinalityOption
-//	| securedOption
-//	)
-//	;
-
-/*
-Changed hard-coded debugOption and nullInputOption2
-to use their parser rule equivalents.  Hopefully this
-isn't too painful for anyone.
-*/
-//procedureOptionList
-//	: (
-//	dynamicResultSetOption
-//	| parameterOption1
-//	| externalNameOption2
-//	| languageOption5
-//	| parameterStyleOption3
-//	| deterministicOption
-//	| packagePathOption
-//	| sqlDataOption3
-//	| dbinfoOption
-//	| collectionIdOption
-//	| wlmEnvironmentOption2
-//	| asuTimeOption
-//	| stayResidentOption
-//	| programTypeOption
-//	| securityOption
-//	| runOptionsOption
-//	| commitOnReturnOption
-//	| specialRegistersOption
-//	| nullInputOption2
-//	| stopAfterFailureOption
-//	| debugOption
-//	)
-//	;
-
 /*
 Removed languageOption5 from createProcedureOptionList so a
 distinction could be made between external (mandatory languageOption5) 
@@ -3739,69 +3071,9 @@ createProcedureOptionList
 	)
 	;
 
-//procedureSQLPLOptionList
-//	: (
-//	specificNameOption2
-//	| deterministicOption
-//	| sqlDataOption4
-//	| nullInputOption2
-//	| dynamicResultSetOption
-//	| debugOption
-//	| parameterOption2
-//	| schemaQualifierOption
-//	| packageOwnerOption
-//	| asuTimeOption
-//	| commitOnReturnOptionSQLPL
-//	| specialRegistersOption
-//	| wlmEnvironmentOption3
-//	| deferPrepareOption
-//	| currentDataOption
-//	| degreeOption
-//	| concurrentAccessOption
-//	| dynamicRulesOption
-//	| applicationEncodingOption
-//	| explainOption
-//	| immediateWriteOption
-//	| isolationLevelOption
-//	| keepDynamicOption
-//	| opthintOption
-//	| sqlPathOption
-//	| queryAccelerationOption
-//	| getAccelArchiveOption
-//	| accelerationOption
-//	| acceleratorOption
-//	| releaseAtOption
-//	| reoptOption
-//	| validateOption
-//	| roundingOption
-//	| dateFormatOption
-//	| decimalOption
-//	| forUpdateOption
-//	| timeFormatOption
-//	| businessTimeSensitiveOption
-//	| systemTimeSensitiveOption
-//	| archiveSensitiveOption
-//	| applcompatOption
-//	| concentrateStatementsOption
-//	| externalNameOption1    //deprecated as of db2 13
-//	| fencedOption           //deprecated as of db2 13
-//	| dbinfoOption           //for compatibility only
-//	| collectionIdOption     //for compatibility only
-//	| stopAfterFailureOption //for compatibility only
-//	| stayResidentOption     //for compatibility only
-//	| programTypeOption      //for compatibility only
-//	| securityOption         //for compatibility only
-//	| runOptionsOption       //for compatibility only
-//	)
-//	;
-
 versionOption
 	: (VERSION (identifier | literal))
 	;
-
-//commitOnReturnOptionSQLPL
-//	: (AUTONOMOUS | commitOnReturnOption)
-//	;
 
 schemaQualifierOption
 	: (QUALIFIER schemaName)
@@ -3826,10 +3098,6 @@ reoptOption
 packageOwnerOption
 	: (PACKAGE OWNER authorizationName (AS (ROLE | USER))?)
 	;
-
-//deferPrepareOption
-//	: ((DEFER PREPARE) | (NODEFER PREPARE))
-//	;
 
 degreeOption
 	: (DEGREE (ANY | INTEGERLITERAL))
@@ -3860,10 +3128,6 @@ applicationEncodingOption
 isolationLevelOption
 	: (ISOLATION LEVEL (CS | RS | RR | UR))
 	;
-
-//keepDynamicOption
-//	: ((WITH | WITHOUT) KEEP DYNAMIC)
-//	;
 
 opthintOption
 	: (OPTHINT NONNUMERICLITERAL)
@@ -3897,10 +3161,6 @@ getAccelArchiveOption
 accelerationOption
 	: (ACCELERATION WAITFORDATA NUMERICLITERAL)
 	;
-
-//releaseAtOption
-//	: (RELEASE AT (COMMIT | DEALLOCATE))
-//	;
 
 businessTimeSensitiveOption
 	: (BUSINESS_TIME SENSITIVE (YES | NO))
@@ -4034,33 +3294,6 @@ keyLabelOption
 	: ((NO KEY LABEL) | (KEY LABEL keyLabelName))
 	;
 
-//dataclasOption
-//	: (DATACLAS dcName)
-//	;
-
-//mgmtclasOption
-//	: (MGMTCLAS mcName)
-//	;
-
-//storclasOption
-//	: (STORCLAS scName)
-//	;
-
-//
-
-//alterStogroupOptionList
-//	: (
-//	(ADD VOLUMES LPAREN volumeID (COMMA volumeID)* RPAREN)
-//	| (ADD VOLUMES LPAREN NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)* RPAREN)
-//	| (REMOVE VOLUMES LPAREN volumeID (COMMA volumeID)* RPAREN)
-//	| (REMOVE VOLUMES LPAREN NONNUMERICLITERAL (COMMA NONNUMERICLITERAL)* RPAREN)
-//	| keyLabelOption
-//	| dataclasOption
-//	| mgmtclasOption
-//	| storclasOption
-//	)
-//	;
-
 /*
 Added..
 
@@ -4082,23 +3315,12 @@ alterTableOptionList
 	| (ADD partitioningClause)
 	| ADD (CHECK | (FOREIGN KEY)) constraintName constraintAlteration
 	| DROP DISTRIBUTION
-//	| (ADD PARTITION partitionClause)
-//	| (ALTER PARTITION INTEGERLITERAL partitionClause)
-//	| (ROTATE PARTITION (FIRST | INTEGERLITERAL) TO LAST rotatePartitionClause)
-//	| (DROP ORGANIZATION)
-//	| (alterHashOrganization)
-//	| (ADD SYSTEM? VERSIONING USE HISTORY TABLE historyTableName extraRowOption?)
-//	| (DROP SYSTEM? VERSIONING)
 	| (ADD ((MATERIALIZED QUERY) | QUERY)? materializedQueryDefinition)
-//	| (ALTER MATERIALIZED? QUERY materializedQueryAlteration)
 	| (DROP MATERIALIZED? QUERY)
 	| dataCaptureClause
 	| ACTIVATE NOT LOGGED INITIALLY (WITH EMPTY TABLE)?
 	| PCTFREE INTEGERLITERAL
 	| LOCKSIZE (ROW | TABLE | BLOCKINSERT)
-//	| cardinalityClause
-//	| (ADD CLONE cloneTableName)
-//	| (DROP CLONE)
 	| (ADD RESTRICT ON DROP)
 	| (DROP RESTRICT ON DROP)
 	| ((ACTIVATE | DEACTIVATE) ROW ACCESS CONTROL)
@@ -4108,12 +3330,6 @@ alterTableOptionList
 	| COMPRESS (YES (ADAPTIVE | STATIC)? | NO)
 	| (ACTIVATE | DEACTIVATE) VALUE COMPRESSION
 	| LOG INDEX BUILD (NULL | ON | OFF)
-//	| auditClause
-//	| validprocClause
-//	| (ENABLE ARCHIVE USE archiveTableName)
-//	| (DISABLE ARCHIVE)
-//	| (NO KEY LABEL)
-//	| (KEY LABEL keyLabelName)
 	)
 	;
 
@@ -4209,7 +3425,6 @@ trustedContextOptionList
 	| (ALTER ATTRIBUTES LPAREN alterAttributesOptions (COMMA alterAttributesOptions)* RPAREN)
 	| (ADD ATTRIBUTES LPAREN addAttributesOptions (COMMA addAttributesOptions)* RPAREN)
 	| (DROP ATTRIBUTES LPAREN dropAttributesOptions (COMMA dropAttributesOptions)* RPAREN)
-//	| userClause
 	)
 	;
 
@@ -4247,22 +3462,6 @@ createIndexOptionList
 	| copyOption
 	)
 	;
-
-//createLobTablespaceOptionList
-//	: (
-//	inDatabaseOption
-//	| bufferpoolOption
-//	| closeOption
-//	| compressOption
-//	| defineOption
-//	| dssizeOption
-//	| gbpcacheSpecification
-//	| lockmaxOption
-//	| locksizeOption
-//	| loggedOption
-//	| usingSpecification2
-//	)
-//	;
 
 inDatabaseOption
 	: (IN databaseName)
@@ -4391,40 +3590,6 @@ includeColumnPhrase
 	: (INCLUDE LPAREN columnName (COMMA columnName)* RPAREN)
 	;
 
-//userClause
-//	: (
-//	(ADD USE FOR userClauseAddOptions (COMMA userClauseAddOptions)*)
-//	| (REPLACE USE FOR userClauseReplaceOptions (COMMA userClauseReplaceOptions)*)
-//	| (DROP USE FOR userClauseDropOptions (COMMA userClauseDropOptions)*)
-//	)
-//	;
-
-//userClauseAddOptions
-//	: (
-//	(authorizationName useOptions?)
-//	| (EXTERNAL SECURITY PROFILE profileName useOptions?)
-//	| (PUBLIC (WITH | WITHOUT) AUTHENTICATION)
-//	)
-//	;
-
-//userClauseReplaceOptions
-//	: (userClauseAddOptions)
-//	;
-
-//userClauseDropOptions
-//	: (
-//	(authorizationName)
-//	| (EXTERNAL SECURITY PROFILE profileName)
-//	| (PUBLIC)
-//	)
-//	;
-
-//useOptions
-//	: (
-//	(ROLE roleName)? (SECURITY LABEL seclabelName)? (WITH | WITHOUT) AUTHENTICATION
-//	)
-//	;
-
 alterPartitionClause
 	: (
 	((ALTER? PARTITION) | PART) INTEGERLITERAL
@@ -4484,10 +3649,6 @@ multipleColumnList
 	)
 	;
 
-//parameterType
-//	: (dataType (AS LOCATOR)?)
-//	;
-
 alterTableColumnDefinitionOptionList1
 	: (
 	(defaultClause1)
@@ -4495,9 +3656,6 @@ alterTableColumnDefinitionOptionList1
 	| (columnConstraint)
 	| (generatedClause)
 	| implicitlyHiddenClause
-//	| asSecurityLabelClause
-//	| fieldprocClause
-//	| inlineLengthClause
     | COMPRESS SYSTEM DEFAULT
     | COLUMN? SECURED WITH identifier
     | NOT HIDDEN_
@@ -4524,9 +3682,6 @@ alterTableColumnDefinitionOptionList2
 	| (columnConstraint)
 	| (generatedClause)
 	| implicitlyHiddenClause
-//	| asSecurityLabelClause
-//	| fieldprocClause
-//	| inlineLengthClause
     | COMPRESS SYSTEM DEFAULT
     | COLUMN? SECURED WITH identifier
     | NOT HIDDEN_
@@ -4788,7 +3943,6 @@ checkConstraint
 	)
 	;
 
-//#KMG
 partitioningClause
 	: (
 	PARTITION BY 
@@ -4828,33 +3982,12 @@ Changed...
 ...because the literal must match the data type of the column
 it references.  Found by Martijn Rutte 2022-01-09.
 */
-//partitionLimitKey
-//	: (literal | MAXVALUE | MINVALUE)
-//	;
 
 /*
 The partitionHashSpace rule can be before the INCLUSIVE token in
 the create table statement, or after the INCLUSIVE token in the
 alter table statement.  Also, it's deprecated as of Db2 12.
 */
-//partitioningPhrase
-//	: (ENDING AT? LPAREN partitionLimitKey (COMMA partitionLimitKey)* RPAREN partitionHashSpace? INCLUSIVE? partitionHashSpace?)
-//	;
-
-//deprecated as of Db2 12
-//#KMG
-//partitionHashSpace
-//	: (HASH SPACE INTEGERLITERAL? sqlidentifier)
-//	;
-
-//deprecated as of Db2 12
-//#KMG
-//alterHashOrganization
-//	: (
-//	(ADD ORGANIZE BY HASH UNIQUE LPAREN columnName (COMMA columnName)* RPAREN HASH SPACE INTEGERLITERAL? sqlidentifier)
-//	| (ALTER ORGANIZATION SET HASH SPACE INTEGERLITERAL? sqlidentifier)
-//	)
-//	;
 
 partitioningClauseElement
 	: (
@@ -4874,29 +4007,11 @@ partitionTablespaceOptions
            (INDEX IN tablespaceName (LONG IN tablespaceName)?)
     ;
 
-//partitionClause
-//	: (
-//	partitioningPhrase | partitionHashSpace
-//	)
-//	;
-//
-//rotatePartitionClause
-//	: (partitioningPhrase RESET)
-//	;
-
-//extraRowOption
-//	: (ON DELETE ADD EXTRA ROW)
-//	;
-
 materializedQueryDefinition
 	: (
 	LPAREN fullSelect RPAREN refreshableTableOptions
 	)
 	;
-
-//materializedQueryAlteration
-//	: (SET refreshableTableOptionsList+)
-//	;
 
 refreshableTableOptions
 	: (dataInitiallyDeferredPhrase refreshDeferredPhrase refreshableTableOptionsList*)
@@ -4916,10 +4031,6 @@ refreshableTableOptionsList
 	| (enableDisableOption QUERY OPTIMIZATION)
 	)
 	;
-
-//materializedQueryTableAlteration
-//	: (SET refreshableTableOptionsList+)
-//	;
 
 periodDefinition
 	: (
@@ -6305,7 +5416,6 @@ It also turns out that...
 ...are all syntactically correct.  So we can see an INTEGERLITERAL,
 an INTEGERLITERAL followed by an sqlidentifier, or an sqlidentifier.
 */
-//#KMG
 length
 	: (
 	LPAREN
@@ -6345,10 +5455,6 @@ numeric
     | INTEGERLITERAL
     ;
 
-//ccsidValue
-//	: INTEGERLITERAL
-//	;
-
 columnName
 	: (((correlationName | tableName) DOT)? identifier1)
 	;
@@ -6378,7 +5484,6 @@ correlationName
 	;
 
 locationName
-//	: (identifier | NUMERICLITERAL | INTEGERLITERAL) (DOT? (identifier | NUMERICLITERAL | INTEGERLITERAL))*
 	: sqlidentifier
 	;
 
@@ -6390,25 +5495,9 @@ tableName
 	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
 	;
 
-//alterTableName
-//	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
-//	;
-
 auxTableName
 	: (((locationName DOT schemaName DOT) | (schemaName DOT))? identifier)
 	;
-
-//historyTableName
-//	: tableName
-//	;
-
-//cloneTableName
-//	: tableName
-//	;
-
-//archiveTableName
-//	: tableName
-//	;
 
 viewName
 	: ((locationName DOT schemaName DOT) | (schemaName DOT))? identifier correlationName?
@@ -6453,10 +5542,6 @@ aliasName
 constraintName
 	: identifier
 	;
-
-//routineVersionID
-//	: (identifier | NUMERICLITERAL | INTEGERLITERAL) (DOT? (identifier | NUMERICLITERAL | INTEGERLITERAL))*
-//	;
 
 versionID
 	: (identifier | NUMERICLITERAL | INTEGERLITERAL) (DOT? (identifier | NUMERICLITERAL | INTEGERLITERAL))*
@@ -6554,22 +5639,6 @@ stogroupName
 	: identifier
 	;
 
-//dcName
-//	: identifier
-//	;
-
-//mcName
-//	: identifier
-//	;
-
-//scName
-//	: identifier
-//	;
-
-//volumeID
-//	: identifier
-//	;
-
 keyLabelName
 	: (identifier | NONNUMERICLITERAL)
 	;
@@ -6622,10 +5691,6 @@ transitionVariableName
 	: columnName
 	;
 
-//synonym
-//	: identifier
-//	;
-
 /*
 Trigger variables, global variables, SQL variables, all
 these conform to the pattern (schemaName DOT)? identifier.
@@ -6675,7 +5740,6 @@ tableReference
 	| tableLocatorReference
 	| xmltableExpression
 	| collectionDerivedTable
-//	| joinedTable
 /*
 The following is brought to you by the ANTLR 4.9.2 message
 "The following sets of rules are mutually left-recursive [tableReference, joinedTable]"
@@ -6852,10 +5916,6 @@ ordinaryArrayExpression
 associativeArrayExpression
 	: (expression)
 	;
-
-//comparison
-//	: columnName comparisonOperator (columnName | literal)
-//	;
 
 whereClause
 	: WHERE searchCondition
