@@ -489,7 +489,7 @@ create_function_body
       ((PIPELINED? (IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec))
         | (PIPELINED | AGGREGATE) USING implementation_type_name
         | sql_macro_body
-      ) ';'
+      )
     ;
 
 sql_macro_body

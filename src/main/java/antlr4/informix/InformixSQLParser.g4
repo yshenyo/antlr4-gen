@@ -1575,7 +1575,7 @@ saveExternalDirectives
     ;
 
 savepointStatement
-    : SAVEPOINT identifier UNIQUE?
+    : SAVEPOINT savepoint=identifier UNIQUE?
     ;
 
 selectStatement
@@ -1712,7 +1712,7 @@ intoExternalClause
     ;
 
 setAutofree
-    : SET AUTOFREE (ENABLED | DISABLED)? (FOR identifier)?
+    : SET AUTOFREE (ENABLED | DISABLED)? (FOR (cursorId=identifier | cursorIdVar=anyName))?
     ;
 
 setCollation

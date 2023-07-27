@@ -550,7 +550,6 @@ create_function_body //区别：多了IF NOT EXISTS EDITIONALBLE
 //      ((PIPELINED? )
 //        | sql_macro_body
 //      )
-    ';'
     ;
 
 //sql_macro_body
