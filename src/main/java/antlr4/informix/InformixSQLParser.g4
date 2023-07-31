@@ -1716,7 +1716,7 @@ setAutofree
     ;
 
 setCollation
-    : SET (COLLATION quotedString | NO COLLATION)
+    : SET (COLLATION locale=quotedString | NO COLLATION)
     ;
 
 setConnection

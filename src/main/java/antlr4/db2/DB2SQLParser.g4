@@ -663,6 +663,142 @@ match sqlRoutineBody because WRAPPED is a sqlKeyword.  This
 is incorrect and misleading.
 */
 
+subsetSplStatement
+    : callStatement
+    | caseStatement
+    | continueStatement
+    | exitStatement
+    | forStatement
+    | foreachStatement
+    | gotoStatement
+    | ifStatement
+    | letStatement
+    | loopStatement
+    | raiseException
+    | returnStatement
+    | systemStatement
+    | traceStatement
+    | whileStatement
+    ;
+
+caseStatement
+    : CASE (elseClause
+    | (WHEN (expression | NULL) THEN statementBlock)+ elseClause?
+    ) END CASE
+    ;
+
+elseClause
+    : ELSE statementBlock
+    ;
+
+continueStatement
+    : CONTINUE (FOR | FOREACH | LOOP | WHILE)? SEMICOLON?
+    ;
+
+exitStatement
+    : EXIT (FOREACH | (FOR | LOOP | WHILE)? (identifier? WHEN searchCondition)? ) SEMICOLON?
+    ;
+
+forStatement
+    : FOR identifier (IN LPAREN (range | expression) (COMMA (range | expression))* RPAREN
+    | EQ range
+    )
+    (statementBlock END FOR identifier?
+    | LOOP statementBlock END LOOP identifier?
+    )
+    SEMICOLON?
+    ;
+
+foreachStatement
+    : FOREACH (WITH HOLD | identifier (WITH HOLD)? FOR | routineCall (INTO identifier (COMMA identifier)*)?)? selectStatement?
+    statementBlock END FOREACH SEMICOLON?
+    ;
+
+routineCall
+    : EXECUTE (PROCEDURE procedureName | FUNCTION functionName)  LPAREN (argument (COMMA argument)*)? RPAREN
+    ;
+
+gotoStatement
+    : GOTO identifier SEMICOLON?
+    ;
+
+ifStatement
+    : IF searchCondition THEN ifStatementList? (ELIF searchCondition THEN ifStatementList?)+ (ELSE ifStatementList)? END IF SEMICOLON?
+    ;
+
+ifStatementList
+    : BEGIN statementBlock END
+    | sqlStatement
+    | subsetSplStatement
+    ;
+
+letStatement
+    : LET identifier (COMMA identifier)*
+    (functionName LPAREN (argument (COMMA argument)*)? RPAREN
+    | expression
+    | LPAREN selectStatement (COMMA selectStatement)* RPAREN
+    )
+    (COMMA (functionName LPAREN (argument (COMMA argument)*)? RPAREN
+    | expression
+    | LPAREN selectStatement (COMMA selectStatement)* RPAREN
+    ))*
+    ;
+
+loopStatement
+    : (WHILE searchCondition | FOR identifier (IN LPAREN (range | expression) RPAREN | EQ range))?
+    LOOP statementBlock END LOOP SEMICOLON?
+    ;
+
+range
+    : left=expression TO right=expression (STEP expression)?
+    ;
+
+raiseException
+    : RAISE EXCEPTION expression (COMMA expression (COMMA (identifier | expression))?) SEMICOLON?
+    ;
+
+returnStatement
+    : RETURN (expression (COMMA expression)* (WITH RESUME)?)? SEMICOLON?
+    ;
+
+systemStatement
+    : SYSTEM (identifier | expression) SEMICOLON?
+    ;
+
+traceStatement
+    : TRACE (ON | OFF | PROCEDURE | expression) SEMICOLON?
+    ;
+
+whileStatement
+    : WHILE searchCondition (statementBlock END WHILE identifier? | LOOP statementBlock END LOOP identifier?) SEMICOLON?
+    ;
+
+statementBlock
+    : defineStatement* statementBlockClause*
+    ;
+
+statementBlockClause
+    : executeFunction
+    | executeProcedure
+    | subsetSplStatement
+    | sqlStatement
+    | BEGIN statementBlock END
+    ;
+
+executeFunction
+    : EXECUTE FUNCTION functionName (LPAREN (argument (COMMA argument)*)? RPAREN)? intoClause? (WITH TRIGGER REFERENCES)?
+    ;
+
+executeProcedure
+    : EXECUTE PROCEDURE procedureName (LPAREN (argument (COMMA argument)*)? RPAREN)? (INTO identifier (COMMA identifier)*)? (WITH TRIGGER REFERENCES)?
+    ;
+
+defineStatement
+    : DEFINE (
+    | identifier (COMMA identifier)* (dataType | REFERENCES (BYTE | TEXT) | LIKE columnName | PROCEDURE | BLOB | CLOB)
+    ) SEMICOLON?
+    ;
+
 sqlRoutineBody
 	: probablySQLPL+
 	;
@@ -681,16 +817,45 @@ probablySQLPL
 	| SEMICOLON
 	| LPAREN 
 	| RPAREN
+	| EQ
 	)
 	;
 
 createProcedureStatement
 	: (
-	CREATE (OR REPLACE)? PROCEDURE procedureName
-	(LPAREN parameterDeclaration3 (COMMA parameterDeclaration3)* RPAREN)?
-	(createProcedureOptionList* languageOption5 createProcedureOptionList*)
+	createProcededureStatementExternal
+	| createProcededureStatementSourced
+	| createProcededureStatementSQL
 	)
 	;
+
+createProcededureStatementExternal
+    :
+	CREATE (OR REPLACE)? PROCEDURE procedureName
+	(LPAREN (parameterDeclaration3 (COMMA parameterDeclaration3)*)? RPAREN)?
+	(createProcedureOptionList* languageOption5? createProcedureOptionList*)
+    ;
+
+createProcededureStatementSourced
+    :
+	CREATE (OR REPLACE)? PROCEDURE procedureName
+	sourceProcedureClause
+	(createProcedureOptionList* languageOption5? createProcedureOptionList*)
+    ;
+
+sourceProcedureClause
+    : SOURCE procedureName
+    (LPAREN RPAREN | NUMBER OF PARAMETERS numeric)?
+    (UNIQUE ID uniqueID)? FOR SERVER identifier
+    ;
+
+createProcededureStatementSQL
+    :
+	CREATE (OR REPLACE)? PROCEDURE procedureName
+	(LPAREN (parameterDeclaration3 (COMMA parameterDeclaration3)*)? RPAREN)?
+	(createProcedureOptionList* languageOption1? createProcedureOptionList*)
+	statementBlock
+    ;
 
 createRoleStatement
 	: (
@@ -2234,7 +2399,7 @@ declareGlobalTemporaryTableColumnDefinition
 
 parameterDeclaration1
 	: (
-	parameterName? ((functionDataType (AS LOCATOR)?) | (TABLE LIKE tableName (AS LOCATOR)?))
+	parameterName? ((functionDataType defaultProcedureClause?) | (TABLE LIKE tableName defaultProcedureClause?))
 	)
 	;
 
@@ -2246,9 +2411,13 @@ parameterDeclaration2
 
 parameterDeclaration3
 	: (
-	(IN | OUT | INOUT)? parameterName? procedureDataType (AS LOCATOR)?
+	(IN | OUT | INOUT)? parameterName? procedureDataType defaultProcedureClause?
 	)
 	;
+
+defaultProcedureClause
+    : DEFAULT (NULL | literal | identifier | LPAREN expression RPAREN)
+    ;
 
 createFunctionStatementExternalScalarOptions
 	: (
@@ -2503,7 +2672,7 @@ inlineSqlScalarFunctionDefinition
 	: (
 	RETURNS functionDataType languageOption1?
 	createFunctionStatementInlineSqlScalarOptions+
-	sqlRoutineBody
+	statementBlock
 	)
 	;
 
@@ -2524,7 +2693,7 @@ compiledSqlScalarFunctionDefinition
 	: (
 	RETURNS functionDataType versionOption?
 	createFunctionStatementCompiledSqlScalarOptions+
-	sqlRoutineBody
+	statementBlock
 	)
 	;
 
@@ -2580,7 +2749,7 @@ sqlTableFunctionDefinition
 	: (
 	RETURNS TABLE LPAREN functionDataType (COMMA functionDataType)* RPAREN
 	createFunctionStatementSqlTableOptions+
-	sqlRoutineBody
+	statementBlock
 	)
 	;
 
@@ -5540,6 +5709,10 @@ aliasName
 	;
 
 constraintName
+	: identifier
+	;
+
+uniqueID
 	: identifier
 	;
 

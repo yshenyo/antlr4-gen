@@ -317,7 +317,6 @@ redundancy_clause //区别：少了无
     | UNPROTECTED
     | PARITY
     | DOUBLE
-    |
     ;
 
 striping_clause
@@ -3681,7 +3680,7 @@ alter_materialized_view //区别：多了IF EXISTS alter_table_partitioning eval
        | allocate_extent_clause
        | deallocate_unused_clause
        | shrink_clause
-       | (cache_or_nocache)
+       | cache_or_nocache
        | annotations_clause
        )?
        alter_iot_clauses?
@@ -3702,7 +3701,8 @@ alter_mv_option1 //区别：删除注释
     ;
 
 unusable_editions_clause
-    : (UNUSABLE BEFORE (CURRENT EDITION | EDITION edition_name))? (UNUSABLE BEGINNING WITH (CURRENT EDITION | EDITION edition_name | NULL_ EDITION))?
+    : (UNUSABLE BEFORE (CURRENT EDITION | EDITION edition_name))? (UNUSABLE BEGINNING WITH (CURRENT EDITION | EDITION edition_name | NULL_ EDITION))
+    | (UNUSABLE BEFORE (CURRENT EDITION | EDITION edition_name)) (UNUSABLE BEGINNING WITH (CURRENT EDITION | EDITION edition_name | NULL_ EDITION))?
     ;
 
 alter_mv_refresh
@@ -3966,8 +3966,8 @@ primary_operator_item
     ;
 
 operator_context_clause
-    : (WITH INDEX CONTEXT COMMA SCAN CONTEXT implementation_type_name (COMPUTE ANCILLARY DATA)?)?
-        (WITH COLUMN CONTEXT)?
+    : (WITH INDEX CONTEXT COMMA SCAN CONTEXT implementation_type_name (COMPUTE ANCILLARY DATA)?)? (WITH COLUMN CONTEXT)
+    | (WITH INDEX CONTEXT COMMA SCAN CONTEXT implementation_type_name (COMPUTE ANCILLARY DATA)?) (WITH COLUMN CONTEXT)?
     ;
 
 using_function_clause
@@ -5764,7 +5764,8 @@ alter_table_properties
     ;
 
 clustering_when
-    : ( yes_no ON LOAD )? ( yes_no ON DATA MOVEMENT )?
+    : ( yes_no ON LOAD ) ( yes_no ON DATA MOVEMENT )?
+    | ( yes_no ON LOAD )? ( yes_no ON DATA MOVEMENT )
     ;
 
 alter_table_partitioning
@@ -6697,7 +6698,8 @@ set_role
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/COMMIT.html
 commit_statement //区别：结构不一样
     : COMMIT WORK? write_clause?
-      ( (COMMENT CHAR_STRING)? write_clause?
+      ( (COMMENT CHAR_STRING) write_clause?
+      | (COMMENT CHAR_STRING)? write_clause
       | FORCE ( CHAR_STRING (',' numeric)?
 //              | CORRUPT_XID CHAR_STRING
 //              | CORRUPT_XID_ALL
@@ -7480,7 +7482,9 @@ json_column_definition
     ;
 
 json_query_returning_clause
-    : (RETURNING json_query_return_type)? PRETTY? ASCII?
+    : (RETURNING json_query_return_type) PRETTY? ASCII?
+    | (RETURNING json_query_return_type)? PRETTY ASCII?
+    | (RETURNING json_query_return_type)? PRETTY? ASCII
     ;
 
 json_query_return_type
