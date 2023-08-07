@@ -8374,6 +8374,7 @@ regular_id
     | RESULT
     | SDO_GEOMETRY
     | SELF
+    | SEQ
     | SERIALLY_REUSABLE
     | SET
     | SHARDSPACE
