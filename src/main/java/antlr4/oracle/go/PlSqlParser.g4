@@ -64,6 +64,7 @@ unit_statement
     | alter_sequence
     | alter_session
     | alter_synonym
+    | alter_system
     | alter_table
     | alter_tablespace
     | alter_tablespace_set
@@ -4005,6 +4006,106 @@ drop_synonym
     : DROP PUBLIC? SYNONYM (schema_name '.')? synonym_name FORCE?
     ;
 
+alter_system
+    : ALTER SYSTEM ( archive_log_clause
+                     | checkpoint_clause
+                     | check_datafiles_clause
+                     | distributed_recov_clauses
+                     | FLUSH ( SHARED_POOL | GLOBAL CONTEXT | BUFFER_CACHE | FLASH_CACHE
+                                   | REDO TO target_db_name=identifier ( NO? CONFIRM APPLY)? )
+                     | end_session_clauses
+                     | SWITCH LOGFILE
+                     | ( SUSPEND | RESUME )
+                     | quiesce_clauses
+                     | rolling_migration_clauses
+                     | rolling_patch_clauses
+                     | security_clauses
+                     | shutdown_dispatcher_clause
+                     | REGISTER
+                     | SET alter_system_set_clause+
+                     | RESET alter_system_reset_clause+
+                     | RELOCATE CLIENT client_id=identifier
+//                     | cancel_sql_clause
+//                     | FLUSH PASSWORDFILE_METADATA_CACHE
+                     ) ;
+
+archive_log_clause
+    : ARCHIVE LOG (INSTANCE quoted_string)? (
+    SEQUENCE literal
+    | CHANGE literal
+    | CURRENT NOSWITCH?
+    | GROUP literal
+    | LOGFILE quoted_string (USING BACKUP CONTROLFILE)?
+    | NEXT
+    | ALL
+    ) (TO quoted_string)?
+    ;
+
+checkpoint_clause
+    : CHECKPOINT (GLOBAL | LOCAL)?
+    ;
+
+check_datafiles_clause
+    : CHECK DATAFILES (GLOBAL | LOCAL)?
+    ;
+
+distributed_recov_clauses
+    : (ENABLE | DISABLE) DISTRIBUTED RECOVERY
+    ;
+
+end_session_clauses
+    : (KILL SESSION quoted_string
+    | DISCONNECT SESSION quoted_string POST_TRANSACTION?
+    ) (IMMEDIATE | NOREPLAY)?
+    ;
+
+quiesce_clauses
+    : QUIESCE RESTRICTED
+    | UNQUIESCE
+    ;
+
+rolling_migration_clauses
+    : START ROLLING MIGRATION TO quoted_string
+    | STOP ROLLING MIGRATION
+    ;
+
+rolling_patch_clauses
+    : START ROLLING PATCH
+    | STOP ROLLING PATCH
+    ;
+
+security_clauses
+    : (ENABLE | DISABLE) RESTRICTED SESSION
+    | SET ENCRYPTION WALLET OPEN IDENTIFIED BY quoted_string
+    | SET ENCRYPTION WALLET CLOSE (IDENTIFIED BY quoted_string)?
+    | set_encryption_key
+    ;
+
+set_encryption_key
+    : SET ENCRYPTION KEY (quoted_string IDENTIFIED BY quoted_string
+    | IDENTIFIED BY quoted_string (MIGRATE USING quoted_string)?
+    )
+    ;
+
+shutdown_dispatcher_clause
+    : SHUTDOWN IMMEDIATE? dispatcher_name=identifier
+    ;
+
+alter_system_set_clause
+    : set_parameter_clause
+    | USE_STORED_OUTLINES '=' (TRUE | FALSE | identifier)
+    | GLOBAL_TOPIC_ENABLED '=' (TRUE | FALSE)
+    ;
+
+set_parameter_clause
+    : parameter_name '=' parameter_value (COMMA parameter_value)* (COMMENT '=' quoted_string)? DEFERRED?
+    (CONTAINER '=' (ALL | CURRENT))? (SID '=' quoted_string | SCOPE '=' (MEMORY | SPFILE | BOTH))*
+    ;
+
+alter_system_reset_clause
+    : parameter_name (SID '=' quoted_string | SCOPE '=' (MEMORY | SPFILE | BOTH))*
+    ;
+
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-SPFILE.html
 create_spfile
     : CREATE SPFILE ('=' spfile_name)?
@@ -4812,6 +4913,7 @@ index_attributes
       | key_compression
       | sort_or_nosort
       | REVERSE
+      | ONLINE
       | visible_or_invisible
       | parallel_clause
       )+
@@ -6076,7 +6178,7 @@ unary_logical_expression
 logical_operation:
     ( NULL_
     | NAN | PRESENT
-    | INFINITE | A_LETTER SET | EMPTY
+    | INFINITE | A_LETTER SET | EMPTY_
     | OF TYPE? '(' ONLY? type_spec (',' type_spec)* ')'
     )
     ;
@@ -6236,9 +6338,9 @@ json_function
     | JSON_OBJECT '(' json_object_content ')'
     | JSON_OBJECTAGG '(' KEY? expression VALUE expression ((NULL_ | ABSENT) ON NULL_)? (RETURNING ( VARCHAR2 ('(' UNSIGNED_INTEGER ( BYTE | CHAR )? ')')? | CLOB | BLOB ))?  STRICT? (WITH UNIQUE KEYS)?')'
     | JSON_QUERY '(' expression (FORMAT JSON)? ',' CHAR_STRING json_query_returning_clause json_query_wrapper_clause? json_query_on_error_clause? json_query_on_empty_clause? ')'
-    | JSON_SERIALIZE '(' CHAR_STRING (RETURNING json_query_return_type)? PRETTY? ASCII? TRUNCATE? ((NULL_ | ERROR | EMPTY (ARRAY | OBJECT)) ON ERROR)? ')'
+    | JSON_SERIALIZE '(' CHAR_STRING (RETURNING json_query_return_type)? PRETTY? ASCII? TRUNCATE? ((NULL_ | ERROR | EMPTY_ (ARRAY | OBJECT)) ON ERROR)? ')'
     | JSON_TRANSFORM '(' expression ',' json_transform_op (',' json_transform_op)* ')'
-    | JSON_VALUE '('  expression (FORMAT JSON)? (',' CHAR_STRING? json_value_return_clause? ((ERROR | NULL_ | DEFAULT literal)? ON ERROR)? ((ERROR | NULL_ | DEFAULT literal)? ON EMPTY)? json_value_on_mismatch_clause?')')?
+    | JSON_VALUE '('  expression (FORMAT JSON)? (',' CHAR_STRING? json_value_return_clause? ((ERROR | NULL_ | DEFAULT literal)? ON ERROR)? ((ERROR | NULL_ | DEFAULT literal)? ON EMPTY_)? json_value_on_mismatch_clause?')')?
     ;
 
 json_object_content
@@ -6252,7 +6354,7 @@ json_object_entry
     ;
 
 json_table_clause
-    : JSON_TABLE '(' expression (FORMAT JSON)? (',' CHAR_STRING)? ((ERROR | NULL_) ON ERROR)? ((EMPTY | NULL_) ON EMPTY)? json_column_clause? ')'
+    : JSON_TABLE '(' expression (FORMAT JSON)? (',' CHAR_STRING)? ((ERROR | NULL_) ON ERROR)? ((EMPTY_ | NULL_) ON EMPTY_)? json_column_clause? ')'
     ;
 
 json_array_element
@@ -6302,11 +6404,11 @@ json_query_wrapper_clause
     ;
 
 json_query_on_error_clause
-    : (ERROR | NULL_ | EMPTY | EMPTY ARRAY | EMPTY OBJECT)? ON ERROR
+    : (ERROR | NULL_ | EMPTY_ | EMPTY_ ARRAY | EMPTY_ OBJECT)? ON ERROR
     ;
 
 json_query_on_empty_clause
-    : (ERROR | NULL_ | EMPTY | EMPTY ARRAY | EMPTY OBJECT)? ON EMPTY
+    : (ERROR | NULL_ | EMPTY_ | EMPTY_ ARRAY | EMPTY_ OBJECT)? ON EMPTY_
     ;
 
 json_value_return_clause
@@ -6388,7 +6490,7 @@ other_function
     | XMLPI
       '(' (NAME identifier | EVALNAME concatenation) (',' concatenation)? ')' ('.' general_element_part)*
     | XMLQUERY
-      '(' concatenation xml_passing_clause? RETURNING CONTENT (NULL_ ON EMPTY)? ')' ('.' general_element_part)*
+      '(' concatenation xml_passing_clause? RETURNING CONTENT (NULL_ ON EMPTY_)? ')' ('.' general_element_part)*
     | XMLROOT
       '(' concatenation (',' xmlroot_param_version_part)? (',' xmlroot_param_standalone_part)? ')' ('.' general_element_part)*
     | XMLSERIALIZE
@@ -7879,7 +7981,7 @@ non_reserved_keywords_pre12c
     | ELIMINATE_OUTER_JOIN
     | EMPTY_BLOB
     | EMPTY_CLOB
-    | EMPTY
+    | EMPTY_
     | ENABLE
     | ENABLE_PRESET
     | ENCODING
