@@ -2257,7 +2257,7 @@ anyName
 ;
 
 identifier
-    : anyName (DOT anyName)*
+    : anyName ((SYM1 | DOT) anyName)*
     ;
 
 numeric
