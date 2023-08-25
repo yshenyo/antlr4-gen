@@ -1032,8 +1032,8 @@ createSynonym
     ;
 
 createTable
-    : CREATE (STANDARD | RAW)? TABLE (IF NOT EXISTS)? tableName (columnDeifinition (COMMA columnDeifinition)*
-    (COMMA (multipleColumnConstraintForTable | columnDeifinition))* | ofTypeClause)
+    : CREATE (STANDARD | RAW)? TABLE (IF NOT EXISTS)? tableName (OPEN_PAR columnDeifinition (COMMA columnDeifinition)*
+    (COMMA (multipleColumnConstraintForTable | columnDeifinition))* CLOSE_PAR | ofTypeClause)
     (WITH (AUDIT | CRCOLS | ERKEY | REPLCHECK | VERCOLS))? (COMMA (WITH (AUDIT | CRCOLS | ERKEY | REPLCHECK | VERCOLS)))*
     securityPolicyClause? storageOptions? (LOCK MODE (PAGE | ROW))? usingAccessMethodClause? statisticsOptions?
     ;
@@ -2257,7 +2257,7 @@ anyName
 ;
 
 identifier
-    : anyName ((SYM1 | DOT) anyName)*
+    : anyName ((':' | DOT) anyName)*
     ;
 
 numeric
