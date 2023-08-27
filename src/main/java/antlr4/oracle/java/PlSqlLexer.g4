@@ -523,6 +523,7 @@ EXCHANGE:                     'EXCHANGE';
 EXCLUDE:                      'EXCLUDE';
 EXCLUDING:                    'EXCLUDING';
 EXCLUSIVE:                    'EXCLUSIVE';
+EXEC:                      'EXEC';
 EXECUTE:                      'EXECUTE';
 EXEMPT:                       'EXEMPT';
 EXISTING:                     'EXISTING';

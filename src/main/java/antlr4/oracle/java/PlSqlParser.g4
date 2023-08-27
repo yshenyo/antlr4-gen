@@ -5558,7 +5558,7 @@ return_statement
     ;
 
 call_statement
-    : CALL? routine_name function_argument? ('.' routine_name function_argument?)* (INTO bind_variable)?
+    : (CALL | EXEC | EXECUTE)? routine_name function_argument? ('.' routine_name function_argument?)* (INTO bind_variable)?
     ;
 
 pipe_row_statement
