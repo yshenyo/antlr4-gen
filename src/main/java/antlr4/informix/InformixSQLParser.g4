@@ -887,6 +887,7 @@ subsetSqlStatement
 //    | setConnection
     | unloadStatement
     | updateStatistics
+    | executeImmediate
     ;
 
 externalRoutineReference

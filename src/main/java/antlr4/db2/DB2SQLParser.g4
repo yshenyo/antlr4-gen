@@ -424,7 +424,7 @@ beginDeclareSectionStatement
 callStatement
 	: (
 	CALL procedureName
-	(LPAREN argument (COMMA argument)* RPAREN)?
+	(LPAREN (argument (COMMA argument)*)? RPAREN)?
 	)
 	;
 

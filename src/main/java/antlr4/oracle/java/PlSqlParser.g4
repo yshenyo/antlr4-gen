@@ -2095,6 +2095,8 @@ analyze
       ( validation_clauses
       | LIST CHAINED ROWS into_clause1?
       | DELETE SYSTEM? STATISTICS
+      | COMPUTE SYSTEM? STATISTICS for_clause?
+      | ESTIMATE SYSTEM? STATISTICS for_clause? (SAMPLE literal (ROWS | PERCENT))
       )
     ;
 
