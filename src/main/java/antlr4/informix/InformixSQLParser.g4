@@ -1491,12 +1491,12 @@ setClause
     ;
 
 singleColumnFormat
-    : column=identifier ASSIGN (expression | NULL | OPEN_PAR selectStatement CLOSE_PAR)
-    (COMMA column=identifier ASSIGN (expression | NULL | OPEN_PAR selectStatement CLOSE_PAR))*
+    : columnName ASSIGN (expression | NULL | OPEN_PAR selectStatement CLOSE_PAR)
+    (COMMA columnName ASSIGN (expression | NULL | OPEN_PAR selectStatement CLOSE_PAR))*
     ;
 
 multipleColumnFormat
-    : (OPEN_PAR column=identifier (COMMA column=identifier)* CLOSE_PAR | STAR) ASSIGN OPEN_PAR
+    : (OPEN_PAR columnName (COMMA columnName)* CLOSE_PAR | STAR) ASSIGN OPEN_PAR
     (expression | NULL | OPEN_PAR selectStatement CLOSE_PAR) (COMMA (expression | NULL | OPEN_PAR selectStatement CLOSE_PAR))*
     CLOSE_PAR
     ;
