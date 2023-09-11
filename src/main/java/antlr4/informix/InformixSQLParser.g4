@@ -1777,7 +1777,7 @@ setDataskip
     ;
 
 setDebugFile
-    : SET DEBUG FILE TO (identifier | expression | quotedString) (WITH APPEND)?
+    : SET DEBUG FILE TO (identifier | quotedString) (WITH APPEND)?
     ;
 
 setDeferredPrepare
@@ -2266,7 +2266,7 @@ numeric
     ;
 
 quotedString
-    : QUOTED_STRING
+    : CHAR_STRING
     ;
 
 datetimeField

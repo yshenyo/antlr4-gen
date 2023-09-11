@@ -691,7 +691,17 @@ NUMERIC_LITERAL: (DIGIT+ ('.' DIGIT*)? | '.' DIGIT+) ('E' [-+]? DIGIT+)? | '0x' 
 
 STRING_LITERAL: '\'' (~'\'' | '\'\'')* '\'';
 
-QUOTED_STRING: '\'' (~'\'' | '\'\'')* '\'' | '"' (~'"' | '""')* '"';
+CHAR_STRING: '\'' (~('\'' | '\r' | '\n') | '\'\'' | NEWLINE)* '\'';
+// Use quoted string as char_string
+CHAR_STRING_PERL    : 'Q' '\'' (QS_ANGLE | QS_BRACE | QS_BRACK | QS_PAREN | QS_EXCLAM | QS_SHARP | QS_QUOTE | QS_DQUOTE) '\'' -> type(CHAR_STRING);
+fragment QS_ANGLE   : '<' ~'>'* '>';
+fragment QS_BRACE   : '{' ~'}'* '}';
+fragment QS_BRACK   : '[' ~']'* ']';
+fragment QS_PAREN   : '(' ~')'* ')';
+fragment QS_EXCLAM  : '!' ~'!'* '!';
+fragment QS_SHARP   : '#' ~'#'* '#';
+fragment QS_QUOTE   : '\'' ~'\''* '\'';
+fragment QS_DQUOTE  : '"' ~'"'* '"';
 
 BLOB_LITERAL: 'X' STRING_LITERAL;
 
@@ -703,7 +713,9 @@ SPACES: [ \u000B\t\r\n] -> channel(HIDDEN);
 
 UNEXPECTED_CHAR: .;
 
+fragment NEWLINE_EOF    : NEWLINE | EOF;
 fragment HEX_DIGIT: [0-9A-F];
 fragment DIGIT:     [0-9];
+fragment NEWLINE        : '\r'? '\n';
 
 QUOTA : '\'' | '"' | '`';
