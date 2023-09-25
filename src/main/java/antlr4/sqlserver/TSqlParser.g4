@@ -3857,9 +3857,9 @@ predicate
     | expression comparison_operator expression
     | expression MULT_ASSIGN expression ////SQL-82 syntax for left outer joins; '*='. See https://stackoverflow.com/questions/40665/in-sybase-sql
     | expression comparison_operator (ALL | SOME | ANY) '(' subquery ')'
-    | expression NOT* BETWEEN expression AND expression
-    | expression NOT* IN '(' (subquery | expression_list_) ')'
-    | expression NOT* LIKE expression (ESCAPE expression)?
+    | expression NOT? BETWEEN expression AND expression
+    | expression NOT? IN '(' (subquery | expression_list_) ')'
+    | expression NOT? LIKE expression (ESCAPE expression)?
     | expression IS null_notnull
     ;
 

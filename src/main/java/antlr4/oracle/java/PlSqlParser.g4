@@ -751,7 +751,7 @@ alter_trigger
 create_trigger
     : CREATE ( OR REPLACE )? TRIGGER trigger_name
       (simple_dml_trigger | compound_dml_trigger | non_dml_trigger)
-      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body
+      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause?
     ;
 
 trigger_follows_clause
@@ -781,7 +781,7 @@ non_dml_trigger
     ;
 
 trigger_body
-    : COMPOUND TRIGGER
+    : compound_trigger_block
     | CALL identifier
     | trigger_block
     ;
@@ -791,14 +791,14 @@ routine_clause
     ;
 
 compound_trigger_block
-    : COMPOUND TRIGGER seq_of_declare_specs? timing_point_section+ END trigger_name
+    : COMPOUND TRIGGER seq_of_declare_specs? timing_point_section+ END trigger_name?
     ;
 
 timing_point_section
-    : bk=BEFORE STATEMENT IS trigger_block BEFORE STATEMENT
-    | bk=BEFORE EACH ROW IS trigger_block BEFORE EACH ROW
-    | ak=AFTER STATEMENT IS trigger_block AFTER STATEMENT
-    | ak=AFTER EACH ROW IS trigger_block AFTER EACH ROW
+    : bk=BEFORE STATEMENT IS BEGIN tps_body END BEFORE STATEMENT ';'
+    | bk=BEFORE EACH ROW IS BEGIN tps_body END BEFORE EACH ROW ';'
+    | ak=AFTER STATEMENT IS BEGIN tps_body END AFTER STATEMENT ';'
+    | ak=AFTER EACH ROW IS BEGIN tps_body END AFTER EACH ROW ';'
     ;
 
 non_dml_event
