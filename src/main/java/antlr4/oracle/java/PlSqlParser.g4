@@ -751,7 +751,7 @@ alter_trigger
 create_trigger
     : CREATE ( OR REPLACE )? TRIGGER trigger_name
       (simple_dml_trigger | compound_dml_trigger | non_dml_trigger)
-      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause?
+      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body
     ;
 
 trigger_follows_clause
@@ -5577,6 +5577,10 @@ exception_handler
 
 trigger_block
     : (DECLARE declare_spec*)? body
+    ;
+
+tps_body
+    : seq_of_statements (EXCEPTION exception_handler+)?
     ;
 
 block
