@@ -1217,7 +1217,7 @@ non_dml_trigger
     ;
 
 trigger_body
-    : COMPOUND TRIGGER
+    : compound_trigger_block
     | CALL identifier
     | trigger_block
     ;
@@ -1227,14 +1227,14 @@ routine_clause
     ;
 
 compound_trigger_block
-    : COMPOUND TRIGGER seq_of_declare_specs? timing_point_section+ END trigger_name
+    : COMPOUND TRIGGER seq_of_declare_specs? timing_point_section+ END trigger_name?
     ;
 
 timing_point_section
-    : bk=BEFORE STATEMENT IS trigger_block BEFORE STATEMENT
-    | bk=BEFORE EACH ROW IS trigger_block BEFORE EACH ROW
-    | ak=AFTER STATEMENT IS trigger_block AFTER STATEMENT
-    | ak=AFTER EACH ROW IS trigger_block AFTER EACH ROW
+    : bk=BEFORE STATEMENT IS BEGIN tps_body END BEFORE STATEMENT ';'
+    | bk=BEFORE EACH ROW IS BEGIN tps_body END BEFORE EACH ROW ';'
+    | ak=AFTER STATEMENT IS BEGIN tps_body END AFTER STATEMENT ';'
+    | ak=AFTER EACH ROW IS BEGIN tps_body END AFTER EACH ROW ';'
     ;
 
 non_dml_event
@@ -2686,6 +2686,8 @@ analyze
       ( validation_clauses
       | LIST CHAINED ROWS into_clause1?
       | DELETE SYSTEM? STATISTICS
+      | COMPUTE SYSTEM? STATISTICS for_clause?
+      | ESTIMATE SYSTEM? STATISTICS for_clause? (SAMPLE literal (ROWS | PERCENT))
       )
     ;
 
@@ -4192,7 +4194,7 @@ create_table //区别：多了IF NOT EXISTS
             )?
         TABLE (schema_name '.')? (IF NOT EXISTS)? table_name
         (SHARING '=' (METADATA | EXTENDED? DATA | NONE))?
-        (relational_table | object_table | xmltype_table)
+        (relational_table | xmltype_table | object_table)
         (MEMOPTIMIZE FOR READ)?
         (MEMOPTIMIZE FOR WRITE)?
         (PARENT tableview_name)?
@@ -6069,6 +6071,7 @@ lob_segname
 lob_item
     : regular_id
     | quoted_string
+    | DELIMITED_ID
     ;
 
 lob_storage_parameters
@@ -6304,12 +6307,10 @@ new_constraint_name
     ;
 
 drop_constraint_clause
-    : DROP  drop_primary_key_or_unique_or_generic_clause
-    ;
-
-drop_primary_key_or_unique_or_generic_clause
-    : (PRIMARY KEY | UNIQUE '(' column_name (',' column_name)* ')') CASCADE? (KEEP | DROP)?
-    | CONSTRAINT constraint_name CASCADE?
+    : DROP ( PRIMARY KEY
+           | UNIQUE '(' column_name (',' column_name)* ')'
+           | CONSTRAINT constraint_name
+           ) CASCADE? ((KEY | DROP) INDEX)? ONLINE?
     ;
 
 add_constraint
@@ -6590,7 +6591,7 @@ return_statement
     ;
 
 call_statement
-    : CALL? routine_name function_argument? ('.' routine_name function_argument?)* (INTO bind_variable)?
+    : (CALL | EXEC | EXECUTE)? routine_name function_argument? ('.' routine_name function_argument?)* (INTO bind_variable)?
     ;
 
 pipe_row_statement
@@ -6608,6 +6609,10 @@ exception_handler
 
 trigger_block
     : (DECLARE declare_spec*)? body
+    ;
+
+tps_body
+    : seq_of_statements (EXCEPTION exception_handler+)?
     ;
 
 block
@@ -7392,13 +7397,11 @@ case_else_part
     ;
 
 atom
-    : table_element outer_join_sign
-    | bind_variable
+    : bind_variable
     | constant
-    | general_element
+    | general_element outer_join_sign?
     | '(' subquery ')' subquery_operation_part*
     | '(' expressions ')'
-    | quoted_string
     ;
 
 quantified_expression
@@ -7412,7 +7415,7 @@ string_function
     | DECODE '(' expressions  ')'
     | CHR '(' concatenation USING NCHAR_CS ')'
     | NVL '(' expression ',' expression ')'
-    | TRIM '(' ((LEADING | TRAILING | BOTH)? quoted_string? FROM)? concatenation ')'
+    | TRIM '(' ((LEADING | TRAILING | BOTH)? expression? FROM)? concatenation ')'
     | TO_DATE '(' (table_element | standard_function | expression)
        (DEFAULT concatenation ON CONVERSION ERROR)? (',' quoted_string  (',' quoted_string)? )? ')'
     ;
@@ -8092,7 +8095,7 @@ general_element
     ;
 
 general_element_part
-    : (INTRODUCER char_set_name)? id_expression ('.' id_expression)* ('@' link_name)? function_argument?
+    : (INTRODUCER char_set_name)? id_expression ('@' link_name)? function_argument?
     ;
 
 table_element
@@ -8287,8 +8290,7 @@ numeric_negative
     ;
 
 quoted_string
-    : variable_name
-    | CHAR_STRING
+    : CHAR_STRING
     //| CHAR_STRING_PERL
     | NATIONAL_CHAR_STRING_LIT
     ;
@@ -8379,6 +8381,7 @@ regular_id
     | SEQ
     | SERIALLY_REUSABLE
     | SET
+    | SEQ
     | SHARDSPACE
     | SIGNTYPE
     | SIMPLE_INTEGER
