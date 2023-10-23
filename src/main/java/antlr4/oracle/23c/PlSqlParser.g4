@@ -720,7 +720,8 @@ function_spec
     ;
 
 package_obj_body
-    : exception_declaration
+    : pragma_declaration
+    | exception_declaration
     | subtype_declaration
     | cursor_declaration
     | variable_declaration
@@ -4192,7 +4193,7 @@ create_table //区别：多了IF NOT EXISTS
             | IMMUTABLE? BLOCKCHAIN
             | IMMUTABLE
             )?
-        TABLE (schema_name '.')? (IF NOT EXISTS)? table_name
+        TABLE (IF NOT EXISTS)? (schema_name '.')? table_name
         (SHARING '=' (METADATA | EXTENDED? DATA | NONE))?
         (relational_table | xmltype_table | object_table)
         (MEMOPTIMIZE FOR READ)?
