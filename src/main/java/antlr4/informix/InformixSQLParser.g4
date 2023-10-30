@@ -1467,7 +1467,13 @@ valuesClause
     : VALUES OPEN_PAR (identifier (SYM1 identifier | SYM12 identifier)?
     | NULL | USER | quotedString | numeric | constExprssion | columnExpression
     | literalCollection | literalRow | expression
-    ) CLOSE_PAR
+    )
+    (COMMA
+    (identifier (SYM1 identifier | SYM12 identifier)?
+    | NULL | USER | quotedString | numeric | constExprssion | columnExpression
+    | literalCollection | literalRow | expression
+    ))*
+     CLOSE_PAR
     ;
 
 loadStatement
