@@ -7273,7 +7273,11 @@ logical_expression
     ;
 
 unary_logical_expression
-    : NOT? multiset_expression (IS NOT? logical_operation)*
+    : NOT? multiset_expression unary_logical_operation?
+    ;
+
+unary_logical_operation
+    : IS NOT? logical_operation
     ;
 
 logical_operation:
