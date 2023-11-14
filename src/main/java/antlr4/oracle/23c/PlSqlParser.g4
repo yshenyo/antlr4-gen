@@ -702,12 +702,12 @@ create_package_body //区别：多了IF NOT EXISTS
 package_obj_spec
     : pragma_declaration
     | exception_declaration
+    | procedure_spec
+    | function_spec
     | variable_declaration
     | subtype_declaration
     | cursor_declaration
     | type_declaration
-    | procedure_spec
-    | function_spec
     ;
 
 procedure_spec
@@ -722,14 +722,14 @@ function_spec
 package_obj_body
     : pragma_declaration
     | exception_declaration
+    | procedure_spec
+    | function_spec
     | subtype_declaration
     | cursor_declaration
     | variable_declaration
     | type_declaration
     | procedure_body
     | function_body
-    | procedure_spec
-    | function_spec
     ;
 
 create_pluggable_database
@@ -6413,12 +6413,12 @@ seq_of_declare_specs
 declare_spec
     : pragma_declaration
     | exception_declaration
+    | procedure_spec
+    | function_spec
     | variable_declaration
     | subtype_declaration
     | cursor_declaration
     | type_declaration
-    | procedure_spec
-    | function_spec
     | procedure_body
     | function_body
     ;
