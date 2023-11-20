@@ -917,7 +917,7 @@ replaceStatement
 selectStatement
     : querySpecification lockClause?                                #simpleSelect
     | queryExpression lockClause?                                   #parenthesisSelect
-    | querySpecificationNointo unionStatement+
+    | (querySpecificationNointo | queryExpressionNointo) unionStatement+
         (
           UNION unionType=(ALL | DISTINCT)?
           (querySpecification | queryExpression)
