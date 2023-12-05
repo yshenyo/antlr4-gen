@@ -6331,7 +6331,7 @@ string_function
     | CHR '(' concatenation USING NCHAR_CS ')'
     | NVL '(' expression ',' expression ')'
     | TRIM '(' ((LEADING | TRAILING | BOTH)? expression? FROM)? concatenation ')'
-    | TO_DATE '(' (table_element | standard_function | expression)
+    | (TO_DATE | TO_TIMESTAMP | TO_TIMESTAMP_TZ | TO_TIME) '(' (table_element | standard_function | expression)
        (DEFAULT concatenation ON CONVERSION ERROR)? (',' quoted_string  (',' quoted_string)? )? ')'
     ;
 
