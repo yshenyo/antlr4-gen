@@ -194,32 +194,34 @@ createTable
        (
          LIKE tableName
          | '(' LIKE parenthesisTable=tableName ')'
-       )   tdsqlOptions?                                                          #copyCreateTable
+       ) distributedOption?                                   #copyCreateTable
     | CREATE TEMPORARY? TABLE ifNotExists?
        tableName createDefinitions?
        ( tableOption (','? tableOption)* )?
-       (partitionDefinitions | tdsqlOptions)? keyViolate=(IGNORE | REPLACE)?
-       AS? selectStatement                                                       #queryCreateTable
+       (partitionDefinitions | distributedOption)?  keyViolate=(IGNORE | REPLACE)?
+       AS? selectStatement                                          #queryCreateTable
     | CREATE TEMPORARY? TABLE ifNotExists?
        tableName createDefinitions
        ( tableOption (','? tableOption)* )?
-       (partitionDefinitions | tdsqlOptions)?                                    #columnCreateTable
+       (partitionDefinitions | distributedOption)?            #columnCreateTable
     ;
 
-tdsqlOptions
-    : SHARDKEY '=' uid
-    | TDSQL_DISTRIBUTED BY (RANGE | LIST) '(' uid ')'
-    '('
-    tdsqlValueOption (',' tdsqlValueOption)*
-    ')'
+distributedOption
+    : DISTRIBUTED BY (
+    HASH '(' fullColumnNameList ')' '(' uid (',' uid)* ')'
+    | RANGE '(' expression ')' '(' (uid VALUES LESS THAN distributedValueList |  uid distributedValues*)
+    (',' (uid VALUES LESS THAN distributedValueList |  uid distributedValues*))* ')'
+    | LIST '(' expression ')' '(' uid VALUES IN distributedValueList (',' uid VALUES IN distributedValueList)* ')'
+    | DUPLICATE '(' uid (',' uid)* ')'
+    ) FORCE?
     ;
 
-tdsqlValueOption
-    : uid VALUES (LESS THAN tdsqlValueList | IN '(' constant (',' constant)* ')')
+distributedValues
+    :  LEFT_BRACKET (constant | expression ) (',' (constant | expression))* ')'
     ;
 
-tdsqlValueList
-    : '(' ((constant | expression ) (',' (constant | expression))* | MAXVALUE) ')'
+distributedValueList
+    : '(' ((constant | expression ) (',' (constant | expression))* | MAXVALUE | DEFAULT) ')'
     ;
 
 createTablespaceInnodb
@@ -634,7 +636,7 @@ alterTable
     : ALTER intimeAction=(ONLINE | OFFLINE)?
       IGNORE? TABLE tableName waitNowaitClause?
       (alterSpecification (',' alterSpecification)*)?
-      partitionDefinitions?
+      (partitionDefinitions | distributedOption)?
     ;
 
 alterTablespace
@@ -2793,7 +2795,6 @@ keywordsCanBeId
     | UNDO_BUFFER_SIZE | UNINSTALL | UNKNOWN | UNTIL | UPGRADE | USA | USER | USE_FRM | USER_RESOURCES
     | VALIDATION | VALUE | VAR_POP | VAR_SAMP | VARIABLES | VARIANCE | VERSION_TOKEN_ADMIN | VIEW | VIRTUAL
     | WAIT | WARNINGS | WITHOUT | WORK | WRAPPER | X509 | XA | XA_RECOVER_ADMIN | XML
-    | SHARDKEY | TDSQL_DISTRIBUTED
     ;
 
 functionNameBase
